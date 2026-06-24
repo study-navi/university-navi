@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大学進学ナビ｜複数エリア・並び替え対応版</title>
+<style>
+:root{--navy:#143b73;--blue:#2563eb;--sky:#eaf3ff;--gold:#f6b73c;--green:#e9fbef;--text:#172033;--muted:#637083;--line:#d9e4f2}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;background:linear-gradient(180deg,#eef6ff,#fff 45%,#f8fbff);color:var(--text)}
+header{background:linear-gradient(135deg,#123a73,#2f6fd7);color:white;padding:26px 15px;text-align:center}
+header h1{margin:6px 0;font-size:27px} header p{margin:0 auto;max-width:900px;font-size:14px;line-height:1.7}
+main{max-width:1180px;margin:auto;padding:16px 14px 60px}
+.home{position:fixed;right:13px;top:12px;z-index:10;border:0;border-radius:999px;background:white;color:var(--navy);font-weight:900;padding:10px 15px;box-shadow:0 8px 22px rgba(0,0,0,.18);cursor:pointer}
+.card{background:white;border:1px solid var(--line);border-radius:22px;padding:20px;margin:16px 0;box-shadow:0 10px 30px rgba(20,59,115,.08)}
+h2{color:var(--navy);font-size:23px;margin:5px 0 12px} h3{color:var(--navy);font-size:17px;margin:0 0 8px}
+p,.help{line-height:1.75;color:var(--muted);font-size:14px}
+.menu{display:grid;grid-template-columns:1fr;gap:15px}@media(min-width:780px){.menu{grid-template-columns:1fr 1fr 1fr}}
+.menuCard{border:2px solid var(--line);border-radius:22px;padding:20px;background:#fff;cursor:pointer}
+.menuCard:hover{border-color:var(--blue);background:#f8fbff} .icon{font-size:34px}
+.grid{display:grid;gap:12px;grid-template-columns:1fr}@media(min-width:800px){.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:1fr 1fr 1fr}}
+label{display:block;font-size:13px;font-weight:900;color:#334155;margin:10px 0 5px}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;font:inherit;background:white} textarea{min-height:88px}
+.btn{border:0;border-radius:999px;padding:11px 14px;font-weight:900;text-decoration:none;display:inline-block;text-align:center;cursor:pointer}
+.primary{background:var(--blue);color:white}.navy{background:var(--navy);color:white}.gold{background:#fff5d7;color:#795200;border:1px solid #ffd166}.gray{background:#eef2f7;color:#334155}.green{background:#ecfdf3;color:#087443;border:1px solid #abe7c3}
+.actions{display:grid;grid-template-columns:1fr;gap:9px;margin-top:12px}@media(min-width:760px){.actions{grid-template-columns:repeat(4,1fr)}}
+.box{border:1px solid var(--line);border-radius:18px;background:#fbfdff;padding:14px;margin:10px 0}
+.option{border:2px solid var(--line);border-radius:16px;background:white;padding:14px;text-align:left;font-weight:900;cursor:pointer}.option.selected{border-color:var(--blue);background:#eaf3ff;color:var(--navy)}
+.options{display:grid;gap:10px;grid-template-columns:1fr}@media(min-width:680px){.options{grid-template-columns:1fr 1fr}}
+.checkGrid{display:grid;grid-template-columns:1fr;gap:10px}@media(min-width:720px){.checkGrid{grid-template-columns:1fr 1fr 1fr}}
+.checkCard{border:2px solid var(--line);border-radius:16px;padding:13px;background:white;font-weight:900;cursor:pointer;display:flex;gap:8px;align-items:center}
+.checkCard.on{border-color:var(--blue);background:#eaf3ff;color:var(--navy)}
+.progress{height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden}.bar{height:100%;background:linear-gradient(90deg,var(--gold),#ffdd7a);width:0}
+.uni{border:1px solid var(--line);border-radius:18px;background:white;padding:15px;margin:10px 0}
+.uniTop{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}.uniName{font-size:18px;font-weight:900;color:#101828}
+.tag{display:inline-block;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900;margin:2px;background:#eaf3ff;color:var(--navy)}
+.challenge{background:#fff5d7;color:#795200;border:1px solid #ffd166}.match{background:#eaf3ff;color:#143b73;border:1px solid #bfd7ff}.safety{background:#ecfdf3;color:#087443;border:1px solid #abe7c3}
+.stars{font-size:20px;letter-spacing:1px;color:#f59e0b;white-space:nowrap}.starGrid{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0}@media(min-width:760px){.starGrid{grid-template-columns:1fr 1fr}}
+.starRow{display:flex;justify-content:space-between;border:1px solid #edf2f7;background:#fff;border-radius:13px;padding:8px 10px;font-size:13px;font-weight:800}
+.facultyList{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.faculty{background:#f4f7fb;border:1px solid #e2e8f0;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800;color:#334155}
+.faculty.hit{background:#fff5d7;border-color:#ffd166;color:#795200}
+.resultControl{display:grid;grid-template-columns:1fr;gap:10px;margin:12px 0}
+@media(min-width:760px){.resultControl{grid-template-columns:1fr 1fr 1fr}}
+.hitBox{background:#fffaf0;border:1px solid #ffd166;border-radius:14px;padding:10px;margin:8px 0;color:#795200;font-size:13px;font-weight:900;line-height:1.6}
+.employBox{background:#f0fdf4;border:1px solid #86efac;border-radius:14px;padding:10px;margin:8px 0;color:#166534;font-size:13px;font-weight:900;line-height:1.6}
+ul{line-height:1.75} table{width:100%;border-collapse:collapse;font-size:13px} th,td{border:1px solid var(--line);padding:8px;text-align:left;vertical-align:top} th{background:#eef6ff;color:var(--navy)}
+.compareWrap{width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:16px;background:white;position:relative}
+.compareWrap::after{content:"横にスライドして比較できます →";display:block;position:sticky;left:0;bottom:0;background:linear-gradient(90deg,#fff7d6,#ffffff);color:#795200;font-size:12px;font-weight:900;padding:8px 10px;border-top:1px solid #ffe3a3}
+.compareTable{min-width:820px;table-layout:fixed}
+.compareTable th:first-child{width:120px;position:sticky;left:0;z-index:3;background:#eaf3ff;box-shadow:2px 0 0 var(--line)}
+.compareTable th:not(:first-child),.compareTable td{min-width:180px;max-width:220px}.compareTable td{background:white}.compareTable .stars{font-size:17px}
+.miniLink{display:inline-block;border-radius:999px;padding:6px 9px;margin:3px 0;font-size:12px;font-weight:900;text-decoration:none}
+.miniPrimary{background:#2563eb;color:white}
+.miniGold{background:#fff5d7;color:#795200;border:1px solid #ffd166}
+.levelBadge{font-size:18px;font-weight:900;color:#143b73}
+.strategyBadge{display:inline-block;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900;background:#eef6ff;color:#143b73;margin:2px}
+.gapGood{color:#166534;font-weight:900}
+.gapMid{color:#795200;font-weight:900}
+.gapBad{color:#b42318;font-weight:900}
+.compareSortBox{background:#f8fbff;border:1px solid var(--line);border-radius:16px;padding:12px;margin:10px 0}
+.aiAdvice{background:linear-gradient(135deg,#f8fbff,#ffffff);border:2px solid #bfd7ff;border-radius:20px;padding:16px;margin:14px 0;box-shadow:0 8px 22px rgba(37,99,235,.08)}
+.aiAdvice h3{display:flex;align-items:center;gap:8px}
+.adviceBlock{background:white;border:1px solid var(--line);border-radius:16px;padding:13px;margin:10px 0}
+.adviceBlock h4{margin:0 0 8px;color:#143b73;font-size:15px}
+.adviceBlock ul{margin:6px 0 0;padding-left:20px}
+.aiNote{font-size:12px;color:#64748b;line-height:1.7;background:#f8fafc;border-radius:12px;padding:9px;margin-top:10px}
+.sheetBox{background:#f0fdf4;border:1px solid #86efac;border-radius:18px;padding:14px;margin:12px 0}
+.sheetStatus{font-size:13px;font-weight:900;margin-top:8px;line-height:1.6}
+.sheetOk{color:#166534}.sheetNg{color:#b42318}
+.deepScoreGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(min-width:760px){.deepScoreGrid{grid-template-columns:repeat(3,1fr)}}
+.scoreCard{background:white;border:1px solid var(--line);border-radius:16px;padding:12px}
+.scoreCard input{font-size:18px;font-weight:900;text-align:center}
+.deepResult{background:linear-gradient(135deg,#eef6ff,#ffffff);border:2px solid #bfd7ff;border-radius:20px;padding:16px;margin:14px 0}
+.priorityItem{display:flex;justify-content:space-between;gap:10px;align-items:center;background:white;border:1px solid var(--line);border-radius:14px;padding:10px;margin:8px 0}
+.priorityItem strong{color:#143b73}
+.subjectBadge{display:inline-block;border-radius:999px;background:#eaf3ff;color:#143b73;border:1px solid #bfd7ff;padding:5px 9px;margin:3px;font-size:12px;font-weight:900}
+.subjectWeak{background:#fff5d7;color:#795200;border-color:#ffd166}
+.subjectStrong{background:#ecfdf3;color:#087443;border-color:#abe7c3}
+.deepChart{display:flex;align-items:flex-end;gap:8px;height:150px;padding:12px;background:#fff;border:1px solid var(--line);border-radius:16px}
+.deepBar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px}
+.deepBarFill{width:100%;max-width:42px;background:linear-gradient(180deg,#2563eb,#bfd7ff);border-radius:8px 8px 0 0;min-height:8px}
+.deepBar span{font-size:11px;font-weight:900;color:#334155}
+.rankList{display:grid;gap:8px;margin-top:10px}
+.rankItem{display:grid;grid-template-columns:42px 1fr 52px;align-items:center;gap:8px;background:white;border:1px solid var(--line);border-radius:14px;padding:9px}
+.rankNo{font-weight:900;color:#143b73}.rankName{font-weight:900}.rankScore{text-align:right;font-weight:900;color:#2563eb}
+.analysisPair{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}@media(min-width:760px){.analysisPair{grid-template-columns:1fr 1fr}}
+.compareHint{display:flex;gap:8px;align-items:center;justify-content:space-between;background:#fff8df;color:#795200;border:1px solid #ffe3a3;border-radius:14px;padding:10px 12px;margin:8px 0 10px;font-size:13px;font-weight:900}
+.small{font-size:12px;color:#64748b;line-height:1.6}
+.printTitle{display:none}
+@media print{header,.home,.noPrint,.actions,.btn,.progress{display:none!important}body{background:white}main{max-width:none;padding:0}.card{box-shadow:none;border:0;margin:0;padding:0}.box,.uni{break-inside:avoid;box-shadow:none;background:white}.printTitle{display:block;text-align:center;font-weight:900;font-size:18px;margin-bottom:10px}}
+</style>
+</head>
+<body>
+<button class="home noPrint" onclick="renderHome()">🏠 ホーム</button>
+<header><div>スクールIE 共和校</div><h1>大学進学ナビ</h1><p>通常診断・詳しく診断・大学比較・AI進路アドバイスに対応。科目別偏差値から弱点分析できます。</p></header>
+<main><div id="app"></div></main>
+<script>
+const universities=[{"name": "東京大学", "type": "国立", "area": "関東", "pref": "東京都", "level": 75, "field": "総合・難関", "faculties": ["法", "経済", "文", "教育", "教養", "理", "工", "医", "薬", "農"]}, {"name": "京都大学", "type": "国立", "area": "関西", "pref": "京都府", "level": 74, "field": "総合・難関", "faculties": ["総合人間", "文", "教育", "法", "経済", "理", "医", "薬", "工", "農"]}, {"name": "大阪大学", "type": "国立", "area": "関西", "pref": "大阪府", "level": 70, "field": "総合・難関", "faculties": ["文", "人間科学", "外国語", "法", "経済", "理", "医", "歯", "薬", "工"]}, {"name": "名古屋大学", "type": "国立", "area": "中部", "pref": "愛知県", "level": 68, "field": "総合・難関", "faculties": ["文", "教育", "法", "経済", "情報", "理", "医", "工", "農"]}, {"name": "東北大学", "type": "国立", "area": "北海道・東北", "pref": "宮城県", "level": 68, "field": "総合・難関", "faculties": ["文", "教育", "法", "経済", "理", "医", "歯", "薬", "工", "農"]}, {"name": "九州大学", "type": "国立", "area": "九州・沖縄", "pref": "福岡県", "level": 67, "field": "総合・難関", "faculties": ["共創", "文", "教育", "法", "経済", "理", "医", "歯", "薬", "工"]}, {"name": "北海道大学", "type": "国立", "area": "北海道・東北", "pref": "北海道", "level": 66, "field": "総合・難関", "faculties": ["文", "教育", "法", "経済", "理", "医", "歯", "薬", "工", "農"]}, {"name": "一橋大学", "type": "国立", "area": "関東", "pref": "東京都", "level": 70, "field": "文系・経済", "faculties": ["商", "経済", "法", "社会", "ソーシャル・データサイエンス"]}, {"name": "東京工業大学", "type": "国立", "area": "関東", "pref": "東京都", "level": 70, "field": "理系・工学", "faculties": ["理学院", "工学院", "物質理工学院", "情報理工学院", "生命理工学院", "環境・社会理工学院"]}, {"name": "筑波大学", "type": "国立", "area": "関東", "pref": "茨城県", "level": 63, "field": "総合", "faculties": ["人文・文化", "社会・国際", "人間", "生命環境", "理工", "情報", "医学"]}, {"name": "神戸大学", "type": "国立", "area": "関西", "pref": "兵庫県", "level": 64, "field": "総合", "faculties": ["文", "国際人間科学", "法", "経済", "経営", "理", "医", "工", "農", "海洋政策科学"]}, {"name": "横浜国立大学", "type": "国立", "area": "関東", "pref": "神奈川県", "level": 62, "field": "総合", "faculties": ["教育", "経済", "経営", "理工", "都市科学"]}, {"name": "千葉大学", "type": "国立", "area": "関東", "pref": "千葉県", "level": 61, "field": "総合", "faculties": ["国際教養", "文", "法政経", "教育", "理", "医", "薬", "看護", "工", "園芸"]}, {"name": "広島大学", "type": "国立", "area": "中国・四国", "pref": "広島県", "level": 60, "field": "総合", "faculties": ["総合科学", "文", "教育", "法", "経済", "理", "医", "歯", "薬", "工"]}, {"name": "岡山大学", "type": "国立", "area": "中国・四国", "pref": "岡山県", "level": 58, "field": "総合", "faculties": ["文", "教育", "法", "経済", "理", "医", "歯", "薬", "工", "農"]}, {"name": "金沢大学", "type": "国立", "area": "中部", "pref": "石川県", "level": 58, "field": "総合", "faculties": ["人間社会", "理工", "医薬保健", "融合"]}, {"name": "静岡大学", "type": "国立", "area": "中部", "pref": "静岡県", "level": 54, "field": "総合", "faculties": ["人文社会科学", "教育", "情報", "理", "工", "農"]}, {"name": "岐阜大学", "type": "国立", "area": "中部", "pref": "岐阜県", "level": 55, "field": "総合", "faculties": ["教育", "地域科学", "医", "工", "応用生物科学"]}, {"name": "三重大学", "type": "国立", "area": "中部", "pref": "三重県", "level": 54, "field": "総合", "faculties": ["人文", "教育", "医", "工", "生物資源"]}, {"name": "愛知教育大学", "type": "国立", "area": "中部", "pref": "愛知県", "level": 55, "field": "教育", "faculties": ["教育"]}, {"name": "名古屋工業大学", "type": "国立", "area": "中部", "pref": "愛知県", "level": 58, "field": "理系・工学", "faculties": ["工"]}, {"name": "豊橋技術科学大学", "type": "国立", "area": "中部", "pref": "愛知県", "level": 52, "field": "理系・工学", "faculties": ["工"]}, {"name": "名古屋市立大学", "type": "公立", "area": "中部", "pref": "愛知県", "level": 59, "field": "医療・文系", "faculties": ["医学", "薬学", "経済", "人文社会", "芸術工学", "看護", "総合生命理学"]}, {"name": "愛知県立大学", "type": "公立", "area": "中部", "pref": "愛知県", "level": 55, "field": "文系・国際", "faculties": ["外国語", "日本文化", "教育福祉", "看護", "情報科学"]}, {"name": "愛知県立芸術大学", "type": "公立", "area": "中部", "pref": "愛知県", "level": 53, "field": "芸術", "faculties": ["美術", "音楽"]}, {"name": "東京都立大学", "type": "公立", "area": "関東", "pref": "東京都", "level": 60, "field": "総合", "faculties": ["人文社会", "法", "経済経営", "理", "都市環境", "システムデザイン", "健康福祉"]}, {"name": "大阪公立大学", "type": "公立", "area": "関西", "pref": "大阪府", "level": 61, "field": "総合", "faculties": ["現代システム科学", "文学", "法学", "経済学", "商学", "理学", "工学", "農学", "医学", "看護学"]}, {"name": "南山大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 56, "field": "文系・国際", "faculties": ["人文学部", "外国語学部", "経済学部", "経営学部", "法学部", "総合政策学部", "国際教養学部", "理工学部"]}, {"name": "名城大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 54, "field": "総合・理系", "faculties": ["法学部", "経営学部", "経済学部", "外国語学部", "人間学部", "都市情報学部", "情報工学部", "理工学部", "農学部", "薬学部"]}, {"name": "中京大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 52, "field": "総合", "faculties": ["文学部", "国際学部", "心理学部", "法学部", "経済学部", "経営学部", "総合政策学部", "工学部", "スポーツ科学部"]}, {"name": "愛知大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 51, "field": "文系", "faculties": ["法学部", "経済学部", "経営学部", "現代中国学部", "国際コミュニケーション学部", "文学部", "地域政策学部"]}, {"name": "愛知淑徳大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 50, "field": "文系・心理", "faculties": ["文学部", "人間情報学部", "心理学部", "創造表現学部", "健康医療科学部", "福祉貢献学部", "交流文化学部", "ビジネス学部"]}, {"name": "愛知学院大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 48, "field": "総合", "faculties": ["文学部", "心理学部", "健康科学部", "商学部", "経営学部", "経済学部", "法学部", "総合政策学部", "薬学部", "歯学部"]}, {"name": "愛知工業大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 49, "field": "理系・工学", "faculties": ["工学部", "経営学部", "情報科学部"]}, {"name": "中部大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 48, "field": "総合", "faculties": ["工学部", "経営情報学部", "国際関係学部", "人文学部", "応用生物学部", "生命健康科学部", "現代教育学部", "理工学部"]}, {"name": "名古屋外国語大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 54, "field": "外国語・国際", "faculties": ["外国語学部", "世界教養学部", "世界共生学部", "現代国際学部"]}, {"name": "名古屋学芸大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 53, "field": "栄養・メディア", "faculties": ["管理栄養学部", "メディア造形学部", "ヒューマンケア学部", "看護学部"]}, {"name": "藤田医科大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 57, "field": "医療", "faculties": ["医学部", "医療科学部", "保健衛生学部"]}, {"name": "同志社大学", "type": "私立", "area": "関西", "pref": "京都府", "level": 62, "field": "総合", "faculties": ["神学部", "文学部", "社会学部", "法学部", "経済学部", "商学部", "政策学部", "文化情報学部", "理工学部", "生命医科学部", "グローバル系"]}, {"name": "立命館大学", "type": "私立", "area": "関西", "pref": "京都府", "level": 60, "field": "総合", "faculties": ["法学部", "産業社会学部", "国際関係学部", "文学部", "映像学部", "経営学部", "政策科学部", "総合心理学部", "経済学部", "理工学部", "情報理工学部"]}, {"name": "関西学院大学", "type": "私立", "area": "関西", "pref": "兵庫県", "level": 59, "field": "総合", "faculties": ["神学部", "文学部", "社会学部", "法学部", "経済学部", "商学部", "人間福祉学部", "国際学部", "教育学部", "理学部", "工学部"]}, {"name": "関西大学", "type": "私立", "area": "関西", "pref": "大阪府", "level": 58, "field": "総合", "faculties": ["法学部", "文学部", "経済学部", "商学部", "社会学部", "政策創造学部", "外国語学部", "人間健康学部", "総合情報学部", "システム理工学部"]}, {"name": "近畿大学", "type": "私立", "area": "関西", "pref": "大阪府", "level": 53, "field": "総合", "faculties": ["法学部", "経済学部", "経営学部", "文芸学部", "総合社会学部", "国際学部", "情報学部", "理工学部", "農学部", "医学部"]}, {"name": "龍谷大学", "type": "私立", "area": "関西", "pref": "京都府", "level": 51, "field": "文系", "faculties": ["文学部", "心理学部", "経済学部", "経営学部", "法学部", "政策学部", "国際学部", "社会学部", "農学部"]}, {"name": "早稲田大学", "type": "私立", "area": "関東", "pref": "東京都", "level": 68, "field": "総合・難関", "faculties": ["政治経済", "法", "文化構想", "文", "教育", "商", "基幹理工", "創造理工", "先進理工", "社会科学", "国際教養"]}, {"name": "慶應義塾大学", "type": "私立", "area": "関東", "pref": "東京都", "level": 69, "field": "総合・難関", "faculties": ["文学部", "経済学部", "法学部", "商学部", "医学部", "理工学部", "総合政策学部", "環境情報学部", "看護医療学部", "薬学部"]}, {"name": "上智大学", "type": "私立", "area": "関東", "pref": "東京都", "level": 64, "field": "文系・国際", "faculties": ["神学部", "文学部", "総合人間科学部", "法学部", "経済学部", "外国語学部", "総合グローバル学部", "理工学部"]}, {"name": "明治大学", "type": "私立", "area": "関東", "pref": "東京都", "level": 61, "field": "総合", "faculties": ["法学部", "商学部", "政治経済学部", "文学部", "理工学部", "農学部", "経営学部", "情報コミュニケーション学部", "国際日本学部"]}, {"name": "青山学院大学", "type": "私立", "area": "関東", "pref": "東京都", "level": 61, "field": "総合・国際", "faculties": ["文学部", "教育人間科学部", "経済学部", "法学部", "経営学部", "国際政治経済学部", "総合文化政策学部", "理工学部", "社会情報学部"]}, {"name": "立教大学", "type": "私立", "area": "関東", "pref": "東京都", "level": 60, "field": "総合", "faculties": ["文学部", "異文化コミュニケーション学部", "経済学部", "経営学部", "理学部", "社会学部", "法学部", "観光学部", "コミュニティ福祉学部"]}, {"name": "中央大学", "type": "私立", "area": "関東", "pref": "東京都", "level": 59, "field": "総合・法", "faculties": ["法学部", "経済学部", "商学部", "理工学部", "文学部", "総合政策学部", "国際経営学部", "国際情報学部"]}, {"name": "法政大学", "type": "私立", "area": "関東", "pref": "東京都", "level": 58, "field": "総合", "faculties": ["法学部", "文学部", "経済学部", "社会学部", "経営学部", "国際文化学部", "人間環境学部", "現代福祉学部", "情報科学部", "理工学部"]}, {"name": "日本大学", "type": "私立", "area": "関東", "pref": "東京都", "level": 50, "field": "総合", "faculties": ["文学部", "経済学部", "経営学部", "法学部", "理工学部", "教育・心理系"]}, {"name": "東洋大学", "type": "私立", "area": "関東", "pref": "東京都", "level": 52, "field": "総合", "faculties": ["文学部", "経済学部", "経営学部", "法学部", "理工学部", "教育・心理系"]}, {"name": "駒澤大学", "type": "私立", "area": "関東", "pref": "東京都", "level": 50, "field": "文系", "faculties": ["文学部", "法学部", "経済学部", "経営学部", "国際系"]}, {"name": "専修大学", "type": "私立", "area": "関東", "pref": "東京都", "level": 50, "field": "文系", "faculties": ["文学部", "法学部", "経済学部", "経営学部", "国際系"]}, {"name": "芝浦工業大学", "type": "私立", "area": "関東", "pref": "東京都", "level": 56, "field": "理系・工学", "faculties": ["工学部", "理工学部", "情報学部", "建築・デザイン系"]}, {"name": "東京都市大学", "type": "私立", "area": "関東", "pref": "東京都", "level": 53, "field": "理系・工学", "faculties": ["工学部", "理工学部", "情報学部", "建築・デザイン系"]}, {"name": "東京理科大学", "type": "私立", "area": "関東", "pref": "東京都", "level": 63, "field": "理系", "faculties": ["工学部", "理工学部", "情報学部", "建築・デザイン系"]}, {"name": "京都産業大学", "type": "私立", "area": "関西", "pref": "京都府", "level": 50, "field": "総合", "faculties": ["文学部", "経済学部", "経営学部", "法学部", "理工学部", "教育・心理系"]}, {"name": "甲南大学", "type": "私立", "area": "関西", "pref": "兵庫県", "level": 52, "field": "総合", "faculties": ["文学部", "経済学部", "経営学部", "法学部", "理工学部", "教育・心理系"]}, {"name": "大阪工業大学", "type": "私立", "area": "関西", "pref": "大阪府", "level": 50, "field": "理系・工学", "faculties": ["工学部", "理工学部", "情報学部", "建築・デザイン系"]}, {"name": "椙山女学園大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 49, "field": "女子大", "faculties": ["文学部", "生活科学部", "教育学部", "看護・心理系"]}, {"name": "金城学院大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 49, "field": "女子大", "faculties": ["文学部", "生活科学部", "教育学部", "看護・心理系"]}, {"name": "日本福祉大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 47, "field": "福祉・心理", "faculties": ["心理学部", "福祉学部", "教育・人間科学系"]}, {"name": "大同大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 45, "field": "理系・工学", "faculties": ["工学部", "理工学部", "情報学部", "建築・デザイン系"]}, {"name": "名古屋学院大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 45, "field": "総合", "faculties": ["文学部", "経済学部", "経営学部", "法学部", "理工学部", "教育・心理系"]}, {"name": "名古屋芸術大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 45, "field": "芸術", "faculties": ["美術学部", "デザイン学部", "音楽学部", "メディア表現系"]}, {"name": "名古屋造形大学", "type": "私立", "area": "中部", "pref": "愛知県", "level": 45, "field": "芸術", "faculties": ["美術学部", "デザイン学部", "音楽学部", "メディア表現系"]}, {"name": "岐阜聖徳学園大学", "type": "私立", "area": "中部", "pref": "岐阜県", "level": 48, "field": "教育", "faculties": ["教育学部", "児童教育学部", "心理・教育系"]}, {"name": "常葉大学", "type": "私立", "area": "中部", "pref": "静岡県", "level": 47, "field": "総合", "faculties": ["文学部", "経済学部", "経営学部", "法学部", "理工学部", "教育・心理系"]}, {"name": "福岡大学", "type": "私立", "area": "九州・沖縄", "pref": "福岡県", "level": 52, "field": "総合", "faculties": ["文学部", "経済学部", "経営学部", "法学部", "理工学部", "教育・心理系"]}, {"name": "西南学院大学", "type": "私立", "area": "九州・沖縄", "pref": "福岡県", "level": 54, "field": "文系・国際", "faculties": ["外国語学部", "国際学部", "国際教養学部", "経済・経営系"]}, {"name": "立命館アジア太平洋大学", "type": "私立", "area": "九州・沖縄", "pref": "大分県", "level": 55, "field": "国際", "faculties": ["外国語学部", "国際学部", "国際教養学部", "経済・経営系"]}, {"name": "広島修道大学", "type": "私立", "area": "中国・四国", "pref": "広島県", "level": 48, "field": "文系", "faculties": ["文学部", "法学部", "経済学部", "経営学部", "国際系"]}, {"name": "松山大学", "type": "私立", "area": "中国・四国", "pref": "愛媛県", "level": 47, "field": "文系", "faculties": ["文学部", "法学部", "経済学部", "経営学部", "国際系"]}, {"name": "岡山理科大学", "type": "私立", "area": "中国・四国", "pref": "岡山県", "level": 46, "field": "理系", "faculties": ["工学部", "理工学部", "情報学部", "建築・デザイン系"]}, {"name": "北海学園大学", "type": "私立", "area": "北海道・東北", "pref": "北海道", "level": 48, "field": "総合", "faculties": ["文学部", "経済学部", "経営学部", "法学部", "理工学部", "教育・心理系"]}, {"name": "東北学院大学", "type": "私立", "area": "北海道・東北", "pref": "宮城県", "level": 48, "field": "総合", "faculties": ["文学部", "経済学部", "経営学部", "法学部", "理工学部", "教育・心理系"]}, {"name": "東北福祉大学", "type": "私立", "area": "北海道・東北", "pref": "宮城県", "level": 47, "field": "福祉・心理", "faculties": ["心理学部", "福祉学部", "教育・人間科学系"]}];
+const prefOrder={"北海道": ["北海道・東北", "関東", "中部", "関西", "中国・四国", "九州・沖縄"], "青森県": ["北海道・東北", "関東", "中部", "関西", "中国・四国", "九州・沖縄"], "岩手県": ["北海道・東北", "関東", "中部", "関西", "中国・四国", "九州・沖縄"], "宮城県": ["北海道・東北", "関東", "中部", "関西", "中国・四国", "九州・沖縄"], "秋田県": ["北海道・東北", "関東", "中部", "関西", "中国・四国", "九州・沖縄"], "山形県": ["北海道・東北", "関東", "中部", "関西", "中国・四国", "九州・沖縄"], "福島県": ["北海道・東北", "関東", "中部", "関西", "中国・四国", "九州・沖縄"], "茨城県": ["関東", "中部", "北海道・東北", "関西", "中国・四国", "九州・沖縄"], "栃木県": ["関東", "中部", "北海道・東北", "関西", "中国・四国", "九州・沖縄"], "群馬県": ["関東", "中部", "北海道・東北", "関西", "中国・四国", "九州・沖縄"], "埼玉県": ["関東", "中部", "北海道・東北", "関西", "中国・四国", "九州・沖縄"], "千葉県": ["関東", "中部", "北海道・東北", "関西", "中国・四国", "九州・沖縄"], "東京都": ["関東", "中部", "北海道・東北", "関西", "中国・四国", "九州・沖縄"], "神奈川県": ["関東", "中部", "関西", "北海道・東北", "中国・四国", "九州・沖縄"], "新潟県": ["中部", "関東", "北海道・東北", "関西", "中国・四国", "九州・沖縄"], "富山県": ["中部", "関西", "関東", "中国・四国", "北海道・東北", "九州・沖縄"], "石川県": ["中部", "関西", "関東", "中国・四国", "北海道・東北", "九州・沖縄"], "福井県": ["中部", "関西", "関東", "中国・四国", "九州・沖縄", "北海道・東北"], "山梨県": ["中部", "関東", "関西", "北海道・東北", "中国・四国", "九州・沖縄"], "長野県": ["中部", "関東", "関西", "北海道・東北", "中国・四国", "九州・沖縄"], "岐阜県": ["中部", "関西", "関東", "中国・四国", "九州・沖縄", "北海道・東北"], "静岡県": ["中部", "関東", "関西", "中国・四国", "九州・沖縄", "北海道・東北"], "愛知県": ["中部", "関西", "関東", "中国・四国", "九州・沖縄", "北海道・東北"], "三重県": ["中部", "関西", "関東", "中国・四国", "九州・沖縄", "北海道・東北"], "滋賀県": ["関西", "中部", "中国・四国", "関東", "九州・沖縄", "北海道・東北"], "京都府": ["関西", "中部", "中国・四国", "関東", "九州・沖縄", "北海道・東北"], "大阪府": ["関西", "中国・四国", "中部", "関東", "九州・沖縄", "北海道・東北"], "兵庫県": ["関西", "中国・四国", "中部", "九州・沖縄", "関東", "北海道・東北"], "奈良県": ["関西", "中部", "中国・四国", "関東", "九州・沖縄", "北海道・東北"], "和歌山県": ["関西", "中国・四国", "中部", "九州・沖縄", "関東", "北海道・東北"], "鳥取県": ["中国・四国", "関西", "九州・沖縄", "中部", "関東", "北海道・東北"], "島根県": ["中国・四国", "九州・沖縄", "関西", "中部", "関東", "北海道・東北"], "岡山県": ["中国・四国", "関西", "九州・沖縄", "中部", "関東", "北海道・東北"], "広島県": ["中国・四国", "九州・沖縄", "関西", "中部", "関東", "北海道・東北"], "山口県": ["中国・四国", "九州・沖縄", "関西", "中部", "関東", "北海道・東北"], "徳島県": ["中国・四国", "関西", "九州・沖縄", "中部", "関東", "北海道・東北"], "香川県": ["中国・四国", "関西", "九州・沖縄", "中部", "関東", "北海道・東北"], "愛媛県": ["中国・四国", "九州・沖縄", "関西", "中部", "関東", "北海道・東北"], "高知県": ["中国・四国", "関西", "九州・沖縄", "中部", "関東", "北海道・東北"], "福岡県": ["九州・沖縄", "中国・四国", "関西", "中部", "関東", "北海道・東北"], "佐賀県": ["九州・沖縄", "中国・四国", "関西", "中部", "関東", "北海道・東北"], "長崎県": ["九州・沖縄", "中国・四国", "関西", "中部", "関東", "北海道・東北"], "熊本県": ["九州・沖縄", "中国・四国", "関西", "中部", "関東", "北海道・東北"], "大分県": ["九州・沖縄", "中国・四国", "関西", "中部", "関東", "北海道・東北"], "宮崎県": ["九州・沖縄", "中国・四国", "関西", "中部", "関東", "北海道・東北"], "鹿児島県": ["九州・沖縄", "中国・四国", "関西", "中部", "関東", "北海道・東北"], "沖縄県": ["九州・沖縄", "中国・四国", "関西", "関東", "中部", "北海道・東北"]};
+const prefectures=["北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県", "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県", "新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県", "静岡県", "愛知県", "三重県", "滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県", "鳥取県", "島根県", "岡山県", "広島県", "山口県", "徳島県", "香川県", "愛媛県", "高知県", "福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"];
+let student={name:"",school:"",grade:"",teacher:"",date:"",goal:"",memo:"",action:""};
+let answers={areas:["中部"], residence:"愛知県", commute:"通学＋下宿可", sort:"おすすめ順（就職の安定性重視）", deepScores:{english:"",japanese:"",math:"",science:"",social:"",info:""}, deepCourse:"未定", deepField:"まだ未定"};
+let qIndex=0; let selected=[];
+const areaOptions=["北海道・東北","関東","中部","関西","中国・四国","九州・沖縄"];
+const questions=[
+ {key:"grade",title:"学年を選んでください",type:"single",opts:["高1","高2","高3","既卒"]},
+ {key:"level",title:"現在の学力目安",type:"single",opts:["45前後","50前後","55前後","60前後","65以上"]},
+ {key:"track",title:"興味のある分野",type:"single",opts:["文系","理系","医療","教育","国際","芸術","まだ未定"]},
+ {key:"areas",title:"希望エリアを選んでください（複数選択可）",type:"multi",opts:areaOptions},
+ {key:"commute",title:"通学条件を選んでください",type:"single",opts:["通学のみ","通学＋下宿可","全国OK"]},
+ {key:"kind",title:"国公私立の希望",type:"single",opts:["国公立中心","私立中心","こだわらない"]},
+ {key:"sort",title:"並び替え方法",type:"single",opts:["おすすめ順（就職の安定性重視）","偏差値が高い順","自宅から近い順"]}
+];
+const $=id=>document.getElementById(id);
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+function today(){return new Date().toISOString().slice(0,10)}
+function stars(n){n=Math.max(1,Math.min(5,Math.round(n))); return "★★★★★".slice(0,n)+"☆☆☆☆☆".slice(0,5-n)}
+function manabiUrl(name){return "https://www.google.com/search?q="+encodeURIComponent("site:manabi.benesse.ne.jp/daigaku "+name+" 受験科目 入試科目 共通テスト")}
+function officialExamUrl(name){return "https://www.google.com/search?q="+encodeURIComponent(name+" 入学者選抜要項 入試科目 配点")}
+function careerUrl(name){return "https://www.google.com/search?q="+encodeURIComponent(name+" 就職実績 進路実績 公式")}
+function collect(){["name","school","grade","teacher","date","goal","memo","action"].forEach(k=>{let e=$(k);if(e)student[k]=e.value}); let rp=$("residence"); if(rp)answers.residence=rp.value;}
+function levelNum(){let v=answers.level||"55前後"; if(v.includes("45"))return 45;if(v.includes("50"))return 50;if(v.includes("55"))return 55;if(v.includes("60"))return 60;if(v.includes("65"))return 65;return 55}
+function areaRank(area){let order=prefOrder[answers.residence||"愛知県"]||prefOrder["愛知県"]; let i=order.indexOf(area); return i<0?99:i}
+function prefNearScore(u){let base=areaRank(u.area)*10; if(u.pref===(answers.residence||"愛知県"))base-=5; return base}
+function fieldMatch(u){
+ let tr=answers.track||"";
+ let f=u.field+" "+u.faculties.join(" ");
+ if(tr==="まだ未定"||!tr)return 2;
+
+ // 最初に選んだ分野を最優先するため、完全一致・関連一致を強く加点
+ if(tr==="教育"){
+   if(/教育|教員|児童/.test(f))return 10;
+   if(/心理|福祉|人間/.test(f))return 4;
+   return -4;
+ }
+ if(tr==="医療"){
+   if(/医|看護|薬|保健|医療|歯/.test(f))return 10;
+   if(/福祉|心理|生命/.test(f))return 4;
+   return -4;
+ }
+ if(tr==="理系"){
+   if(/理|工|情報|建築|データ|科学|農|生命/.test(f))return 9;
+   if(/医|薬|看護/.test(f))return 5;
+   return -3;
+ }
+ if(tr==="文系"){
+   if(/文|法|経済|経営|商|社会|政策|心理|人文/.test(f))return 9;
+   if(/国際|外国語|教育/.test(f))return 5;
+   return -3;
+ }
+ if(tr==="国際"){
+   if(/国際|外国語|英語|グローバル|教養/.test(f))return 10;
+   if(/文|経済|経営|商/.test(f))return 4;
+   return -4;
+ }
+ if(tr==="芸術"){
+   if(/芸術|美術|音楽|デザイン|映像|メディア/.test(f))return 10;
+   if(/表現|文化/.test(f))return 4;
+   return -5;
+ }
+ return 1;
+}
+function allowedByArea(u){let areas=answers.areas||[]; if(answers.commute==="全国OK")return true; if(!areas.length)return true; if(answers.commute==="通学のみ")return u.pref===(answers.residence||"愛知県") || u.area===areaOptions[Math.min(areaRank(u.area), areaRank(u.area))] && areaRank(u.area)===0; return areas.includes(u.area)}
+function isMajorMismatch(u){
+ let tr=answers.track||"";
+ let f=u.field+" "+u.faculties.join(" ");
+ if(tr==="まだ未定"||!tr)return false;
+ if(tr==="教育")return !/教育|教員|児童|心理|福祉|人間/.test(f);
+ if(tr==="医療")return !/医|看護|薬|保健|医療|歯|福祉|心理|生命/.test(f);
+ if(tr==="理系")return !/理|工|情報|建築|データ|科学|農|生命|医|薬|看護/.test(f);
+ if(tr==="文系")return !/文|法|経済|経営|商|社会|政策|心理|人文|国際|外国語|教育/.test(f);
+ if(tr==="国際")return !/国際|外国語|英語|グローバル|教養|文|経済|経営|商/.test(f);
+ if(tr==="芸術")return !/芸術|美術|音楽|デザイン|映像|メディア|表現|文化/.test(f);
+ return false;
+}
+function matchScore(u){
+ let s=fieldMatch(u)*2.2; // 分野一致をかなり強く反映
+ let areas=answers.areas||[];
+ if(areas.includes(u.area))s+=4;
+ s += Math.max(0, 4-areaRank(u.area));
+ if(answers.kind==="国公立中心"&&(u.type==="国立"||u.type==="公立"))s+=3;
+ if(answers.kind==="国公立中心"&&u.type==="私立")s-=1.5;
+ if(answers.kind==="私立中心"&&u.type==="私立")s+=3;
+ if(answers.kind==="私立中心"&&(u.type==="国立"||u.type==="公立"))s-=1;
+ if(u.pref===(answers.residence||"愛知県"))s+=2;
+ s-=Math.abs(u.level-levelNum())/5;
+ if(isMajorMismatch(u))s-=10; // 選択分野と大きく違う大学は下げる
+ return s;
+}
+function employmentScore(u){
+ let s=3;
+ let f=u.field+" "+u.faculties.join(" ");
+
+ // 資格職・安定職につながりやすい分野を強めに補正
+ if(/医|看護|薬|保健|医療|歯/.test(f))s+=2.4;
+ if(/教育|教員|児童/.test(f))s+=2.3;
+ if(/工|理工|情報|建築|データ|科学/.test(f))s+=2.0;
+
+ // 企業就職・公務員に広げやすい分野
+ if(/経済|経営|商|法/.test(f))s+=1.0;
+ if(/福祉|心理/.test(f))s+=0.9;
+ if(/国際|外国語/.test(f))s+=0.6;
+
+ // 専門性はあるが、就職安定度は学部・実績確認が必要
+ if(/芸術|美術|音楽|デザイン/.test(f))s-=0.1;
+
+ // 大学種別補正。ただし私立の資格職系が沈みすぎないよう控えめ
+ if(u.type==="国立")s+=0.35;
+ if(u.type==="公立")s+=0.3;
+
+ // レベル補正も控えめ。偏差値だけで就職力を決めすぎない
+ if(u.level>=60)s+=0.35; else if(u.level>=55)s+=0.2;
+
+ // 教育・医療・工学情報は下限を高める
+ if(/教育|教員|児童|医|看護|薬|保健|医療|歯|工|理工|情報/.test(f))s=Math.max(s,4.25);
+
+ return Math.max(1,Math.min(5,s));
+}
+function employmentLabel(u){
+ let e=employmentScore(u);
+ if(e>=4.7)return "かなり強い";
+ if(e>=4.0)return "強い";
+ if(e>=3.3)return "安定しやすい";
+ return "分野次第";
+}
+function employmentReason(u){
+ let f=u.field+" "+u.faculties.join(" ");
+ if(/医|看護|薬|保健|医療|歯/.test(f))return "医療・資格職につながりやすい";
+ if(/教育|教員|児童/.test(f))return "教員・公務員系を目指しやすい";
+ if(/工|理工|情報|建築|データ|科学/.test(f))return "技術職・IT・メーカーに強い";
+ if(/経済|経営|商|法/.test(f))return "企業就職・公務員に広げやすい";
+ if(/国際|外国語/.test(f))return "語学を活かす職種に広げやすい";
+ return "学部選びと対策次第で広げられる";
+}
+function sortList(list){
+ let mode=answers.sort||"おすすめ順（就職の安定性重視）";
+ if(mode==="偏差値が高い順")return list.sort((a,b)=>b.level-a.level||matchScore(b)-matchScore(a));
+ if(mode==="自宅から近い順")return list.sort((a,b)=>prefNearScore(a)-prefNearScore(b)||matchScore(b)-matchScore(a));
+
+ // おすすめ順：選択分野を最優先。そのうえで就職安定度を強く反映
+ return list.sort((a,b)=>{
+   const mismatchA = isMajorMismatch(a) ? -25 : 0;
+   const mismatchB = isMajorMismatch(b) ? -25 : 0;
+   const scoreA = fieldMatch(a)*4.0 + employmentScore(a)*3.0 + matchScore(a)*0.8 - prefNearScore(a)*0.08 + mismatchA;
+   const scoreB = fieldMatch(b)*4.0 + employmentScore(b)*3.0 + matchScore(b)*0.8 - prefNearScore(b)*0.08 + mismatchB;
+   return scoreB-scoreA || b.level-a.level;
+ });
+}
+function ratings(u){let lv=levelNum(), diff=u.level-lv, fit=Math.max(1,Math.min(5,Math.round(matchScore(u)/2))); let chance=Math.max(1,Math.min(5,Math.round(4-diff/5))); let future=/総合|難関|工|医療|教育|国際/.test(u.field)?4:3; let campus=u.type==="私立"?4:3; return {fit,chance,future,campus}}
+function careerImage(u){let f=u.field; if(/医療/.test(f))return ["病院・医療機関","薬局・医療関連企業","保健・福祉分野","医療専門職"]; if(/教育/.test(f))return ["小学校・中学校・高校教員","公務員","教育関連企業","児童・福祉分野"]; if(/理|工|情報/.test(f))return ["メーカー・IT企業","研究開発・技術職","インフラ・通信","建築・設計分野"]; if(/国際|外国語/.test(f))return ["航空・旅行・ホテル","商社・メーカー海外部門","英語を使う事務職","国際交流・サービス"]; if(/芸術/.test(f))return ["デザイン・制作会社","広告・映像・ゲーム関連","作家・クリエイター","音楽・舞台関連"]; if(/福祉|心理/.test(f))return ["福祉施設・医療福祉分野","公務員","心理・教育関連","生活支援分野"]; if(/経済|商|文|法/.test(f))return ["金融・保険","メーカー・商社","公務員","広告・サービス業"]; return ["一般企業","公務員","専門職","地域企業"]}
+function examTypes(u){let arr=["一般選抜","共通テスト利用"]; if(u.type!=="国立")arr.push("学校推薦型選抜"); arr.push("総合型選抜"); return arr}
+function hitFaculties(u){
+ let tr=answers.track||"";
+ if(tr==="まだ未定"||!tr)return u.faculties.slice(0,3);
+ let words=[];
+ if(tr==="文系")words=["文","法","経済","経営","商","社会","政策","心理","人文"];
+ if(tr==="理系")words=["理","工","情報","建築","農","生命","科学"];
+ if(tr==="医療")words=["医","看護","薬","保健","医療","歯"];
+ if(tr==="教育")words=["教育","児童","教員"];
+ if(tr==="国際")words=["国際","外国語","英語","グローバル","教養"];
+ if(tr==="芸術")words=["芸術","美術","音楽","デザイン","映像","メディア"];
+ let hits=u.faculties.filter(f=>words.some(w=>f.includes(w)));
+ return hits.length?hits:u.faculties.slice(0,3);
+}
+function hitReason(u){
+ let hits=hitFaculties(u);
+ let areaOk=(answers.areas||[]).includes(u.area) || answers.commute==="全国OK";
+ let parts=[];
+ if(!isMajorMismatch(u))parts.push("選択分野に一致");
+ else parts.push("選択分野とはやや別系統");
+ if(hits.length)parts.push("学部："+hits.slice(0,4).map(esc).join("・"));
+ if(areaOk)parts.push("エリア："+esc(u.area));
+ if(u.pref===(answers.residence||"愛知県"))parts.push("居住地と同一県");
+ return parts.join(" ／ ");
+}
+function facultyChips(u,limit=8){
+ let hits=hitFaculties(u);
+ return `<div class="facultyList">${u.faculties.slice(0,limit).map(x=>`<span class="faculty ${hits.includes(x)?"hit":""}">${esc(x)}</span>`).join("")}</div>`;
+}
+
+const subjectLabels={english:"英語",japanese:"国語",math:"数学",science:"理科",social:"社会",info:"情報"};
+function subjectVal(k){const v=Number((answers.deepScores||{})[k]);return isNaN(v)||v<=0?null:v}
+function deepAverage(){const vals=Object.keys(subjectLabels).map(subjectVal).filter(v=>v!==null);if(!vals.length)return levelNum();return Math.round(vals.reduce((a,b)=>a+b,0)/vals.length)}
+function updateLevelFromDeep(){const avg=deepAverage();if(avg>=63)answers.level="65以上";else if(avg>=58)answers.level="60前後";else if(avg>=53)answers.level="55前後";else if(avg>=48)answers.level="50前後";else answers.level="45前後"}
+function sortedSubjects(){return Object.keys(subjectLabels).map(k=>({key:k,label:subjectLabels[k],value:subjectVal(k)})).filter(x=>x.value!==null).sort((a,b)=>b.value-a.value)}
+function strongSubjects(){return sortedSubjects().filter(x=>x.value>=55).slice(0,3)}
+function weakSubjects(){return [...sortedSubjects()].reverse().filter(x=>x.value<55).slice(0,3)}
+function subjectPriority(){const vals=Object.keys(subjectLabels).map(k=>({key:k,label:subjectLabels[k],value:subjectVal(k)})).filter(x=>x.value!==null);const field=answers.deepField||answers.track||"";let weight={english:1,japanese:1,math:1,science:1,social:1,info:1};if(/理系|情報|理工|工学|医療|看護/.test(field)){weight.math+=1.2;weight.science+=1.1;weight.english+=0.6}if(/文系|法|経済|経営|国際|外国語|教育/.test(field)){weight.english+=1.0;weight.japanese+=0.8;weight.social+=0.5}if(/情報/.test(field)){weight.math+=1.0;weight.info+=1.2;weight.english+=0.5}return vals.map(x=>({...x,priority:(65-x.value)*weight[x.key]})).sort((a,b)=>b.priority-a.priority).slice(0,3)}
+function scoreFitForUniversity(u){const avg=deepAverage();const gap=u.level-avg;let score=matchScore(u)+employmentScore(u)*2-gap*0.6;const f=(u.field+" "+u.faculties.join(" "));const field=answers.deepField||answers.track||"";if(field&&field!=="まだ未定"){if(field==="教育"&&/教育|児童|教員/.test(f))score+=8;if((field==="医療"||field==="看護")&&/医|看護|薬|保健|医療|歯/.test(f))score+=8;if(field==="情報"&&/情報|データ|工|理工/.test(f))score+=8;if(field==="理系"&&/理|工|情報|農|生命|建築/.test(f))score+=7;if(field==="文系"&&/文|法|経済|経営|商|社会|政策/.test(f))score+=7;if((field==="国際"||field==="外国語")&&/国際|外国語|英語|グローバル/.test(f))score+=7;if(field==="芸術"&&/芸術|美術|音楽|デザイン|映像/.test(f))score+=8}return score}
+function deepCandidates(min,max){const avg=deepAverage();const base=allFiltered().filter(u=>u.level-avg>=min&&u.level-avg<=max);return base.sort((a,b)=>scoreFitForUniversity(b)-scoreFitForUniversity(a)).slice(0,6)}
+function deepAdviceText(){const avg=deepAverage();const strong=strongSubjects().map(x=>x.label+"("+x.value+")");const weak=weakSubjects().map(x=>x.label+"("+x.value+")");const pri=subjectPriority().map(x=>x.label);let msg=[];msg.push(`総合偏差値目安は${avg}前後です。`);if(strong.length)msg.push(`強みは${strong.join("・")}です。ここは得点源として維持しましょう。`);if(weak.length)msg.push(`弱みは${weak.join("・")}です。志望校との差を縮めるには、まず弱点科目の基礎固めが必要です。`);if(pri.length)msg.push(`優先学習は${pri.join(" → ")}の順がおすすめです。`);msg.push("大学比較では、チャレンジ校・適正校・安全校を1校ずつ入れると受験戦略が立てやすくなります。");return msg.join("\n")}
+function deepChartHtml(){
+ const keys=Object.keys(subjectLabels);
+ return `<div class="deepChart">${keys.map(k=>{
+   const v=subjectVal(k)||0;
+   const h=v?Math.max(6,Math.min(100,((v-40)/30)*100)):6;
+   return `<div class="deepBar"><div class="deepBarFill" style="height:${h}%"></div><span>${subjectLabels[k]}</span><span>${v||"-"}</span></div>`;
+ }).join("")}</div><p class="small">※偏差値40を基準にして表示しているため、得意・苦手の差が見えやすくなっています。</p>`;
+}
+function subjectRankingHtml(){
+ const list=sortedSubjects();
+ if(!list.length)return "<p class='small'>科目別偏差値を入力するとランキングが表示されます。</p>";
+ return `<div class="rankList">${list.map((x,i)=>`<div class="rankItem"><div class="rankNo">${i+1}位</div><div class="rankName">${x.label}</div><div class="rankScore">${x.value}</div></div>`).join("")}</div>`;
+}
+function renderDeepStart(){$("app").innerHTML=`<div class="card"><h2>🔍 詳しく診断</h2><p>科目別の偏差値を入力すると、強み・弱み・優先学習科目・おすすめ大学を詳しく分析します。</p><div class="grid three"><div><label>生徒名</label><input id="name" value="${esc(student.name)}"></div><div><label>高校名</label><input id="school" value="${esc(student.school)}"></div><div><label>学年</label><input id="grade" value="${esc(student.grade||answers.grade||"")}"></div><div><label>居住地</label>${prefSelect()}</div><div><label>文理</label><select id="deepCourse">${["未定","文系","理系"].map(x=>`<option value="${x}" ${answers.deepCourse===x?"selected":""}>${x}</option>`).join("")}</select></div><div><label>志望分野</label><select id="deepField">${["まだ未定","文系","理系","教育","医療","看護","情報","経済・経営","法","国際","外国語","心理","福祉","芸術","スポーツ"].map(x=>`<option value="${x}" ${answers.deepField===x?"selected":""}>${x}</option>`).join("")}</select></div></div><h3>科目別偏差値</h3><div class="deepScoreGrid">${Object.keys(subjectLabels).map(k=>`<div class="scoreCard"><label>${subjectLabels[k]}</label><input id="deep_${k}" type="number" min="20" max="80" placeholder="例：55" value="${esc((answers.deepScores||{})[k]||"")}"></div>`).join("")}</div><div class="actions"><button class="btn primary" onclick="collectDeep();renderDeepResult()">詳しく診断する</button><button class="btn gray" onclick="renderHome()">ホーム</button></div></div>`;scrollTo(0,0)}
+function collectDeep(){collect();answers.deepCourse=$("deepCourse")?$("deepCourse").value:answers.deepCourse;answers.deepField=$("deepField")?$("deepField").value:answers.deepField;answers.track=answers.deepField==="まだ未定"?answers.track:answers.deepField;answers.deepScores=answers.deepScores||{};Object.keys(subjectLabels).forEach(k=>{const e=$("deep_"+k);if(e)answers.deepScores[k]=e.value});updateLevelFromDeep()}
+function renderDeepResult(){collectDeep();const avg=deepAverage();const strong=strongSubjects();const weak=weakSubjects();const pri=subjectPriority();const ch=deepCandidates(5,16),ma=deepCandidates(-4,4),sa=deepCandidates(-16,-5);$("app").innerHTML=`<div class="card"><h2>🔍 詳しく診断 結果</h2><p>総合偏差値目安：<strong>${avg}前後</strong> ／ 志望分野：${esc(answers.deepField||"未定")} ／ 文理：${esc(answers.deepCourse||"未定")}</p><div class="deepResult"><h3>科目バランス</h3>${deepChartHtml()}<div class="analysisPair"><div class="box"><h3>科目ランキング</h3>${subjectRankingHtml()}</div><div class="box"><h3>強み・弱み</h3><p><strong>強み</strong><br>${strong.length?strong.map(x=>`<span class="subjectBadge subjectStrong">${x.label} ${x.value}</span>`).join(""):"<span class='small'>55以上の科目がまだありません。</span>"}</p><p><strong>要強化</strong><br>${weak.length?weak.map(x=>`<span class="subjectBadge subjectWeak">${x.label} ${x.value}</span>`).join(""):"<span class='small'>大きな弱点は少なめです。</span>"}</p></div></div><div class="grid two" style="display:none"><div class="box"><h3>強み</h3>${strong.length?strong.map(x=>`<span class="subjectBadge subjectStrong">${x.label} ${x.value}</span>`).join(""):"<p class='small'>55以上の科目がまだありません。</p>"}</div><div class="box"><h3>弱み</h3>${weak.length?weak.map(x=>`<span class="subjectBadge subjectWeak">${x.label} ${x.value}</span>`).join(""):"<p class='small'>大きな弱点は少なめです。</p>"}</div></div><div class="box"><h3>優先学習科目</h3>${pri.map((x,i)=>`<div class="priorityItem"><strong>${i+1}. ${x.label}</strong><span>${x.value} → まず55以上へ</span></div>`).join("")}</div><div class="box"><h3>AI受験戦略コメント</h3><p style="white-space:pre-line">${esc(deepAdviceText())}</p></div></div><div class="grid three"><div class="box"><h3>チャレンジ校</h3>${ch.map(u=>uniCard(u,"チャレンジ","challenge")).join("")||"<p class='small'>条件に合う候補が少ないです。</p>"}</div><div class="box"><h3>適正校</h3>${ma.map(u=>uniCard(u,"適正","match")).join("")||"<p class='small'>条件に合う候補が少ないです。</p>"}</div><div class="box"><h3>安全校</h3>${sa.map(u=>uniCard(u,"安全","safety")).join("")||"<p class='small'>条件に合う候補が少ないです。</p>"}</div></div><div class="actions"><button class="btn primary" onclick="renderCompare()">大学比較へ</button><button class="btn navy" onclick="renderStrategy()">面談記録へ</button><button class="btn gray" onclick="renderDeepStart()">入力を修正</button><button class="btn gray" onclick="renderHome()">ホーム</button></div></div>`;scrollTo(0,0)}
+
+function renderHome(){$("app").innerHTML=`<div class="card"><h2>ホーム</h2><p>診断で大学を探し、気になる大学を選ぶと、比較表や面談記録・進路戦略シートに反映できます。</p>
+<div class="menu">
+ <div class="menuCard" onclick="renderStart()"><div class="icon">🎓</div><h2>志望大学診断</h2><p>複数エリア・近い順・偏差値順に対応。</p></div>
+ <div class="menuCard" onclick="renderDeepStart()"><div class="icon">🔍</div><h2>詳しく診断</h2><p>科目別偏差値から、弱点・優先科目・受験戦略を分析。</p></div>
+ <div class="menuCard" onclick="renderCompare()"><div class="icon">📊</div><h2>大学比較</h2><p>学部・就職分野も横スクロールで比較。</p></div>
+ <div class="menuCard" onclick="renderStrategy()"><div class="icon">📝</div><h2>面談記録・進路戦略</h2><p>保護者面談で見せやすく印刷できます。</p></div>
+</div></div>`; scrollTo(0,0)}
+function prefSelect(){return `<select id="residence">${prefectures.map(p=>`<option value="${p}" ${(answers.residence||"愛知県")===p?"selected":""}>${p}</option>`).join("")}</select>`}
+function renderStart(){$("app").innerHTML=`<div class="card"><h2>診断前の入力</h2><div class="grid three">
+<div><label>生徒名</label><input id="name" value="${esc(student.name)}"></div><div><label>高校名</label><input id="school" value="${esc(student.school)}"></div><div><label>担当講師</label><input id="teacher" value="${esc(student.teacher)}"></div>
+<div><label>面談日</label><input id="date" value="${esc(student.date||today())}"></div><div><label>居住地</label>${prefSelect()}</div><div><label>学年</label><input id="grade" value="${esc(student.grade||answers.grade||"")}"></div>
+<div style="grid-column:1/-1"><label>志望メモ</label><input id="goal" value="${esc(student.goal)}" placeholder="例：愛知県内＋関西、国際系、推薦も検討"></div>
+</div><div class="actions"><button class="btn primary" onclick="collect();qIndex=0;renderQuestion()">診断スタート</button><button class="btn gray" onclick="renderHome()">ホーム</button></div></div>`}
+function renderQuestion(){let q=questions[qIndex],pct=Math.round(qIndex/questions.length*100);let body="";
+ if(q.type==="multi"){let vals=answers[q.key]||[]; body=`<div class="checkGrid">${q.opts.map(o=>`<div class="checkCard ${vals.includes(o)?"on":""}" onclick="toggleMulti('${q.key}','${o}')"><span>${vals.includes(o)?"☑":"☐"}</span><span>${o}</span></div>`).join("")}</div>`;}
+ else {body=`<div class="options">${q.opts.map(o=>`<button class="option ${answers[q.key]===o?'selected':''}" onclick="answers['${q.key}']='${esc(o)}';renderQuestion()">${esc(o)}</button>`).join("")}</div>`;}
+ $("app").innerHTML=`<div class="card"><div class="progress"><div class="bar" style="width:${pct}%"></div></div><p class="help">質問 ${qIndex+1} / ${questions.length}</p><h2>${esc(q.title)}</h2>${body}<p class="small">${q.key==="areas"?"北から南の順に並べています。複数選ぶと候補が広がります。":""}</p><div class="actions"><button class="btn gray" onclick="${qIndex===0?'renderStart()':'qIndex--;renderQuestion()'}">戻る</button><button class="btn primary" onclick="nextQ()">次へ</button></div></div>`}
+function toggleMulti(key,val){let arr=answers[key]||[]; if(arr.includes(val)) arr=arr.filter(x=>x!==val); else arr.push(val); answers[key]=arr; renderQuestion()}
+function nextQ(){if(qIndex<questions.length-1){qIndex++;renderQuestion()}else renderResult()}
+function allFiltered(){return universities.filter(allowedByArea)}
+function bucket(min,max){
+ let lv=levelNum();
+ let base=allFiltered().filter(u=>u.level-lv>=min&&u.level-lv<=max);
+ let matched=base.filter(u=>!isMajorMismatch(u));
+ // 分野一致の候補がある程度ある場合は、まず分野一致を優先
+ if(matched.length>=4)return sortList(matched).slice(0,10);
+ return sortList(base).slice(0,10);
+}
+function uniCard(u,label,cls){let r=ratings(u);return `<div class="uni"><div class="uniTop"><div><div class="uniName">${esc(u.name)}</div><div><span class="tag ${cls}">${label}</span><span class="tag">${esc(u.type)}</span><span class="tag">${esc(u.area)}</span><span class="tag">${esc(u.pref)}</span></div></div><div class="stars">${stars(r.fit)}</div></div><p class="small">${esc(u.field)}／目安レベル ${u.level}前後</p><div class="hitBox">検索にヒット：${hitReason(u)}</div><div class="employBox">就職安定度：${stars(employmentScore(u))}　${employmentLabel(u)}<br>${employmentReason(u)}</div><h3>主な学部</h3>${facultyChips(u)}<div class="starGrid"><div class="starRow"><span>大学との相性</span><span class="stars">${stars(r.fit)}</span></div><div class="starRow"><span>入試の現実度</span><span class="stars">${stars(r.chance)}</span></div><div class="starRow"><span>将来の広がり</span><span class="stars">${stars(r.future)}</span></div><div class="starRow"><span>就職安定度</span><span class="stars">${stars(employmentScore(u))}</span></div><div class="starRow"><span>キャンパス生活</span><span class="stars">${stars(r.campus)}</span></div></div><div class="actions"><button class="btn green" onclick="addSelected('${esc(u.name)}')">比較・面談に追加</button><button class="btn gray" onclick="renderDetail('${esc(u.name)}')">大学詳細</button><a class="btn primary" target="_blank" href="${manabiUrl(u.name)}">受験科目を見る</a><a class="btn gold" target="_blank" href="${careerUrl(u.name)}">就職実績を見る</a></div></div>`}
+function addSelected(name){if(!selected.includes(name))selected.push(name); alert(name+" を比較・面談に追加しました")}
+function renderResultControls(){
+ return `<div class="box noPrint"><h3>診断結果の絞り込み・並び替え</h3><div class="resultControl">
+  <div><label>並び替え</label><select id="resultSort" onchange="answers.sort=this.value;renderResult(false)">
+   ${["おすすめ順（就職の安定性重視）","偏差値が高い順","自宅から近い順"].map(x=>`<option value="${x}" ${answers.sort===x?"selected":""}>${x}</option>`).join("")}
+  </select></div>
+  <div><label>通学条件</label><select id="resultCommute" onchange="answers.commute=this.value;renderResult(false)">
+   ${["通学のみ","通学＋下宿可","全国OK"].map(x=>`<option value="${x}" ${answers.commute===x?"selected":""}>${x}</option>`).join("")}
+  </select></div>
+  <div><label>居住地</label><select id="resultResidence" onchange="answers.residence=this.value;renderResult(false)">
+   ${prefectures.map(p=>`<option value="${p}" ${(answers.residence||"愛知県")===p?"selected":""}>${p}</option>`).join("")}
+  </select></div>
+ </div><p class="small">診断後でも、並び替え・通学条件・居住地を変えられます。おすすめ順は、最初に選んだ分野を最優先します。そのうえで、就職の安定性が高い教育・医療・看護・薬学・工学・情報などを強めに評価します。</p></div>`;
+}
+function renderResult(doCollect=true){if(doCollect)collect();let ch=bucket(5,15),ma=bucket(-4,4),sa=bucket(-15,-5);$("app").innerHTML=`<div class="card"><h2>診断結果</h2><p>居住地：${esc(answers.residence)} ／ 希望エリア：${esc((answers.areas||[]).join("・")||"指定なし")} ／ 通学条件：${esc(answers.commute)} ／ 並び替え：${esc(answers.sort)}</p>${renderResultControls()}<div class="grid three"><div class="box"><h3>チャレンジ候補</h3>${ch.map(u=>uniCard(u,"チャレンジ","challenge")).join("")}</div><div class="box"><h3>おすすめ候補</h3>${ma.map(u=>uniCard(u,"おすすめ","match")).join("")}</div><div class="box"><h3>併願候補</h3>${sa.map(u=>uniCard(u,"併願","safety")).join("")}</div></div><div class="actions"><button class="btn primary" onclick="renderCompare()">大学比較へ</button><button class="btn navy" onclick="renderStrategy()">面談記録へ</button><button class="btn gray" onclick="renderQuestion()">診断を修正</button></div></div>`;scrollTo(0,0)}
+function getU(name){return universities.find(u=>u.name===name)}
+function renderDetail(name){let u=getU(name),r=ratings(u),careers=careerImage(u);$("app").innerHTML=`<div class="card"><h2>${esc(u.name)}</h2><div><span class="tag">${esc(u.type)}</span><span class="tag">${esc(u.area)}</span><span class="tag">${esc(u.pref)}</span><span class="tag">${esc(u.field)}</span></div><div class="box"><h3>主な学部</h3><div class="hitBox">検索にヒット：${hitReason(u)}</div>${facultyChips(u,12)}</div><div class="starGrid"><div class="starRow"><span>大学との相性</span><span class="stars">${stars(r.fit)}</span></div><div class="starRow"><span>入試の現実度</span><span class="stars">${stars(r.chance)}</span></div><div class="starRow"><span>将来の広がり</span><span class="stars">${stars(r.future)}</span></div><div class="starRow"><span>就職安定度</span><span class="stars">${stars(employmentScore(u))}</span></div><div class="starRow"><span>キャンパス生活</span><span class="stars">${stars(r.campus)}</span></div></div><div class="grid two"><div class="box"><h3>主な入試方式</h3><ul>${examTypes(u).map(x=>"<li>"+x+"</li>").join("")}</ul></div><div class="box"><h3>卒業後の進路イメージ</h3><ul>${careers.map(x=>"<li>"+esc(x)+"</li>").join("")}</ul><p class="small">具体的な企業名は年度で変わるため、公式の就職実績で確認します。</p></div></div><div class="actions"><button class="btn green" onclick="addSelected('${esc(u.name)}')">比較・面談に追加</button><a class="btn primary" target="_blank" href="${manabiUrl(u.name)}">受験科目を見る</a><a class="btn gold" target="_blank" href="${careerUrl(u.name)}">就職実績を見る</a><a class="btn gray" target="_blank" href="${officialExamUrl(u.name)}">公式募集要項を探す</a></div></div>`;scrollTo(0,0)}
+
+function estimatedCommonTestRate(u){
+ let base = Math.round(u.level + 10);
+ let f = u.field+" "+u.faculties.join(" ");
+ if(/国立|公立/.test(u.type))base += 4;
+ if(/難関/.test(u.field))base += 6;
+ if(/医|薬|看護|医療|歯/.test(f))base += 4;
+ if(/芸術|美術|音楽|デザイン/.test(f))base -= 4;
+ return Math.max(48, Math.min(88, base));
+}
+function estimated倍率(u){
+ let f = u.field+" "+u.faculties.join(" ");
+ let m = 2.1;
+ if(u.type==="私立")m += 0.5;
+ if(/医|薬|看護|医療|歯/.test(f))m += 0.4;
+ if(/国際|外国語|心理/.test(f))m += 0.3;
+ if(u.level>=60)m += 0.4;
+ return Math.round(m*10)/10;
+}
+function currentRate(){
+ let lv = levelNum();
+ return Math.max(45, Math.min(82, Math.round(lv + 5)));
+}
+function gapText(u){
+ let need=estimatedCommonTestRate(u), now=currentRate(), gap=need-now;
+ if(gap<=0)return `<span class="gapGood">到達圏内</span><br><span class="small">目安 ${now}% / 必要 ${need}%</span>`;
+ if(gap<=8)return `<span class="gapMid">あと${gap}%</span><br><span class="small">現在 ${now}% / 必要 ${need}%</span>`;
+ return `<span class="gapBad">あと${gap}%</span><br><span class="small">現在 ${now}% / 必要 ${need}%</span>`;
+}
+function strategySortList(list){
+ let mode = document.getElementById("compareSort") ? document.getElementById("compareSort").value : "選択順";
+ let arr=[...list];
+ if(mode==="共テ得点率が低い順")arr.sort((a,b)=>estimatedCommonTestRate(a)-estimatedCommonTestRate(b));
+ if(mode==="倍率が低い順")arr.sort((a,b)=>estimated倍率(a)-estimated倍率(b));
+ if(mode==="就職安定度順")arr.sort((a,b)=>employmentScore(b)-employmentScore(a));
+ if(mode==="偏差値が高い順")arr.sort((a,b)=>b.level-a.level);
+ if(mode==="合格可能性順")arr.sort((a,b)=>(ratings(b).chance-ratings(a).chance));
+ return arr;
+}
+function compareSortControl(){
+ return `<div class="compareSortBox noPrint"><label>比較表の並び替え</label><select id="compareSort" onchange="renderCompare()">
+  ${["選択順","合格可能性順","共テ得点率が低い順","倍率が低い順","就職安定度順","偏差値が高い順"].map(x=>`<option value="${x}">${x}</option>`).join("")}
+ </select><p class="small">共テ得点率・倍率は面談用の目安表示です。正式な数値は大学公式・入試情報サイトで確認してください。</p></div>`;
+}
+function compareRows(){let list=strategySortList(selected.map(getU).filter(Boolean)); if(!list.length)return `<p class="help">まだ大学が選ばれていません。診断結果や検索から大学を追加してください。</p>`; let rows=["所在地","偏差値目安","昨年度共テ得点率目安","昨年度倍率目安","現在との差分","主な学部","大学との相性","入試の現実度","就職安定度","将来の広がり","主な就職分野","受験科目"]; return `<div class="compareHint"><span>📊 ${list.length}校を比較中</span><span>横スクロールできます →</span></div><div class="compareWrap"><table class="compareTable"><tr><th>項目</th>${list.map(u=>"<th>"+esc(u.name)+"</th>").join("")}</tr>${rows.map(row=>`<tr><th>${row}</th>${list.map(u=>{let r=ratings(u); if(row==="所在地")return "<td>"+esc(u.area)+"<br>"+esc(u.pref)+"</td>"; if(row==="偏差値目安")return "<td><span class='levelBadge'>"+u.level+"前後</span></td>"; if(row==="昨年度共テ得点率目安")return "<td><span class='levelBadge'>"+estimatedCommonTestRate(u)+"%前後</span><br><span class='small'>学部・方式で変動</span></td>"; if(row==="昨年度倍率目安")return "<td><span class='levelBadge'>"+estimated倍率(u)+"倍前後</span><br><span class='small'>方式で変動</span></td>"; if(row==="現在との差分")return "<td>"+gapText(u)+"</td>"; if(row==="主な学部")return "<td>"+u.faculties.slice(0,6).map(esc).join("<br>")+"</td>"; if(row==="大学との相性")return "<td class='stars'>"+stars(r.fit)+"</td>"; if(row==="入試の現実度")return "<td class='stars'>"+stars(r.chance)+"</td>"; if(row==="就職安定度")return "<td><span class='stars'>"+stars(employmentScore(u))+"</span><br>"+employmentLabel(u)+"<br><span class='small'>"+employmentReason(u)+"</span></td>"; if(row==="将来の広がり")return "<td class='stars'>"+stars(r.future)+"</td>"; if(row==="主な就職分野")return "<td>"+careerImage(u).slice(0,4).map(esc).join("<br>")+"</td>"; if(row==="受験科目")return "<td><a class='miniLink miniPrimary' target='_blank' href='"+manabiUrl(u.name)+"'>受験科目を見る</a><br><a class='miniLink miniGold' target='_blank' href='"+officialExamUrl(u.name)+"'>公式募集要項</a></td>"; return "<td></td>";}).join("")}</tr>`).join("")}</table></div>`}
+
+function classifyCandidate(u){
+ let gap=estimatedCommonTestRate(u)-currentRate();
+ if(gap>=12)return "チャレンジ";
+ if(gap>=4)return "実力相応";
+ return "安全・併願";
+}
+function bestByType(list,type){
+ let arr=list.filter(u=>classifyCandidate(u)===type);
+ if(!arr.length)return null;
+ return arr.sort((a,b)=>employmentScore(b)-employmentScore(a)||matchScore(b)-matchScore(a))[0];
+}
+function aiAdviceHtml(){
+ let list=selected.map(getU).filter(Boolean);
+ if(!list.length){
+   return `<div class="aiAdvice"><h3>🤖 AI進路アドバイス</h3><p class="help">大学を比較に追加すると、ここに受験戦略アドバイスが表示されます。</p></div>`;
+ }
+ let sorted=[...list].sort((a,b)=>matchScore(b)-matchScore(a));
+ let top=sorted[0];
+ let challenge=bestByType(list,"チャレンジ");
+ let match=bestByType(list,"実力相応");
+ let safety=bestByType(list,"安全・併願");
+ let field=answers.track||"未定";
+ let now=currentRate();
+ let avgNeed=Math.round(list.reduce((s,u)=>s+estimatedCommonTestRate(u),0)/list.length);
+ let privateCount=list.filter(u=>u.type==="私立").length;
+ let publicCount=list.length-privateCount;
+ let areas=[...new Set(list.map(u=>u.area))].join("・");
+ let strong=list.slice().sort((a,b)=>employmentScore(b)-employmentScore(a))[0];
+
+ let summary=`現在の候補は「${areas}」を中心に、${field}系の進路を考えやすい組み合わせです。現在の共テ目安を${now}%前後とすると、候補全体の必要得点率目安は平均${avgNeed}%前後です。まずは${esc(top.name)}を軸に、チャレンジ校・実力相応校・安全校を分けて考えると面談で整理しやすくなります。`;
+
+ let balance=[];
+ if(challenge)balance.push(`第一志望・チャレンジ：${challenge.name}`);
+ if(match)balance.push(`実力相応：${match.name}`);
+ if(safety)balance.push(`安全校・併願：${safety.name}`);
+ if(!balance.length)balance.push(`${top.name}を中心に、もう1〜2校追加して比較すると判断しやすくなります。`);
+
+ let caution=[];
+ if(privateCount===list.length)caution.push("候補が私立中心です。学費や受験日程の重なりも確認しましょう。");
+ if(publicCount===list.length)caution.push("候補が国公立中心です。共通テストで必要な科目数が多くなるため、早めに科目確認が必要です。");
+ if(list.length<3)caution.push("比較大学が少なめです。チャレンジ・実力相応・安全校を最低1校ずつ入れると受験戦略が立てやすくなります。");
+ if(avgNeed-now>=10)caution.push("必要得点率との差が大きめです。まずは英語・数学・国語など配点の大きい科目を優先して伸ばしましょう。");
+ if(!caution.length)caution.push("候補のバランスは比較的良好です。次は受験科目と入試日程を確認しましょう。");
+
+ let todo=[];
+ if(field==="教育")todo=["教員志望か、教育関連企業も含めるかを決める","英語・国語・小論文の基礎を固める","教育学部の面接・志望理由を早めに言語化する"];
+ else if(field==="医療")todo=["必要な理科科目を早めに確定する","英語・数学・理科を優先して学習時間を増やす","医療職を目指す理由を面接で話せるようにする"];
+ else if(field==="理系")todo=["数学の苦手単元を洗い出す","理科の選択科目を確定する","工学・情報・理学など学部の違いを比較する"];
+ else if(field==="国際")todo=["英単語・長文読解を毎日固定する","英検など資格利用入試も確認する","留学制度や語学教育の違いを比較する"];
+ else todo=["英語を最優先で安定させる","志望学部ごとの受験科目を確認する","安全校を1〜2校追加して受験日程を組む"];
+
+ return `<div class="aiAdvice">
+  <h3>🤖 AI進路アドバイス</h3>
+  <div class="adviceBlock"><h4>総評</h4><p>${esc(summary)}</p></div>
+  <div class="adviceBlock"><h4>おすすめ併願パターン</h4><ul>${balance.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+  <div class="adviceBlock"><h4>生徒が今やること</h4><ul>${todo.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+  <div class="adviceBlock"><h4>注意点</h4><ul>${caution.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+  <div class="adviceBlock"><h4>就職面で見るなら</h4><p>${esc(strong.name)}は、候補内では就職安定度が高めです。理由：${esc(employmentReason(strong))}</p></div>
+  <div class="aiNote">このコメントは、選択した大学・分野・偏差値目安・共テ得点率目安・就職安定度から自動生成しています。最終判断は公式募集要項、受験科目、入試日程、学費を確認して決めてください。</div>
+ </div>`;
+}
+function renderCompare(){$("app").innerHTML=`<div class="card"><h2>大学比較</h2><p>選んだ大学を、偏差値目安・昨年度共テ得点率目安・倍率目安・現在との差分まで比較します。</p><div class="box"><label>大学名から追加</label><input id="addName" placeholder="例：南山大学"><div class="actions"><button class="btn green" onclick="manualAdd()">追加</button><button class="btn primary" onclick="renderStrategy()">面談記録へ</button><button class="btn gray" onclick="selected=[];renderCompare()">選択リセット</button></div></div><div class="box">${compareSortControl()}${compareRows()}</div>${aiAdviceHtml()}${sheetSaveBox()}</div>`}
+function manualAdd(){let n=$("addName").value.trim(); let u=universities.find(x=>x.name===n)||universities.find(x=>x.name.includes(n)); if(!u)return alert("大学が見つかりません。正式名称に近い形で入力してください。"); addSelected(u.name); renderCompare()}
+function selectedCards(){let list=selected.map(getU).filter(Boolean); if(!list.length)return "<p class='help'>大学比較に追加した大学がここに表示されます。</p>"; return list.map(u=>`<div class="box"><h3>${esc(u.name)}</h3><p class="small">${esc(u.area)}／${esc(u.pref)}／${esc(u.field)}</p><div class="hitBox">偏差値目安：${u.level}前後<br>昨年度共テ得点率目安：${estimatedCommonTestRate(u)}%前後<br>昨年度倍率目安：${estimated倍率(u)}倍前後<br>現在との差分：${gapText(u)}</div><h3>主な学部</h3>${facultyChips(u)}<div class="starGrid"><div class="starRow"><span>相性</span><span class="stars">${stars(ratings(u).fit)}</span></div><div class="starRow"><span>現実度</span><span class="stars">${stars(ratings(u).chance)}</span></div></div><div class="employBox">就職安定度：${stars(employmentScore(u))}　${employmentLabel(u)}<br>${employmentReason(u)}</div><p><strong>主な就職分野</strong></p><ul>${careerImage(u).map(x=>"<li>"+esc(x)+"</li>").join("")}</ul><div class="actions"><a class="btn primary" target="_blank" href="${manabiUrl(u.name)}">受験科目</a><a class="btn gold" target="_blank" href="${careerUrl(u.name)}">就職実績</a></div></div>`).join("")}
+function renderStrategy(){$("app").innerHTML=`<div class="card"><div class="printTitle">面談記録・進路戦略シート</div><h2>面談記録・進路戦略</h2><div class="grid three"><div><label>生徒名</label><input id="name" value="${esc(student.name)}"></div><div><label>高校名</label><input id="school" value="${esc(student.school)}"></div><div><label>学年</label><input id="grade" value="${esc(student.grade||answers.grade||"")}"></div><div><label>担当講師</label><input id="teacher" value="${esc(student.teacher)}"></div><div><label>面談日</label><input id="date" value="${esc(student.date||today())}"></div><div><label>志望メモ</label><input id="goal" value="${esc(student.goal)}"></div></div><div class="box"><h3>候補大学 比較表</h3>${compareRows()}</div>${aiAdviceHtml()}${sheetSaveBox()}<div class="grid two">${selectedCards()}</div><div class="grid two"><div class="box"><h3>面談メモ</h3><textarea id="memo">${esc(student.memo)}</textarea></div><div class="box"><h3>次回までの課題</h3><textarea id="action">${esc(student.action)}</textarea></div></div><div class="actions noPrint"><button class="btn primary" onclick="saveRecord()">保存</button><button class="btn navy" onclick="window.print()">印刷・PDF保存</button><button class="btn gray" onclick="renderCompare()">大学比較へ</button><button class="btn gray" onclick="renderHome()">ホーム</button></div></div>`;scrollTo(0,0)}
+
+function getAdvicePlainText(){
+ let list=selected.map(getU).filter(Boolean);
+ if(!list.length)return "比較大学が未選択です。";
+ let top=[...list].sort((a,b)=>matchScore(b)-matchScore(a))[0];
+ let now=currentRate();
+ let avgNeed=Math.round(list.reduce((s,u)=>s+estimatedCommonTestRate(u),0)/list.length);
+ return `候補大学は${list.map(u=>u.name).join("、")}です。現在の共テ目安は${now}%前後、候補全体の必要得点率目安は平均${avgNeed}%前後です。${top.name}を軸に、チャレンジ・実力相応・安全校を分けて受験戦略を立てるとよいです。`;
+}
+function makeSheetPayload(){
+ collect();
+ let list=selected.map(getU).filter(Boolean);
+ return {
+  timestamp:new Date().toLocaleString("ja-JP"),
+  studentName:student.name||"",
+  school:student.school||"",
+  grade:student.grade||answers.grade||"",
+  teacher:student.teacher||"",
+  interviewDate:student.date||"",
+  residence:answers.residence||"",
+  field:answers.track||"",
+  level:answers.level||"",
+  areas:(answers.areas||[]).join("・"),
+  commute:answers.commute||"",
+  kind:answers.kind||"",
+  selectedUniversities:list.map(u=>u.name).join("、"),
+  universityDetails:list.map(u=>`${u.name}｜${u.type}｜${u.area}｜${u.pref}｜偏差値${u.level}前後｜共テ${estimatedCommonTestRate(u)}%前後｜倍率${estimated倍率(u)}倍前後｜就職安定度${employmentLabel(u)}`).join("\\n"),
+  aiAdvice:getAdvicePlainText(),
+  memo:student.memo||"",
+  action:student.action||"",
+  deepAverage:(typeof deepAverage==="function"?deepAverage():""),
+  deepScores:answers.deepScores?JSON.stringify(answers.deepScores):"",
+  deepField:answers.deepField||"",
+  deepAdvice:(typeof deepAdviceText==="function"?deepAdviceText():""),
+  pageUrl:location.href
+ };
+}
+function getSheetUrl(){
+ return localStorage.getItem("sheet_webapp_url")||"";
+}
+function setSheetUrl(){
+ const current=getSheetUrl();
+ const url=prompt("Google Apps ScriptのWebアプリURLを入力してください", current);
+ if(url!==null){
+   localStorage.setItem("sheet_webapp_url", url.trim());
+   alert("保存先URLを設定しました。");
+ }
+}
+async function sendToSheet(){
+ const url=getSheetUrl();
+ const status=document.getElementById("sheetStatus");
+ if(!url){
+   if(status)status.innerHTML='<span class="sheetNg">先に「保存先URLを設定」を押してください。</span>';
+   return;
+ }
+ const payload=makeSheetPayload();
+ try{
+   if(status)status.innerHTML='送信中...';
+   await fetch(url,{
+     method:"POST",
+     mode:"no-cors",
+     headers:{"Content-Type":"text/plain;charset=utf-8"},
+     body:JSON.stringify(payload)
+   });
+   if(status)status.innerHTML='<span class="sheetOk">スプレッドシートへ送信しました。</span>';
+ }catch(e){
+   if(status)status.innerHTML='<span class="sheetNg">送信できませんでした。URLや公開設定を確認してください。</span>';
+ }
+}
+function sheetSaveBox(){
+ return `<div class="sheetBox noPrint"><h3>📗 スプレッドシート保存</h3>
+ <p class="small">面談記録・比較大学・AIアドバイスをGoogleスプレッドシートに送信できます。初回だけ保存先URLを設定してください。</p>
+ <div class="actions">
+  <button class="btn gray" onclick="setSheetUrl()">保存先URLを設定</button>
+  <button class="btn green" onclick="sendToSheet()">スプレッドシートに保存</button>
+ </div>
+ <div id="sheetStatus" class="sheetStatus"></div>
+ </div>`;
+}
+function saveRecord(){collect();let arr=JSON.parse(localStorage.getItem("univ_nav_records_v2")||"[]");arr.unshift({id:Date.now(),student,answers,selected,date:new Date().toISOString()});localStorage.setItem("univ_nav_records_v2",JSON.stringify(arr.slice(0,80)));alert("保存しました")}
+renderHome();
+</script>
+</body>
+</html>
