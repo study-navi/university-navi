@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>進学コンパス5.1｜オープニング対応版</title>
+<meta name="theme-color" content="#143b73">
+<style>
+:root{
+  --navy:#143b73;
+  --blue:#2563eb;
+  --sky:#eaf3ff;
+  --line:#dbe7f6;
+  --muted:#64748b;
+  --gold:#fff4c7;
+  --goldText:#795200;
+  --green:#16a34a;
+  --bg:#f4f8fd;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",Meiryo,sans-serif;background:var(--bg);color:#0f172a}
+body{padding-bottom:env(safe-area-inset-bottom)}
+header{
+  background:linear-gradient(135deg,#123a73,#2563eb);
+  color:white;
+  padding:18px 16px 22px;
+  text-align:center;
+}
+header .school{font-size:13px;opacity:.92;font-weight:800}
+header h1{margin:5px 0 3px;font-size:25px;letter-spacing:.04em}
+header p{margin:0;color:#eaf3ff;font-size:13px;font-weight:800}
+main{max-width:1040px;margin:0 auto;padding:14px}
+.card{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:18px;
+  box-shadow:0 10px 28px rgba(20,59,115,.07);
+  margin:12px 0;
+}
+.hero{
+  background:linear-gradient(135deg,#0f2f5f,#163f7c 55%,#2563eb);
+  color:white;
+  border-radius:28px;
+  padding:22px 18px;
+  box-shadow:0 18px 42px rgba(15,47,95,.23);
+}
+.hero h2{font-size:29px;margin:0 0 6px;color:white}
+.hero .copy{font-size:15px;font-weight:900;color:white;margin:0 0 10px}
+.badge{
+  display:inline-block;
+  background:var(--gold);
+  color:var(--goldText);
+  border:1px solid #ffd166;
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:12px;
+  font-weight:900;
+  cursor:pointer;
+}
+.searchBox{
+  display:flex;
+  gap:8px;
+  margin-top:14px;
+  background:white;
+  border-radius:18px;
+  padding:8px;
+}
+.searchBox input{flex:1;border:0;outline:0;padding:10px;font-size:14px;min-width:0}
+.searchBox button,.btn{
+  border:0;border-radius:999px;background:var(--navy);color:white;font-weight:900;
+  padding:10px 14px;cursor:pointer;font-size:13px;
+}
+.btn.gray{background:#eef6ff;color:var(--navy)}
+.btn.green{background:#ecfdf3;color:#087443;border:1px solid #abe7c3}
+.btn.gold{background:#fff5d7;color:#795200;border:1px solid #ffd166}
+.note{text-align:center;color:var(--muted);font-size:12px;font-weight:800;margin:12px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+@media(min-width:760px){.grid{grid-template-columns:repeat(3,1fr)}}
+.navCard{
+  background:white;border:1px solid var(--line);border-radius:22px;padding:16px 12px;
+  cursor:pointer;box-shadow:0 8px 22px rgba(20,59,115,.07);text-align:left;
+}
+.navCard:hover{border-color:var(--blue);background:#f8fbff}
+.navCard.wide{grid-column:1/-1}
+@media(min-width:760px){.navCard.wide{grid-column:auto}}
+.navIcon{font-size:29px;margin-bottom:5px}
+.navCard h3{margin:0 0 5px;color:var(--navy);font-size:16px}
+.navCard p{margin:0;color:var(--muted);font-size:12px;line-height:1.55;font-weight:700}
+.fixedMenu{
+  position:fixed;right:14px;top:12px;z-index:10020;
+  border:0;border-radius:999px;background:white;color:var(--navy);
+  padding:10px 16px;font-weight:900;font-size:14px;
+  box-shadow:0 10px 24px rgba(15,23,42,.18);cursor:pointer;
+}
+.menuOverlay{display:none;position:fixed;inset:0;z-index:10030;background:rgba(15,23,42,.12)}
+.menuOverlay.open{display:block}
+.menuPanel{
+  position:fixed;right:18px;top:64px;width:min(340px,calc(100vw - 36px));
+  background:white;border:1px solid var(--line);border-radius:24px;padding:18px;
+  box-shadow:0 22px 48px rgba(15,23,42,.22);
+}
+.menuPanel h3{margin:0 0 10px;color:var(--navy)}
+.menuClose{float:right;border:0;border-radius:999px;padding:8px 11px;background:#eef6ff;color:var(--navy);font-weight:900}
+.menuBtn{
+  display:block;width:100%;border:0;background:white;color:var(--navy);text-align:left;
+  font-size:15px;font-weight:900;padding:11px 8px;border-radius:14px;cursor:pointer;
+}
+.menuBtn:hover{background:#eef6ff}
+h2{color:var(--navy);margin:0 0 10px}
+h3{color:var(--navy)}
+label{display:block;font-size:13px;font-weight:900;color:var(--navy);margin:10px 0 5px}
+input,select,textarea{
+  width:100%;border:1px solid var(--line);border-radius:14px;padding:11px;font-size:16px;background:white;
+}
+.actions{display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px}
+@media(min-width:760px){.actions{grid-template-columns:repeat(2,1fr)}}
+.pill{display:inline-block;border-radius:999px;background:#eef6ff;color:var(--navy);padding:6px 10px;font-size:12px;font-weight:900;margin:3px}
+.uni{
+  border:1px solid var(--line);border-radius:20px;padding:14px;margin:10px 0;background:white;
+}
+.uniTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.uni strong{font-size:17px;color:var(--navy)}
+.small{font-size:12px;color:var(--muted);line-height:1.6}
+.probBox{background:linear-gradient(135deg,#f0fdf4,#fff);border:1px solid #86efac;border-radius:16px;padding:11px;margin:9px 0}
+.probMain{display:flex;justify-content:space-between;align-items:center}
+.probMain b{color:#166534}.probPct{font-size:24px;font-weight:900;color:#166534}
+.rank{display:inline-block;border-radius:999px;background:#ecfdf3;border:1px solid #abe7c3;color:#087443;font-size:12px;font-weight:900;padding:5px 9px}
+.improve{background:#fffaf0;border:1px solid #ffd166;color:#795200;border-radius:12px;padding:8px;margin-top:8px;font-size:12px;line-height:1.6;font-weight:800}
+.sortBar{background:#fbfdff;border:1px solid var(--line);border-radius:18px;padding:12px;margin:10px 0}
+.sortBtns{display:flex;flex-wrap:wrap;gap:7px}
+.sortBtn{border:1px solid #bfd7ff;background:#eaf3ff;color:var(--navy);border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900}
+.sortBtn.on{background:var(--navy);color:white}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.tag{border:1px solid #fed7aa;background:#fff7ed;color:#9a3412;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900;cursor:pointer}
+.tag.on{background:#ffedd5;border-color:#f97316}
+.route{border:1px solid var(--line);border-radius:18px;padding:13px;margin:10px 0;background:#fbfdff}
+.footerCopy{text-align:center;color:var(--muted);font-weight:900;margin:12px 0}
+.warning{background:#fffaf0;border:1px solid #ffd166;color:#795200;border-radius:16px;padding:12px;margin:10px 0;font-size:13px;line-height:1.7;font-weight:800}
+@media print{
+  header,.fixedMenu,.menuOverlay,.noPrint{display:none!important}
+  body{background:white}
+  .card,.uni{box-shadow:none;border-color:#ddd}
+}
+
+/* 進学コンパス5.1 オープニング */
+.splash{
+  position:fixed;
+  inset:0;
+  z-index:20000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#0f2f5f,#143b73 55%,#2563eb);
+  color:white;
+  overflow:hidden;
+}
+.splash::before{
+  content:"";
+  position:absolute;
+  width:260px;
+  height:260px;
+  border-radius:999px;
+  background:rgba(255,255,255,.10);
+  top:-70px;
+  right:-70px;
+}
+.splash::after{
+  content:"";
+  position:absolute;
+  width:220px;
+  height:220px;
+  border-radius:999px;
+  background:rgba(255,209,102,.16);
+  bottom:-60px;
+  left:-60px;
+}
+.splashInner{
+  position:relative;
+  text-align:center;
+  padding:28px;
+  animation:splashIn .8s ease both;
+}
+.splashLogo{
+  font-size:54px;
+  margin-bottom:8px;
+}
+.splashTitle{
+  font-size:31px;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+.splashCopy{
+  margin-top:12px;
+  font-size:15px;
+  font-weight:900;
+  color:#eaf3ff;
+}
+.splashBadge{
+  display:inline-block;
+  margin-top:18px;
+  padding:8px 13px;
+  border-radius:999px;
+  background:#fff4c7;
+  border:1px solid #ffd166;
+  color:#795200;
+  font-size:12px;
+  font-weight:900;
+}
+.splashLine{
+  width:0;
+  height:3px;
+  border-radius:999px;
+  background:#ffd166;
+  margin:18px auto 0;
+  animation:splashLine 1.2s ease .6s forwards;
+}
+.splash.fadeOut{
+  animation:splashOut .55s ease forwards;
+}
+@keyframes splashIn{
+  from{opacity:0;transform:translateY(12px) scale(.98)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes splashLine{
+  to{width:180px}
+}
+@keyframes splashOut{
+  to{opacity:0;visibility:hidden}
+}
+.skipSplash{
+  position:absolute;
+  right:16px;
+  bottom:18px;
+  border:1px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.12);
+  color:white;
+  border-radius:999px;
+  padding:8px 12px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+</style>
+</head>
+<body>
+<div id="splash" class="splash">
+  <div class="splashInner">
+    <div class="splashLogo">🎓</div>
+    <div class="splashTitle">進学コンパス</div>
+    <div class="splashCopy">可能性を広げ、未来へつなぐ。</div>
+    <div class="splashBadge">🛡️ 公式データベース対応</div>
+    <div class="splashLine"></div>
+  </div>
+  <button class="skipSplash" onclick="finishSplash(true)">スキップ</button>
+</div>
+
+<button class="fixedMenu noPrint" onclick="openMenu()">☰ メニュー</button>
+<header>
+  <div class="school">スクールIE 共和校</div>
+  <h1>進学コンパス</h1>
+  <p>可能性を広げ、未来へつなぐ。</p>
+</header>
+<main id="app"></main>
+
+<div id="menuOverlay" class="menuOverlay" onclick="if(event.target.id==='menuOverlay')closeMenu()">
+  <div class="menuPanel">
+    <button class="menuClose" onclick="closeMenu()">閉じる</button>
+    <h3>メニュー</h3>
+    <div id="menuButtons"></div>
+  </div>
+</div>
+
+<script>
+const NAV_ITEMS=[
+  {icon:"🔍",title:"AI進路診断",desc:"成績・希望から候補大学を探します。",action:"renderAiDiagnosis"},
+  {icon:"🌱",title:"可能性診断",desc:"強みや興味から進路を広げます。",action:"renderPossibilityDiagnosis"},
+  {icon:"💭",title:"夢・好きから探す",desc:"ゲーム・美術・音楽・動物など、好きなことから探します。",action:"renderDreamSearch",wide:true},
+  {icon:"🎓",title:"学部・学科",desc:"学問から大学・職業へつなげます。",action:"renderAcademic"},
+  {icon:"🏫",title:"大学検索",desc:"大学・地域・分野から探します。",action:"renderUniversitySearch"},
+  {icon:"📊",title:"比較",desc:"候補大学を並べて比較します。",action:"renderCompare"},
+  {icon:"👨‍🏫",title:"面談サポート",desc:"学習プラン・面談PDFを作ります。",action:"renderMeeting"},
+  {icon:"🗂️",title:"大学データ",desc:"登録大学データを確認します。",action:"renderData"},
+  {icon:"🛡️",title:"品質保証",desc:"公式データベース対応方針を確認します。",action:"renderQuality"}
+];
+
+const universities=[
+{name:"名古屋大学",type:"国立",pref:"愛知",area:"東海",level:67,field:"総合・情報・工学・医療",faculties:["情報学部","工学部","医学部","教育学部","法学部"],career:5,research:5},
+{name:"名古屋工業大学",type:"国立",pref:"愛知",area:"東海",level:61,field:"工学・情報・建築",faculties:["工学部"],career:5,research:4},
+{name:"愛知教育大学",type:"国立",pref:"愛知",area:"東海",level:55,field:"教育",faculties:["教育学部"],career:4,research:3},
+{name:"愛知県立大学",type:"公立",pref:"愛知",area:"東海",level:55,field:"外国語・看護・情報",faculties:["外国語学部","情報科学部","看護学部"],career:4,research:3},
+{name:"名古屋市立大学",type:"公立",pref:"愛知",area:"東海",level:61,field:"医療・経済・芸術工学",faculties:["医学部","薬学部","経済学部","芸術工学部"],career:5,research:4},
+{name:"南山大学",type:"私立",pref:"愛知",area:"東海",level:58,field:"文系・国際・経営",faculties:["外国語学部","経済学部","経営学部","法学部"],career:4,research:3},
+{name:"名城大学",type:"私立",pref:"愛知",area:"東海",level:53,field:"理工・薬・農・経営",faculties:["理工学部","薬学部","農学部","経営学部"],career:4,research:4},
+{name:"中京大学",type:"私立",pref:"愛知",area:"東海",level:52,field:"心理・スポーツ・経営・情報",faculties:["心理学部","スポーツ科学部","経営学部","工学部"],career:4,research:3},
+{name:"愛知大学",type:"私立",pref:"愛知",area:"東海",level:50,field:"文系・経済・国際",faculties:["文学部","経済学部","国際コミュニケーション学部"],career:3,research:3},
+{name:"椙山女学園大学",type:"私立",pref:"愛知",area:"東海",level:48,field:"教育・生活科学・看護",faculties:["教育学部","生活科学部","看護学部"],career:3,research:2},
+{name:"藤田医科大学",type:"私立",pref:"愛知",area:"東海",level:58,field:"医療・看護・リハビリ",faculties:["医学部","医療科学部","保健衛生学部"],career:5,research:4},
+{name:"愛知淑徳大学",type:"私立",pref:"愛知",area:"東海",level:49,field:"心理・福祉・文系・健康",faculties:["心理学部","福祉貢献学部","文学部","健康医療科学部"],career:3,research:2},
+{name:"岐阜大学",type:"国立",pref:"岐阜",area:"東海",level:58,field:"教育・工学・農学・医療",faculties:["教育学部","工学部","応用生物科学部","医学部"],career:4,research:4},
+{name:"三重大学",type:"国立",pref:"三重",area:"東海",level:57,field:"教育・工学・生物資源・医療",faculties:["教育学部","工学部","生物資源学部","医学部"],career:4,research:4},
+{name:"静岡大学",type:"国立",pref:"静岡",area:"東海",level:56,field:"情報・工学・教育・人文",faculties:["情報学部","工学部","教育学部","人文社会科学部"],career:4,research:4},
+{name:"東京大学",type:"国立",pref:"東京",area:"関東",level:75,field:"総合・最難関",faculties:["教養学部","法学部","医学部","工学部","文学部"],career:5,research:5},
+{name:"京都大学",type:"国立",pref:"京都",area:"関西",level:73,field:"総合・研究",faculties:["総合人間学部","工学部","理学部","医学部","文学部"],career:5,research:5},
+{name:"大阪大学",type:"国立",pref:"大阪",area:"関西",level:70,field:"総合・外国語・工学",faculties:["工学部","基礎工学部","外国語学部","医学部"],career:5,research:5},
+{name:"東京藝術大学",type:"国立",pref:"東京",area:"関東",level:62,field:"美術・音楽・芸術",faculties:["美術学部","音楽学部"],career:4,research:5},
+{name:"武蔵野美術大学",type:"私立",pref:"東京",area:"関東",level:55,field:"美術・デザイン",faculties:["造形学部","造形構想学部"],career:4,research:4},
+{name:"多摩美術大学",type:"私立",pref:"東京",area:"関東",level:55,field:"美術・デザイン",faculties:["美術学部"],career:4,research:4},
+{name:"名古屋芸術大学",type:"私立",pref:"愛知",area:"東海",level:45,field:"芸術・音楽・教育",faculties:["芸術学部","教育学部"],career:3,research:3},
+{name:"京都芸術大学",type:"私立",pref:"京都",area:"関西",level:48,field:"芸術・デザイン・映像",faculties:["芸術学部"],career:3,research:3},
+{name:"東京理科大学",type:"私立",pref:"東京",area:"関東",level:62,field:"理工・薬・経営",faculties:["理学部","工学部","創域理工学部","薬学部"],career:5,research:4},
+{name:"芝浦工業大学",type:"私立",pref:"東京",area:"関東",level:57,field:"工学・建築・情報",faculties:["工学部","建築学部","システム理工学部"],career:5,research:4}
+];
+
+const domains=[
+{name:"情報・AI・データサイエンス",icon:"🤖",keys:["ゲーム","AI","情報","アプリ","データ"],studies:["情報工学","AI","データサイエンス","ソフトウェア"],careers:["AIエンジニア","データサイエンティスト","ゲームプログラマー"],match:["情報","工","データ","AI"]},
+{name:"美術・デザイン・映像",icon:"🎨",keys:["絵","美術","デザイン","アニメ","映像"],studies:["美術","デザイン","映像","アニメーション"],careers:["デザイナー","イラストレーター","映像制作"],match:["美術","芸術","デザイン","映像"]},
+{name:"音楽・音響・舞台",icon:"🎵",keys:["音楽","歌","作曲","音響","舞台"],studies:["音楽","作曲","音響","舞台芸術"],careers:["演奏家","音響スタッフ","音楽教員"],match:["音楽","芸術","教育"]},
+{name:"医療・看護・薬学",icon:"🩺",keys:["医療","看護","薬","リハビリ"],studies:["医学","看護","薬学","医療科学"],careers:["医師","看護師","薬剤師"],match:["医","看護","薬","医療"]},
+{name:"教育・心理・子ども",icon:"🏫",keys:["先生","教育","心理","子ども"],studies:["教育学","心理学","児童教育"],careers:["教員","心理支援職","教育関連"],match:["教育","心理","児童"]},
+{name:"建築・都市・インテリア",icon:"🏙️",keys:["建築","インテリア","街","空間"],studies:["建築学","都市計画","環境デザイン"],careers:["建築士","都市計画","インテリア"],match:["建築","都市","工","デザイン"]},
+{name:"経済・経営・法律",icon:"🏛️",keys:["会社","お金","法律","公務員"],studies:["経済学","経営学","法学","政策"],careers:["企業総合職","公務員","金融"],match:["経済","経営","法","政策"]},
+{name:"国際・外国語・観光",icon:"🌏",keys:["英語","海外","旅行","国際"],studies:["外国語","国際関係","観光"],careers:["商社","航空旅行","通訳翻訳"],match:["外国語","国際","観光"]},
+{name:"農学・動物・環境",icon:"🐾",keys:["動物","自然","食品","環境"],studies:["農学","獣医学","食品科学","環境科学"],careers:["食品メーカー","獣医師","環境保全"],match:["農","獣医","生命","環境","食品"]},
+{name:"スポーツ・健康科学",icon:"⚽",keys:["スポーツ","体育","健康"],studies:["スポーツ科学","体育","健康科学"],careers:["体育教員","トレーナー","スポーツビジネス"],match:["スポーツ","体育","健康"]}
+];
+
+let state={scores:{level:55,eng:55,math:55,jp:55,sci:55,soc:55},selected:[],sort:"recommend"};
+
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+function openMenu(){document.getElementById("menuButtons").innerHTML=NAV_ITEMS.map(i=>`<button class="menuBtn" onclick="closeMenu();run('${i.action}')">${i.icon} ${i.title}</button>`).join("");document.getElementById("menuOverlay").classList.add("open")}
+function closeMenu(){document.getElementById("menuOverlay").classList.remove("open")}
+function run(fn){ if(window[fn]) window[fn](); else alert("準備中です"); }
+function renderHome(){
+  document.getElementById("app").innerHTML=`<div class="card">
+    <div class="hero">
+      <h2>🎓 進学コンパス</h2>
+      <div class="copy">可能性を広げる進路診断</div>
+      <span class="badge" onclick="renderQuality()">🛡️ 公式データベース対応</span>
+      <div class="searchBox">
+        <input id="homeQ" placeholder="大学・学部・職業・興味を検索" onkeydown="if(event.key==='Enter')homeSearch()">
+        <button onclick="homeSearch()">検索</button>
+      </div>
+    </div>
+    <div class="note">ホームとメニューは同じ順番です。</div>
+    <div class="grid">${NAV_ITEMS.map(i=>`<div class="navCard ${i.wide?"wide":""}" onclick="run('${i.action}')"><div class="navIcon">${i.icon}</div><h3>${i.title}</h3><p>${i.desc}</p></div>`).join("")}</div>
+    <div class="footerCopy">あなたの未来は、一つではありません。</div>
+  </div>`;
+  scrollTo(0,0);
+}
+function homeSearch(){
+  const q=document.getElementById("homeQ").value.trim();
+  if(!q)return;
+  const u=universities.find(x=>x.name.includes(q)||x.field.includes(q)||x.faculties.join(" ").includes(q)||x.pref.includes(q));
+  if(u){renderDetail(u.name);return}
+  const d=domains.find(x=>(x.name+x.keys.join("")+x.studies.join("")+x.careers.join("")).includes(q));
+  if(d){renderDomain(d.name);return}
+  renderDreamSearch(q);
+}
+function matchScore(u){
+  let s=0;
+  const text=(u.name+u.field+u.faculties.join(""));
+  const interests=(state.interests||[]);
+  interests.forEach(k=>{if(text.includes(k))s+=8});
+  if(state.area && u.area===state.area)s+=8;
+  if(state.type && u.type===state.type)s+=5;
+  return s+50;
+}
+function level(){return Number(state.scores.level||55)}
+function probability(u){
+  let p=50+(level()-u.level)*5+(matchScore(u)-50)/4;
+  return Math.max(5,Math.min(95,Math.round(p)));
+}
+function rank(p){if(p>=80)return"A判定｜かなり有力";if(p>=65)return"B判定｜十分狙える";if(p>=45)return"C判定｜チャレンジ";if(p>=30)return"D判定｜要強化";return"E判定｜大きな挑戦"}
+function stars(p){const n=Math.max(1,Math.min(5,Math.ceil(p/20)));return"★".repeat(n)+"☆".repeat(5-n)}
+function required(u){const t=u.field+u.faculties.join("");if(/医|看護|薬|工|情報|理|建築|農|生命/.test(t))return["数学","英語","理科"];if(/芸術|美術|音楽|デザイン/.test(t))return["英語","国語"];return["英語","国語","社会"]}
+function improve(u){const req=required(u);let sub=req[0];if(req.includes("数学")&&state.scores.math<u.level)sub="数学";else if(req.includes("英語")&&state.scores.eng<u.level)sub="英語";const plus=Math.max(3,Math.min(12,Math.round(u.level-level()+5)));return `${sub}をあと+${plus}目安で、合格可能性アップを狙えます。`}
+function sortList(list){
+ const a=[...list];
+ if(state.sort==="prob")return a.sort((x,y)=>probability(y)-probability(x));
+ if(state.sort==="fit")return a.sort((x,y)=>matchScore(y)-matchScore(x));
+ if(state.sort==="safe")return a.sort((x,y)=>x.level-y.level);
+ if(state.sort==="hard")return a.sort((x,y)=>y.level-x.level);
+ if(state.sort==="career")return a.sort((x,y)=>y.career-x.career);
+ return a.sort((x,y)=>(matchScore(y)+probability(y))-(matchScore(x)+probability(x)));
+}
+function sortBar(){
+ const b=[["recommend","🏆おすすめ"],["prob","📈合格可能性"],["fit","🌱相性"],["safe","📘安全校"],["hard","📉難易度"],["career","💼就職"]];
+ return `<div class="sortBar"><b>並び替え</b><div class="sortBtns">${b.map(x=>`<button class="sortBtn ${state.sort===x[0]?"on":""}" onclick="state.sort='${x[0]}';renderResults(currentResults)">${x[1]}</button>`).join("")}</div></div>`
+}
+let currentResults=[];
+function uniCard(u){
+ const p=probability(u);
+ return `<div class="uni"><div class="uniTop"><div><strong>${esc(u.name)}</strong><div class="small">${u.type}／${u.pref}／${u.field}</div></div><button class="btn gray" onclick="toggleSelect('${esc(u.name)}')">比較</button></div>
+ <div class="probBox"><div class="probMain"><b>推定合格可能性</b><div class="probPct">${p}%</div></div><div>${stars(p)}</div><span class="rank">${rank(p)}</span><div class="improve">${improve(u)}</div><div class="small">※簡易推定です。公式判定ではありません。</div></div>
+ <div><span class="pill">相性 ${Math.round(matchScore(u))}</span><span class="pill">就職 ${u.career}/5</span><span class="pill">研究 ${u.research}/5</span></div>
+ <div class="actions"><button class="btn" onclick="renderDetail('${esc(u.name)}')">詳細を見る</button><button class="btn green" onclick="toggleSelect('${esc(u.name)}')">比較に追加</button></div></div>`
+}
+function renderResults(list){
+ currentResults=list;
+ document.getElementById("app").innerHTML=`<div class="card"><h2>診断結果</h2>${sortBar()}${sortList(list).map(uniCard).join("")}</div>`;
+ scrollTo(0,0);
+}
+function renderAiDiagnosis(){
+ document.getElementById("app").innerHTML=`<div class="card"><h2>🔍 AI進路診断</h2>
+ <label>総合偏差値</label><input type="number" id="lv" value="${state.scores.level}">
+ <label>英語</label><input type="number" id="eng" value="${state.scores.eng}">
+ <label>数学</label><input type="number" id="math" value="${state.scores.math}">
+ <label>希望エリア</label><select id="area"><option value="">指定なし</option><option>東海</option><option>関東</option><option>関西</option></select>
+ <label>大学種別</label><select id="type"><option value="">指定なし</option><option>国立</option><option>公立</option><option>私立</option></select>
+ <div class="actions"><button class="btn" onclick="saveDiag();renderResults(universities)">診断する</button><button class="btn gray" onclick="renderHome()">ホーム</button></div></div>`;
+}
+function saveDiag(){state.scores.level=+document.getElementById("lv").value||55;state.scores.eng=+document.getElementById("eng").value||55;state.scores.math=+document.getElementById("math").value||55;state.area=document.getElementById("area").value;state.type=document.getElementById("type").value}
+function renderPossibilityDiagnosis(){
+ const tags=["論理的に考える","アイデアを出す","表現するのが好き","人を支えたい","観察力がある","数字・分析が得意","言葉・英語が好き","手を動かすのが好き","自然・生き物が好き","機械・PCが好き"];
+ document.getElementById("app").innerHTML=`<div class="card"><h2>🌱 可能性診断</h2><p class="small">当てはまるものを選んでください。</p><div class="chips">${tags.map(t=>`<span class="tag" onclick="this.classList.toggle('on')">${t}</span>`).join("")}</div><div class="actions"><button class="btn" onclick="renderDomainResults()">結果を見る</button><button class="btn gray" onclick="renderHome()">ホーム</button></div></div>`;
+}
+function renderDomainResults(){renderAcademic()}
+function renderDreamSearch(q=""){
+ const dream=["ゲーム","美術","音楽","動物","宇宙","建築","医療","先生","英語","スポーツ"];
+ document.getElementById("app").innerHTML=`<div class="card"><h2>💭 夢・好きから探す</h2><p class="small">好きなことから複数の進路へ広げます。</p><div class="grid">${dream.map(d=>`<div class="navCard" onclick="renderDreamRoute('${d}')"><div class="navIcon">💭</div><h3>${d}</h3><p>${d}に関わる学問・大学を探します。</p></div>`).join("")}</div></div>`;
+}
+function renderDreamRoute(d){
+ const list=domains.filter(x=>(x.keys.join("")+x.name).includes(d)||d==="ゲーム"&&x.name.includes("情報")||d==="宇宙"&&x.name.includes("情報"));
+ document.getElementById("app").innerHTML=`<div class="card"><h2>💭 ${d}から広がる進路</h2>${(list.length?list:domains.slice(0,4)).map(domainCard).join("")}</div>`;
+}
+function domainCard(d){return `<div class="route"><h3>${d.icon} ${d.name}</h3><div>${d.studies.map(s=>`<span class="pill">${s}</span>`).join("")}</div><p class="small">関連職業：${d.careers.join("・")}</p><button class="btn" onclick="renderDomain('${d.name}')">関連大学を見る</button></div>`}
+function renderAcademic(){document.getElementById("app").innerHTML=`<div class="card"><h2>🎓 学部・学科</h2>${domains.map(domainCard).join("")}</div>`}
+function renderDomain(name){const d=domains.find(x=>x.name===name)||domains[0];const list=universities.filter(u=>d.match.some(m=>(u.field+u.faculties.join("")).includes(m)));renderResults(list.length?list:universities.slice(0,8))}
+function renderUniversitySearch(){
+ document.getElementById("app").innerHTML=`<div class="card"><h2>🏫 大学検索</h2><input id="uq" placeholder="大学名・地域・分野"><div class="actions"><button class="btn" onclick="searchUni()">検索</button><button class="btn gray" onclick="renderResults(universities)">全大学を見る</button></div></div>`;
+}
+function searchUni(){const q=document.getElementById("uq").value;renderResults(universities.filter(u=>(u.name+u.pref+u.field+u.faculties.join("")).includes(q)))}
+function toggleSelect(name){if(state.selected.includes(name))state.selected=state.selected.filter(x=>x!==name);else state.selected.push(name);alert(`${name}を比較リストに反映しました。`)}
+function renderCompare(){const list=universities.filter(u=>state.selected.includes(u.name));document.getElementById("app").innerHTML=`<div class="card"><h2>📊 比較</h2>${list.length?list.map(uniCard).join(""):"<p>比較したい大学を各大学カードから追加してください。</p>"}</div>`}
+function renderMeeting(){document.getElementById("app").innerHTML=`<div class="card"><h2>👨‍🏫 面談サポート</h2><div class="warning">志望校候補、合格可能性、伸ばすべき科目を面談用に整理します。</div><textarea rows="6" placeholder="面談メモ"></textarea><div class="actions"><button class="btn" onclick="window.print()">PDF/印刷</button><button class="btn gray" onclick="renderHome()">ホーム</button></div></div>`}
+function renderData(){document.getElementById("app").innerHTML=`<div class="card"><h2>🗂️ 大学データ</h2><p>登録大学：${universities.length}校</p>${universities.map(u=>`<div class="uni"><strong>${u.name}</strong><div class="small">${u.type}／${u.pref}／${u.faculties.join("・")}</div></div>`).join("")}</div>`}
+function renderQuality(){document.getElementById("app").innerHTML=`<div class="card"><h2>🛡️ 品質保証</h2><div class="warning">現在は公式データベース対応の設計段階です。今後、大学ごとに対象年度・更新日・情報源を記録します。</div><p><b>5つの約束</b></p><p>公式情報を基盤にします。根拠ある提案を行います。子どもの可能性を狭めません。最新情報を継続して更新します。進学後の未来まで見据えます。</p></div>`}
+function renderDetail(name){const u=universities.find(x=>x.name===name);if(!u)return;document.getElementById("app").innerHTML=`<div class="card"><h2>${u.name}</h2>${uniCard(u)}<h3>学部</h3><div>${u.faculties.map(f=>`<span class="pill">${f}</span>`).join("")}</div><h3>AI最短ルート</h3><div class="warning">${improve(u)}</div></div>`}
+
+function finishSplash(skip){
+  const sp=document.getElementById("splash");
+  if(!sp)return;
+  if(skip) localStorage.setItem("shingakuSplashSeen_v51","1");
+  sp.classList.add("fadeOut");
+  setTimeout(()=>{sp.remove();},560);
+}
+function startAppWithSplash(){
+  renderHome();
+  const seen=localStorage.getItem("shingakuSplashSeen_v51");
+  const sp=document.getElementById("splash");
+  if(!sp)return;
+  if(seen==="1"){sp.remove();return;}
+  setTimeout(()=>finishSplash(false),3000);
+  localStorage.setItem("shingakuSplashSeen_v51","1");
+}
+startAppWithSplash();
+
+</script>
+</body>
+</html>
