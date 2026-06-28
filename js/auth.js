@@ -1,8 +1,11 @@
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+// 進学コンパス Ver.10 認証・ログイン継続
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
 
 const SC = window.SC || (window.SC = {});
 SC.currentUser = null;
 SC.currentProfile = null;
+
+setPersistence(window.SCFB.auth, browserLocalPersistence).catch(console.error);
 
 function studentIdToEmail(id){
   return String(id || "").trim().toLowerCase().replace(/\s+/g,"") + "@shingaku-compass.local";
@@ -15,50 +18,33 @@ async function loadProfile(uid){
 }
 
 SC.renderLogin = function(){
-  SC.closeMenu?.();
-  document.getElementById("app").innerHTML = `
-  <section class="card">
-    <h1>🔐 ログイン</h1>
-    <p class="help">生徒はメールアドレスなしで、生徒IDだけでログインできます。</p>
-    <div class="grid two">
-      <div class="box">
-        <h2>🎓 生徒ログイン</h2>
-        <label>生徒ID</label><input id="studentIdInput" placeholder="例：OBU001">
-        <label>パスワード</label><input id="studentPasswordInput" type="password">
-        <button class="btn primary" onclick="SC.loginStudent()">ログイン</button>
-        <p id="studentLoginMsg" class="help"></p>
-      </div>
-      <div class="box">
-        <h2>👨‍🏫 先生ログイン</h2>
-        <label>メールアドレス</label><input id="teacherEmailInput" placeholder="teacher@shingaku-compass.local">
-        <label>パスワード</label><input id="teacherPasswordInput" type="password">
-        <button class="btn navy" onclick="SC.loginTeacher()">ログイン</button>
-        <p id="teacherLoginMsg" class="help"></p>
-      </div>
-    </div>
-  </section>`;
+  SC.renderWelcome ? SC.renderWelcome() : null;
 };
 
 SC.loginStudent = async function(){
-  const id = document.getElementById("studentIdInput").value;
-  const pw = document.getElementById("studentPasswordInput").value;
+  const id = document.getElementById("studentIdInput")?.value;
+  const pw = document.getElementById("studentPasswordInput")?.value;
+  const msg = document.getElementById("studentLoginMsg");
   try{
     await signInWithEmailAndPassword(window.SCFB.auth, studentIdToEmail(id), pw);
-    SC.renderStudentDashboard();
+    localStorage.setItem("sc_last_mode", "student");
+    setTimeout(() => SC.renderStudentDashboard(), 400);
   }catch(e){
-    document.getElementById("studentLoginMsg").textContent = "ログインできませんでした。";
+    if(msg) msg.textContent = "ログインできませんでした。先生側で生徒ログイン有効化後に使えます。";
     console.error(e);
   }
 };
 
 SC.loginTeacher = async function(){
-  const email = document.getElementById("teacherEmailInput").value;
-  const pw = document.getElementById("teacherPasswordInput").value;
+  const email = document.getElementById("teacherEmailInput")?.value;
+  const pw = document.getElementById("teacherPasswordInput")?.value;
+  const msg = document.getElementById("teacherLoginMsg");
   try{
     await signInWithEmailAndPassword(window.SCFB.auth, email, pw);
-    SC.renderTeacherDashboard();
+    localStorage.setItem("sc_last_mode", "teacher");
+    setTimeout(() => SC.renderTeacherDashboard(), 400);
   }catch(e){
-    document.getElementById("teacherLoginMsg").textContent = "ログインできませんでした。";
+    if(msg) msg.textContent = "ログインできませんでした。メールアドレスまたはパスワードを確認してください。";
     console.error(e);
   }
 };
@@ -67,10 +53,24 @@ SC.logout = async function(){
   await signOut(window.SCFB.auth);
   SC.currentUser = null;
   SC.currentProfile = null;
-  SC.renderLogin();
+  localStorage.removeItem("sc_last_mode");
+  SC.renderWelcome ? SC.renderWelcome() : null;
 };
 
 onAuthStateChanged(window.SCFB.auth, async user => {
   SC.currentUser = user || null;
-  SC.currentProfile = user ? await loadProfile(user.uid) : null;
+  SC.currentProfile = null;
+
+  if(user){
+    try{
+      SC.currentProfile = await loadProfile(user.uid);
+      if(SC.currentProfile?.role === "teacher"){
+        localStorage.setItem("sc_last_mode", "teacher");
+      }else if(SC.currentProfile?.role === "student"){
+        localStorage.setItem("sc_last_mode", "student");
+      }
+    }catch(e){
+      console.warn("profile load failed", e);
+    }
+  }
 });
