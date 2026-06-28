@@ -1,4 +1,4 @@
-// 進学コンパス Ver.14 生徒マイページ・学習記録・カウントダウン強化版
+// 進学コンパス Ver.14.1 生徒マイページ・第一志望保存修正版
 
 const SC = window.SC || (window.SC = {});
 
@@ -29,7 +29,6 @@ function daysUntil(dateStr){
   return Math.ceil((target - today) / (1000 * 60 * 60 * 24));
 }
 
-// 2027年度 大学入学共通テスト 本試験1日目想定
 SC.commonTestDate = "2027-01-16";
 
 SC.renderStudentDashboard = async function(){
@@ -52,12 +51,22 @@ SC.renderStudentDashboard = async function(){
   await SC.loadStudentDashboard();
 };
 
+SC.reloadMyProfile = async function(){
+  if(!SC.currentUser) return null;
+  const { db, doc, getDoc } = window.SCFB;
+  const snap = await getDoc(doc(db, "users", SC.currentUser.uid));
+  if(snap.exists()){
+    SC.currentProfile = { id: snap.id, ...snap.data() };
+  }
+  return SC.currentProfile;
+};
+
 SC.loadStudentDashboard = async function(){
   const box = document.getElementById("studentDashboardBox");
   if(!box || !SC.currentUser) return;
 
   try{
-    const profile = SC.currentProfile || {};
+    const profile = await SC.reloadMyProfile() || {};
     const logs = await SC.getMyStudyLogs();
 
     const today = todayStr();
@@ -75,8 +84,15 @@ SC.loadStudentDashboard = async function(){
     });
 
     const commonDays = daysUntil(SC.commonTestDate);
-    const firstExamDate = profile.firstExamDate || profile.examDate || "";
+    const firstExamDate = profile.firstExamDate || "";
     const firstExamDays = daysUntil(firstExamDate);
+
+    const candidates = [
+      "名古屋大学", "名古屋市立大学", "愛知教育大学", "愛知県立大学",
+      "南山大学", "中京大学", "名城大学", "愛知大学", "愛知学院大学",
+      "藤田医科大学", "日本福祉大学", "愛知淑徳大学", "椙山女学園大学",
+      "金城学院大学", "岐阜大学", "三重大学", "静岡大学"
+    ];
 
     box.innerHTML = `
       <h2>${safeText(profile.name || "生徒")} さん</h2>
@@ -102,11 +118,21 @@ SC.loadStudentDashboard = async function(){
 
       <div class="box">
         <h3>🎯 第一志望・試験日設定</h3>
+        <p class="help">大学名を入力し、試験日を設定するとカウントダウンに反映されます。</p>
+
         <label>第一志望</label>
-        <input id="studentTargetUniversity" value="${safeText(profile.targetUniversity || "")}" placeholder="例：名古屋大学 工学部">
+        <input id="studentTargetUniversity" list="universityCandidateList" value="${safeText(profile.targetUniversity || "")}" placeholder="例：名古屋市立大学">
+        <datalist id="universityCandidateList">
+          ${candidates.map(u => `<option value="${u}"></option>`).join("")}
+        </datalist>
+
         <label>第一志望の試験日</label>
         <input id="studentFirstExamDate" type="date" value="${safeText(firstExamDate || "")}">
-        <button class="btn primary" onclick="SC.saveStudentGoal()">保存</button>
+
+        <div class="actions">
+          <button class="btn primary" onclick="SC.saveStudentGoal()">保存</button>
+          <button class="btn light" onclick="SC.clearStudentGoal()">クリア</button>
+        </div>
         <p id="studentGoalMsg" class="help"></p>
       </div>
 
@@ -142,35 +168,39 @@ SC.loadStudentDashboard = async function(){
 SC.saveStudentGoal = async function(){
   if(!SC.currentUser) return;
 
-  const targetUniversity = document.getElementById("studentTargetUniversity")?.value || "";
+  const targetUniversity = document.getElementById("studentTargetUniversity")?.value?.trim() || "";
   const firstExamDate = document.getElementById("studentFirstExamDate")?.value || "";
   const msg = document.getElementById("studentGoalMsg");
 
   try{
-    const { db, doc, updateDoc, serverTimestamp } = window.SCFB;
-    await updateDoc(doc(db, "users", SC.currentUser.uid), {
+    const { db, doc, setDoc, serverTimestamp } = window.SCFB;
+
+    const payload = {
       targetUniversity,
       firstExamDate,
       updatedAt: serverTimestamp()
-    });
-    await updateDoc(doc(db, "students", SC.currentUser.uid), {
-      targetUniversity,
-      firstExamDate,
-      updatedAt: serverTimestamp()
-    }).catch(()=>{});
+    };
+
+    await setDoc(doc(db, "users", SC.currentUser.uid), payload, { merge:true });
+    await setDoc(doc(db, "students", SC.currentUser.uid), payload, { merge:true });
 
     SC.currentProfile = {
       ...(SC.currentProfile || {}),
-      targetUniversity,
-      firstExamDate
+      ...payload
     };
 
-    if(msg) msg.textContent = "保存しました。";
+    if(msg) msg.textContent = "保存しました。カウントダウンに反映します。";
     await SC.loadStudentDashboard();
   }catch(e){
-    if(msg) msg.textContent = "保存できませんでした。";
+    if(msg) msg.textContent = "保存できませんでした。Firestore Rules を確認してください。";
     console.error(e);
   }
+};
+
+SC.clearStudentGoal = async function(){
+  document.getElementById("studentTargetUniversity").value = "";
+  document.getElementById("studentFirstExamDate").value = "";
+  await SC.saveStudentGoal();
 };
 
 SC.renderStudyForm = function(){
