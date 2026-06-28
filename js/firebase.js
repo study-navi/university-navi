@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/fireba
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
 import {
   getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc,
-  query, where, serverTimestamp
+  updateDoc, deleteDoc, query, where, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -16,10 +16,12 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
+window.SCFB_CONFIG = firebaseConfig;
 window.SCFB = {
   app,
   auth: getAuth(app),
   db: getFirestore(app),
   collection, doc, getDoc, getDocs, setDoc, addDoc,
-  query, where, serverTimestamp
+  updateDoc, deleteDoc, query, where, serverTimestamp
 };

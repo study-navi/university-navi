@@ -1,4 +1,4 @@
-// 進学コンパス Ver.12 認証・ログイン継続
+// 進学コンパス Ver.13 認証・ログイン継続
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
 
 const SC = window.SC || (window.SC = {});
@@ -44,7 +44,7 @@ SC.loginStudent = async function(){
     localStorage.setItem("sc_current_mode", "student");
     setTimeout(() => SC.renderStudentHome ? SC.renderStudentHome() : SC.renderStudentDashboard(), 600);
   }catch(e){
-    if(msg) msg.textContent = "ログインできませんでした。先生側で生徒ログイン有効化後に使えます。";
+    if(msg) msg.textContent = "ログインできませんでした。生徒IDまたはパスワードを確認してください。";
     console.error(e);
   }
 };
@@ -70,4 +70,6 @@ onAuthStateChanged(window.SCFB.auth, async user => {
       console.warn("profile load failed", e);
     }
   }
+
+  if(SC.updateRoleNav) SC.updateRoleNav();
 });
