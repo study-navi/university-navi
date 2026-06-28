@@ -1,7 +1,7 @@
-// 進学コンパス Ver.13.1 先生画面・ログイン有効化対応
+// 進学コンパス Ver.13.3 先生画面・生徒ログイン修正版
 
 import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signOut as secondarySignOut } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as secondarySignOut } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
 
 const SC = window.SC || (window.SC = {});
 
@@ -9,18 +9,37 @@ function todayStr(){ return new Date().toISOString().slice(0,10); }
 function dateDaysAgo(n){ const d = new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
 function ymStr(){ return new Date().toISOString().slice(0,7); }
 function safeText(v){ return String(v ?? "").replace(/[<>&]/g, s => ({ "<":"&lt;", ">":"&gt;", "&":"&amp;" }[s])); }
+function normalizePassword(pw){
+  const raw = String(pw || "").trim();
+  if(raw.length >= 6) return raw;
+  return raw.padEnd(6, "0") || "000000";
+}
 
-async function createStudentAuthAccount(studentId, password){
+async function createOrRecoverStudentAuthAccount(studentId, password){
   const appName = "studentCreateApp_" + Date.now();
   const secondaryApp = initializeApp(window.SCFB_CONFIG, appName);
   const secondaryAuth = getAuth(secondaryApp);
+  const email = SC.studentIdToEmail ? SC.studentIdToEmail(studentId) : (String(studentId).toLowerCase() + "@student.shingaku-compass.com");
+  const fixedPw = normalizePassword(password);
+
   try{
-    const email = SC.studentIdToEmail ? SC.studentIdToEmail(studentId) : (String(studentId).toLowerCase() + "@student.shingaku-compass.com");
-    const cred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+    const cred = await createUserWithEmailAndPassword(secondaryAuth, email, fixedPw);
     await secondarySignOut(secondaryAuth);
     await deleteApp(secondaryApp);
-    return { uid: cred.user.uid, email };
+    return { uid: cred.user.uid, email, password: fixedPw, recovered:false };
   }catch(e){
+    if(e?.code === "auth/email-already-in-use"){
+      try{
+        const cred = await signInWithEmailAndPassword(secondaryAuth, email, fixedPw);
+        await secondarySignOut(secondaryAuth);
+        await deleteApp(secondaryApp);
+        return { uid: cred.user.uid, email, password: fixedPw, recovered:true };
+      }catch(signErr){
+        try{ await deleteApp(secondaryApp); }catch(_){}
+        signErr.originalCode = e.code;
+        throw signErr;
+      }
+    }
     try{ await deleteApp(secondaryApp); }catch(_){}
     throw e;
   }
@@ -77,10 +96,7 @@ SC.renderTeacherSummary = async function(){
         <div class="box"><b>直近7日</b><br>${weekMin}分</div>
         <div class="box"><b>今月</b><br>${monthMin}分</div>
       </div>`;
-  }catch(e){
-    box.innerHTML = "サマリーを読み込めませんでした。";
-    console.error(e);
-  }
+  }catch(e){ box.innerHTML = "サマリーを読み込めませんでした。"; console.error(e); }
 };
 
 SC.makeStudentId = async function(){
@@ -98,7 +114,6 @@ SC.renderAddStudent = async function(){
   let nextId = "KYOWA001";
   try{ nextId = await SC.makeStudentId(); }catch(e){}
   const pw = SC.makePassword();
-
   box.innerHTML = `
     <h2>＋ 生徒追加</h2>
     <p class="help">登録後、生徒はこのIDとパスワードでログインできます。</p>
@@ -114,7 +129,7 @@ SC.renderAddStudent = async function(){
 
 SC.createStudent = async function(){
   const id = document.getElementById("newStudentId")?.value?.trim();
-  const pw = document.getElementById("newStudentPassword")?.value?.trim();
+  const pw = normalizePassword(document.getElementById("newStudentPassword")?.value);
   const name = document.getElementById("newStudentName")?.value?.trim();
   const school = document.getElementById("newStudentSchool")?.value?.trim();
   const grade = document.getElementById("newStudentGrade")?.value?.trim();
@@ -128,7 +143,7 @@ SC.createStudent = async function(){
 
   try{
     if(msg) msg.textContent = "登録中...";
-    const created = await createStudentAuthAccount(id, pw);
+    const created = await createOrRecoverStudentAuthAccount(id, pw);
 
     const { db, doc, setDoc, serverTimestamp } = window.SCFB;
     const studentKey = id.toLowerCase().replace(/\s+/g,"");
@@ -138,25 +153,27 @@ SC.createStudent = async function(){
       studentId:id,
       loginId:studentKey,
       email:created.email,
-      initialPassword:pw,
+      initialPassword:created.password,
       name,
       school:school || "",
       grade:grade || "",
       targetUniversity:target || "",
       createdBy:SC.currentUser?.uid || "",
       createdAt:serverTimestamp(),
-      authEnabled:true
+      authEnabled:true,
+      authUid:created.uid
     };
 
     await setDoc(doc(db, "students", created.uid), data);
     await setDoc(doc(db, "users", created.uid), data);
 
-    if(msg) msg.innerHTML = `登録しました。<br>生徒ID：<b>${id}</b><br>初期PW：<b>${pw}</b>`;
+    if(msg) msg.innerHTML = `登録しました。<br>生徒ID：<b>${id}</b><br>初期PW：<b>${created.password}</b>`;
     await SC.loadStudents();
   }catch(e){
     let text = "登録できませんでした。";
-    if(e?.code === "auth/email-already-in-use") text = "この生徒IDはすでにログイン有効化されています。";
     if(e?.code === "auth/weak-password") text = "パスワードは6文字以上にしてください。";
+    if(e?.code === "auth/wrong-password") text = "既に同じIDがあります。パスワードが違うため復旧できません。別IDで登録してください。";
+    if(e?.code === "auth/invalid-credential") text = "既に同じIDがあります。以前のパスワードと違う可能性があります。別IDで登録してください。";
     if(msg) msg.textContent = text;
     console.error(e);
   }
@@ -164,7 +181,8 @@ SC.createStudent = async function(){
 
 SC.enableStudentLogin = async function(uid, studentId, password, name){
   try{
-    const created = await createStudentAuthAccount(studentId, password || "123456");
+    const fixedPw = normalizePassword(password || "000000");
+    const created = await createOrRecoverStudentAuthAccount(studentId, fixedPw);
     const { db, doc, getDoc, setDoc, deleteDoc, serverTimestamp } = window.SCFB;
     const oldSnap = await getDoc(doc(db, "users", uid));
     const oldData = oldSnap.exists() ? oldSnap.data() : {};
@@ -173,11 +191,11 @@ SC.enableStudentLogin = async function(uid, studentId, password, name){
       ...oldData,
       role:"student",
       studentId,
-      email: created.email,
-      initialPassword: password || "123456",
+      email:created.email,
+      initialPassword:created.password,
       authEnabled:true,
-      authUid: created.uid,
-      updatedAt: serverTimestamp()
+      authUid:created.uid,
+      updatedAt:serverTimestamp()
     };
 
     await setDoc(doc(db, "users", created.uid), data);
@@ -185,10 +203,14 @@ SC.enableStudentLogin = async function(uid, studentId, password, name){
     if(uid !== created.uid){
       await deleteDoc(doc(db, "users", uid));
     }
-    alert(`${name || studentId} のログインを有効化しました。`);
+    alert(`${name || studentId} のログインを有効化しました。\\n生徒ID：${studentId}\\nパスワード：${created.password}`);
     await SC.loadStudents();
   }catch(e){
-    alert("有効化できませんでした。IDが既に使われている可能性があります。");
+    let text = "有効化できませんでした。";
+    if(e?.code === "auth/invalid-credential" || e?.code === "auth/wrong-password"){
+      text = "既に同じIDがあります。以前のパスワードと違う可能性があります。別IDで登録し直してください。";
+    }
+    alert(text);
     console.error(e);
   }
 };
@@ -208,7 +230,7 @@ SC.loadStudents = async function(){
       const todayMin = myLogs.filter(l=>l.date===today).reduce((a,l)=>a+Number(l.minutes||0),0);
       const weekMin = myLogs.filter(l=>String(l.date||"")>=weekStart).reduce((a,l)=>a+Number(l.minutes||0),0);
       const monthMin = myLogs.filter(l=>String(l.date||"").startsWith(month)).reduce((a,l)=>a+Number(l.minutes||0),0);
-      const pw = s.initialPassword || "123456";
+      const pw = normalizePassword(s.initialPassword || "000000");
       return `
       <div class="box">
         <h2>${safeText(s.name || "名前未設定")}</h2>
@@ -217,7 +239,7 @@ SC.loadStudents = async function(){
           学校：${safeText(s.school || "-")} / 学年：${safeText(s.grade || "-")}<br>
           志望校：${safeText(s.targetUniversity || "-")}<br>
           ログイン：${s.authEnabled ? "有効" : "未設定"}<br>
-          初期PW：${safeText(s.initialPassword || "-")}<br>
+          初期PW：${safeText(pw)}<br>
           今日：${todayMin}分 / 直近7日：${weekMin}分 / 今月：${monthMin}分
         </p>
         <div class="actions">
@@ -227,12 +249,10 @@ SC.loadStudents = async function(){
         </div>
       </div>`;
     }).join("");
-  }catch(e){
-    list.innerHTML = `<div class="box">読み込み失敗。Firestoreルールを確認してください。</div>`;
-    console.error(e);
-  }
+  }catch(e){ list.innerHTML = `<div class="box">読み込み失敗。Firestoreルールを確認してください。</div>`; console.error(e); }
 };
 
+/* keep study/ranking functions compact */
 SC.renderAddStudyForStudent = function(uid, name){
   const box = document.getElementById("teacherBox");
   const today = todayStr();
@@ -254,20 +274,12 @@ SC.saveStudyForStudent = async function(uid, name){
   const memo = document.getElementById("teacherStudyMemo")?.value || "";
   const msg = document.getElementById("teacherStudyMsg");
   if(!date || !subject || minutes <= 0){ if(msg) msg.textContent = "日付・教科・時間を入力してください。"; return; }
-
   try{
     const { db, collection, addDoc, serverTimestamp } = window.SCFB;
-    await addDoc(collection(db, "studyLogs"), {
-      uid, studentName:name || "", date, subject, minutes, memo,
-      inputBy:"teacher", createdBy:SC.currentUser?.uid || "",
-      createdAt:serverTimestamp(), updatedAt:serverTimestamp()
-    });
+    await addDoc(collection(db, "studyLogs"), {uid, studentName:name||"", date, subject, minutes, memo, inputBy:"teacher", createdBy:SC.currentUser?.uid||"", createdAt:serverTimestamp(), updatedAt:serverTimestamp()});
     if(msg) msg.textContent = "保存しました。";
     await SC.showStudentLogs(uid, name);
-  }catch(e){
-    if(msg) msg.textContent = "保存できませんでした。";
-    console.error(e);
-  }
+  }catch(e){ if(msg) msg.textContent = "保存できませんでした。"; console.error(e); }
 };
 
 SC.showStudentLogs = async function(uid, name){
@@ -294,10 +306,7 @@ SC.showStudentLogs = async function(uid, name){
             <button class="btn light" onclick="SC.deleteStudyLog('${l.id}','${uid}','${String(name||"").replace(/'/g,"")}')">削除</button>
           </div>
         </div>`).join("") : "まだ学習記録はありません。"}`;
-  }catch(e){
-    box.innerHTML = "学習記録を読み込めませんでした。";
-    console.error(e);
-  }
+  }catch(e){ box.innerHTML = "学習記録を読み込めませんでした。"; console.error(e); }
 };
 
 SC.renderEditStudyLog = async function(logId, uid, name){
@@ -317,8 +326,7 @@ SC.renderEditStudyLog = async function(logId, uid, name){
       <div class="actions">
         <button class="btn primary" onclick="SC.updateStudyLog('${logId}','${uid}','${String(name||"").replace(/'/g,"")}')">保存</button>
         <button class="btn light" onclick="SC.showStudentLogs('${uid}','${String(name||"").replace(/'/g,"")}')">戻る</button>
-      </div>
-      <p id="editStudyMsg" class="help"></p>`;
+      </div><p id="editStudyMsg" class="help"></p>`;
   }catch(e){ box.innerHTML = "編集画面を開けませんでした。"; console.error(e); }
 };
 
@@ -362,7 +370,7 @@ SC.renderTeacherRanking = async function(){
       logs.filter(filterFn).forEach(l=>{ totals[l.uid]=(totals[l.uid]||0)+Number(l.minutes||0); });
       const ranking = Object.entries(totals).map(([uid,minutes])=>({uid,name:names[uid]||uid,minutes})).sort((a,b)=>b.minutes-a.minutes);
       return `<h2>${title}</h2>` + (ranking.length ? ranking.map((r,i)=>`
-        <div class="box"><b>${i+1}位　${safeText(r.name)}</b><br>${r.minutes}分（${Math.round(r.minutes/60*10)/10}時間）
+        <div class="box"><b>${i+1}位　${safeText(r.name)}</b><br>${r.minutes}分（${Math.round(r.minutes/60*10)/10}時間)
         <div><button class="btn light" onclick="SC.showStudentLogs('${r.uid}','${String(r.name||"").replace(/'/g,"")}')">詳細</button></div></div>`).join("") : `<div class="box">記録なし</div>`);
     }
     list.innerHTML = makeRanking(l=>l.date===today,"今日") + makeRanking(l=>String(l.date||"")>=weekStart,"直近7日") + makeRanking(l=>String(l.date||"").startsWith(month),"今月");

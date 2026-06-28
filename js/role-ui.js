@@ -1,5 +1,5 @@
-// 進学コンパス Ver.13.2 ユーザー別ホーム完全分離版
-// 共通ホームをやめ、先生・生徒・ゲストで使える機能を明確に分ける
+// 進学コンパス Ver.13.3 UI修正版
+// 左上ボタン短縮・役割別ホーム完全分離・下ナビ安定化
 
 const SC = window.SC || (window.SC = {});
 SC.currentMode = localStorage.getItem("sc_current_mode") || "guest";
@@ -26,7 +26,7 @@ function injectRoleStyles(){
   style.textContent = `
     .topbar{
       display:grid !important;
-      grid-template-columns:auto minmax(0,1fr) auto;
+      grid-template-columns:64px minmax(0,1fr) auto;
       align-items:center;
       gap:8px;
       padding-left:10px !important;
@@ -41,26 +41,27 @@ function injectRoleStyles(){
       white-space:nowrap !important;
       overflow:hidden;
       text-overflow:ellipsis;
-      font-size:clamp(22px, 6vw, 34px) !important;
+      font-size:clamp(22px, 6vw, 32px) !important;
       line-height:1.1 !important;
     }
-    .brand img{width:26px;height:26px;flex:0 0 auto;}
+    .brand img{width:24px;height:24px;flex:0 0 auto;}
     #roleSwitchBtn{
-      border:0;
-      background:rgba(255,255,255,.12);
-      color:white;
-      font-weight:900;
-      border-radius:999px;
-      padding:8px 9px;
-      font-size:13px;
-      white-space:nowrap;
-      max-width:88px;
-      overflow:hidden;
-      text-overflow:ellipsis;
+      border:0 !important;
+      background:rgba(255,255,255,.16) !important;
+      color:white !important;
+      font-weight:900 !important;
+      border-radius:999px !important;
+      padding:8px 10px !important;
+      font-size:13px !important;
+      white-space:nowrap !important;
+      width:58px !important;
+      max-width:58px !important;
+      overflow:visible !important;
+      text-align:center !important;
     }
     .topMenu{
       white-space:nowrap;
-      font-size:clamp(17px,4.2vw,28px) !important;
+      font-size:clamp(17px,4.2vw,26px) !important;
     }
     .roleHero{
       margin:20px auto;
@@ -115,10 +116,16 @@ function injectRoleStyles(){
     }
   `;
   document.head.appendChild(style);
+
+  const btn = document.getElementById("roleSwitchBtn");
+  if(btn) btn.textContent = "切替";
 }
 
 SC.renderRoleSelect = function(){
   injectRoleStyles();
+  const btn = document.getElementById("roleSwitchBtn");
+  if(btn) btn.textContent = "切替";
+
   SC.closeMenu?.();
   setTimeout(() => SC.updateRoleNav?.(), 0);
 
@@ -295,7 +302,7 @@ SC.renderRoleMenu = function(){
       <button onclick="SC.renderAddStudent()">＋ 生徒追加</button>
       <button onclick="SC.renderTeacherRanking()">🏆 ランキング</button>
       <button onclick="SC.go('search')">🔍 大学検索</button>
-      <button onclick="SC.renderRoleSelect()">← ユーザー選択へ</button>
+      <button onclick="SC.renderRoleSelect()">切替</button>
       <button onclick="SC.logout()">🚪 ログアウト</button>`;
   }
   if(mode === "student"){
@@ -306,7 +313,7 @@ SC.renderRoleMenu = function(){
       <button onclick="SC.loadMyStudyLogs()">📈 自分の記録</button>
       <button onclick="SC.go('dream')">💭 夢・好き</button>
       <button onclick="SC.go('search')">🔍 大学検索</button>
-      <button onclick="SC.renderRoleSelect()">← ユーザー選択へ</button>
+      <button onclick="SC.renderRoleSelect()">切替</button>
       <button onclick="SC.logout()">🚪 ログアウト</button>`;
   }
   return `
@@ -315,7 +322,7 @@ SC.renderRoleMenu = function(){
     <button onclick="SC.go('search')">🔍 大学検索</button>
     <button onclick="SC.go('compare')">📊 大学比較</button>
     <button onclick="SC.go('ai')">🤖 AI進路診断</button>
-    <button onclick="SC.renderRoleSelect()">← ユーザー選択へ</button>`;
+    <button onclick="SC.renderRoleSelect()">切替</button>`;
 };
 
 const originalOpenMenu = SC.openMenu;
@@ -331,6 +338,9 @@ SC.openMenu = function(){
 
 window.addEventListener("load", () => {
   injectRoleStyles();
+  const btn = document.getElementById("roleSwitchBtn");
+  if(btn) btn.textContent = "切替";
+
   setTimeout(() => {
     if(SC.currentUser && SC.currentProfile?.role === "teacher"){
       setMode("teacher");
