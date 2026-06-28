@@ -1,4 +1,4 @@
-// 進学コンパス Ver.14.1 生徒マイページ・第一志望保存修正版
+// 進学コンパス Ver.14.2 生徒マイページ・第一志望保存安定版
 
 const SC = window.SC || (window.SC = {});
 
@@ -173,7 +173,7 @@ SC.saveStudentGoal = async function(){
   const msg = document.getElementById("studentGoalMsg");
 
   try{
-    const { db, doc, setDoc, serverTimestamp } = window.SCFB;
+    const { db, doc, setDoc, updateDoc, getDoc, serverTimestamp } = window.SCFB;
 
     const payload = {
       targetUniversity,
@@ -181,15 +181,33 @@ SC.saveStudentGoal = async function(){
       updatedAt: serverTimestamp()
     };
 
-    await setDoc(doc(db, "users", SC.currentUser.uid), payload, { merge:true });
-    await setDoc(doc(db, "students", SC.currentUser.uid), payload, { merge:true });
+    // まず users の自分のプロフィールへ保存。ここが本体。
+    const userRef = doc(db, "users", SC.currentUser.uid);
+    const userSnap = await getDoc(userRef);
+
+    if(userSnap.exists()){
+      await updateDoc(userRef, payload);
+    }else{
+      await setDoc(userRef, {
+        role: "student",
+        uid: SC.currentUser.uid,
+        ...payload
+      }, { merge:true });
+    }
+
+    // students 側は先生管理用の同期。失敗しても保存成功扱いにする。
+    try{
+      await setDoc(doc(db, "students", SC.currentUser.uid), payload, { merge:true });
+    }catch(syncErr){
+      console.warn("students sync skipped", syncErr);
+    }
 
     SC.currentProfile = {
       ...(SC.currentProfile || {}),
       ...payload
     };
 
-    if(msg) msg.textContent = "保存しました。カウントダウンに反映します。";
+    if(msg) msg.textContent = "保存しました。";
     await SC.loadStudentDashboard();
   }catch(e){
     if(msg) msg.textContent = "保存できませんでした。Firestore Rules を確認してください。";
