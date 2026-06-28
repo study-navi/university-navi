@@ -1,4 +1,4 @@
-// 進学コンパス Ver.13 認証・ログイン継続
+// 進学コンパス Ver.13.1 認証修正版
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
 
 const SC = window.SC || (window.SC = {});
@@ -7,9 +7,9 @@ SC.currentProfile = null;
 
 setPersistence(window.SCFB.auth, browserLocalPersistence).catch(console.error);
 
-function studentIdToEmail(id){
-  return String(id || "").trim().toLowerCase().replace(/\s+/g,"") + "@shingaku-compass.local";
-}
+SC.studentIdToEmail = function(id){
+  return String(id || "").trim().toLowerCase().replace(/\s+/g,"") + "@student.shingaku-compass.com";
+};
 
 async function loadProfile(uid){
   const { db, doc, getDoc } = window.SCFB;
@@ -40,11 +40,11 @@ SC.loginStudent = async function(){
   const pw = document.getElementById("studentPasswordInput")?.value;
   const msg = document.getElementById("studentLoginMsg");
   try{
-    await signInWithEmailAndPassword(window.SCFB.auth, studentIdToEmail(id), pw);
+    await signInWithEmailAndPassword(window.SCFB.auth, SC.studentIdToEmail(id), pw);
     localStorage.setItem("sc_current_mode", "student");
     setTimeout(() => SC.renderStudentHome ? SC.renderStudentHome() : SC.renderStudentDashboard(), 600);
   }catch(e){
-    if(msg) msg.textContent = "ログインできませんでした。生徒IDまたはパスワードを確認してください。";
+    if(msg) msg.textContent = "ログインできませんでした。先生画面でログイン有効化してください。";
     console.error(e);
   }
 };

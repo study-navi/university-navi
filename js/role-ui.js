@@ -1,4 +1,5 @@
-// 進学コンパス Ver.13 UI・役割別ナビ整理版
+// 進学コンパス Ver.13.2 ユーザー別ホーム完全分離版
+// 共通ホームをやめ、先生・生徒・ゲストで使える機能を明確に分ける
 
 const SC = window.SC || (window.SC = {});
 SC.currentMode = localStorage.getItem("sc_current_mode") || "guest";
@@ -8,7 +9,7 @@ function appEl(){ return document.getElementById("app"); }
 function setMode(mode){
   SC.currentMode = mode;
   localStorage.setItem("sc_current_mode", mode);
-  SC.updateRoleNav?.();
+  setTimeout(() => SC.updateRoleNav?.(), 0);
 }
 
 function roleText(){
@@ -23,6 +24,44 @@ function injectRoleStyles(){
   const style = document.createElement("style");
   style.id = "roleUiStyle";
   style.textContent = `
+    .topbar{
+      display:grid !important;
+      grid-template-columns:auto minmax(0,1fr) auto;
+      align-items:center;
+      gap:8px;
+      padding-left:10px !important;
+      padding-right:10px !important;
+    }
+    .brand{
+      min-width:0;
+      justify-content:center;
+      overflow:hidden;
+    }
+    .brand span{
+      white-space:nowrap !important;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      font-size:clamp(22px, 6vw, 34px) !important;
+      line-height:1.1 !important;
+    }
+    .brand img{width:26px;height:26px;flex:0 0 auto;}
+    #roleSwitchBtn{
+      border:0;
+      background:rgba(255,255,255,.12);
+      color:white;
+      font-weight:900;
+      border-radius:999px;
+      padding:8px 9px;
+      font-size:13px;
+      white-space:nowrap;
+      max-width:88px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .topMenu{
+      white-space:nowrap;
+      font-size:clamp(17px,4.2vw,28px) !important;
+    }
     .roleHero{
       margin:20px auto;
       border-radius:30px;
@@ -44,15 +83,11 @@ function injectRoleStyles(){
       text-align:left;background:white;color:#0b2d5c;
       box-shadow:0 10px 24px rgba(20,59,115,.10);
       border:1px solid #dce9f8;
-      cursor:pointer;transition:.15s transform,.15s box-shadow;
+      cursor:pointer;
     }
-    .roleCard:active{transform:scale(.98);}
     .roleCard h2{font-size:24px;margin:0 0 8px;}
     .roleCard p{margin:0 0 12px;line-height:1.55;color:#58708f;}
     .roleCard b{color:#0a63c7;font-size:16px;}
-    .roleCard.teacher{background:linear-gradient(145deg,#ffffff,#edf5ff);}
-    .roleCard.student{background:linear-gradient(145deg,#ffffff,#f3f7ff);}
-    .roleCard.guest{background:linear-gradient(145deg,#ffffff,#f8fbff);}
     .rolePill{
       display:inline-block;border-radius:999px;padding:7px 12px;
       background:#e8f2ff;color:#143b73;font-weight:800;font-size:13px;
@@ -65,7 +100,15 @@ function injectRoleStyles(){
     }
     .modeTile h2{margin:0 0 8px;font-size:22px;}
     .modeTile p{margin:0;color:#58708f;line-height:1.5;}
-    #roleSwitchBtn{font-size:14px;padding:8px 10px;white-space:nowrap;}
+    .modeNotice{
+      border-radius:18px;
+      padding:14px 16px;
+      background:#f3f8ff;
+      border:1px solid #dce9f8;
+      color:#143b73;
+      margin-bottom:14px;
+      font-weight:700;
+    }
     @media (min-width:720px){
       .roleCards{grid-template-columns:1fr 1fr 1fr;}
       .modeHomeGrid{grid-template-columns:1fr 1fr;}
@@ -77,6 +120,8 @@ function injectRoleStyles(){
 SC.renderRoleSelect = function(){
   injectRoleStyles();
   SC.closeMenu?.();
+  setTimeout(() => SC.updateRoleNav?.(), 0);
+
   const app = appEl();
   if(!app) return;
 
@@ -88,26 +133,24 @@ SC.renderRoleSelect = function(){
     <div class="roleHeroTitle">
       <div class="roleLogo">🎓</div>
       <h1>進学コンパス</h1>
-      <p class="help">大学検索と学習管理をひとつに。</p>
+      <p class="help">利用するモードを選んでください。</p>
       <span class="rolePill">${roleText()}</span>
     </div>
 
     <div class="roleCards">
-      <button class="roleCard teacher" onclick="SC.enterTeacherMode()">
+      <button class="roleCard" onclick="SC.enterTeacherMode()">
         <h2>👨‍🏫 先生</h2>
-        <p>生徒管理・学習記録・ランキングを確認します。</p>
+        <p>生徒管理・学習記録・ランキングを使います。</p>
         <b>${teacherLogged ? "ログイン済み・先生ホームへ" : "先生ログインへ"}</b>
       </button>
-
-      <button class="roleCard student" onclick="SC.enterStudentMode()">
+      <button class="roleCard" onclick="SC.enterStudentMode()">
         <h2>🎓 生徒</h2>
-        <p>勉強を記録し、自分のマイページを使います。</p>
+        <p>マイページ・勉強記録・夢好き診断を使います。</p>
         <b>${studentLogged ? "ログイン済み・生徒ホームへ" : "生徒ログインへ"}</b>
       </button>
-
-      <button class="roleCard guest" onclick="SC.enterGuestMode()">
+      <button class="roleCard" onclick="SC.enterGuestMode()">
         <h2>🌎 ゲスト</h2>
-        <p>ログインなしで大学検索・比較・診断を使います。</p>
+        <p>大学検索・比較・夢好き診断だけ使います。</p>
         <b>ゲストで始める</b>
       </button>
     </div>
@@ -116,20 +159,14 @@ SC.renderRoleSelect = function(){
 
 SC.enterTeacherMode = function(){
   setMode("teacher");
-  if(SC.currentUser && SC.currentProfile?.role === "teacher"){
-    SC.renderTeacherHome();
-  }else{
-    SC.renderTeacherLogin();
-  }
+  if(SC.currentUser && SC.currentProfile?.role === "teacher") SC.renderTeacherHome();
+  else SC.renderTeacherLogin();
 };
 
 SC.enterStudentMode = function(){
   setMode("student");
-  if(SC.currentUser && SC.currentProfile?.role === "student"){
-    SC.renderStudentHome();
-  }else{
-    SC.renderStudentLogin();
-  }
+  if(SC.currentUser && SC.currentProfile?.role === "student") SC.renderStudentHome();
+  else SC.renderStudentLogin();
 };
 
 SC.enterGuestMode = function(){
@@ -139,8 +176,7 @@ SC.enterGuestMode = function(){
 
 SC.renderTeacherLogin = function(){
   injectRoleStyles();
-  const app = appEl();
-  app.innerHTML = `
+  appEl().innerHTML = `
   <section class="card">
     <h1>👨‍🏫 先生ログイン</h1>
     <p class="help">ログアウトするまでログイン状態は保持されます。</p>
@@ -158,8 +194,7 @@ SC.renderTeacherLogin = function(){
 
 SC.renderStudentLogin = function(){
   injectRoleStyles();
-  const app = appEl();
-  app.innerHTML = `
+  appEl().innerHTML = `
   <section class="card">
     <h1>🎓 生徒ログイン</h1>
     <p class="help">先生から発行された生徒IDとパスワードでログインします。</p>
@@ -178,11 +213,10 @@ SC.renderStudentLogin = function(){
 SC.renderTeacherHome = function(){
   injectRoleStyles();
   setMode("teacher");
-  const app = appEl();
-  app.innerHTML = `
+  appEl().innerHTML = `
   <section class="card">
     <h1>👨‍🏫 先生ホーム</h1>
-    <p class="help">先生向け機能をまとめています。</p>
+    <div class="modeNotice">先生用：生徒管理・学習管理・進路相談に必要な機能だけ表示しています。</div>
     <div class="modeHomeGrid">
       <button class="modeTile" onclick="SC.renderTeacherDashboard()"><h2>📊 ダッシュボード</h2><p>生徒一覧・学習時間・ランキング。</p></button>
       <button class="modeTile" onclick="SC.renderAddStudent()"><h2>＋ 生徒追加</h2><p>生徒IDと初期パスワードを発行。</p></button>
@@ -190,43 +224,39 @@ SC.renderTeacherHome = function(){
       <button class="modeTile" onclick="SC.go('search')"><h2>🔍 大学検索</h2><p>生徒の志望校相談に使う。</p></button>
     </div>
   </section>`;
-  SC.updateRoleNav?.();
 };
 
 SC.renderStudentHome = function(){
   injectRoleStyles();
   setMode("student");
-  const app = appEl();
-  app.innerHTML = `
+  appEl().innerHTML = `
   <section class="card">
     <h1>🎓 生徒ホーム</h1>
-    <p class="help">自分の学習記録・志望校管理を使います。</p>
+    <div class="modeNotice">生徒用：自分の学習・進路に関係する機能だけ表示しています。</div>
     <div class="modeHomeGrid">
       <button class="modeTile" onclick="SC.renderStudentDashboard()"><h2>👤 マイページ</h2><p>自分の情報・学習状況を確認。</p></button>
       <button class="modeTile" onclick="SC.renderStudyForm()"><h2>📚 勉強記録</h2><p>今日の勉強時間を入力。</p></button>
       <button class="modeTile" onclick="SC.loadMyStudyLogs()"><h2>📈 自分の記録</h2><p>教科別・日別の記録を確認。</p></button>
+      <button class="modeTile" onclick="SC.go('dream')"><h2>💭 夢・好き</h2><p>興味から進路を探す。</p></button>
       <button class="modeTile" onclick="SC.go('search')"><h2>🔍 大学検索</h2><p>志望校や学部を調べる。</p></button>
     </div>
   </section>`;
-  SC.updateRoleNav?.();
 };
 
 SC.renderGuestHome = function(){
   injectRoleStyles();
   setMode("guest");
-  const app = appEl();
-  app.innerHTML = `
+  appEl().innerHTML = `
   <section class="card">
     <h1>🌎 ゲストホーム</h1>
-    <p class="help">ログインなしで進路検索機能を利用できます。</p>
+    <div class="modeNotice">ゲスト用：ログインなしで使える進路検索機能だけ表示しています。</div>
     <div class="modeHomeGrid">
-      <button class="modeTile" onclick="SC.go('home')"><h2>🏠 ホーム</h2><p>進学コンパスの通常ホーム。</p></button>
+      <button class="modeTile" onclick="SC.go('dream')"><h2>💭 夢・好き</h2><p>興味から進路を探す。</p></button>
       <button class="modeTile" onclick="SC.go('search')"><h2>🔍 大学検索</h2><p>大学・学部・分野から探す。</p></button>
       <button class="modeTile" onclick="SC.go('compare')"><h2>📊 大学比較</h2><p>候補大学を比べる。</p></button>
       <button class="modeTile" onclick="SC.go('ai')"><h2>🤖 AI進路診断</h2><p>興味や条件から考える。</p></button>
     </div>
   </section>`;
-  SC.updateRoleNav?.();
 };
 
 SC.updateRoleNav = function(){
@@ -238,26 +268,22 @@ SC.updateRoleNav = function(){
   if(mode === "teacher"){
     nav.innerHTML = `
       <button onclick="SC.renderTeacherHome()">🏠<span>先生</span></button>
-      <button onclick="SC.renderTeacherDashboard()">👥<span>生徒</span></button>
-      <button onclick="SC.renderTeacherRanking()">📊<span>管理</span></button>
+      <button onclick="SC.renderTeacherDashboard()">👥<span>生徒管理</span></button>
+      <button onclick="SC.renderTeacherRanking()">📊<span>ランキング</span></button>
       <button onclick="SC.openMenu()">☰<span>メニュー</span></button>`;
-    return;
-  }
-
-  if(mode === "student"){
+  }else if(mode === "student"){
     nav.innerHTML = `
       <button onclick="SC.renderStudentHome()">🏠<span>ホーム</span></button>
       <button onclick="SC.renderStudyForm()">📚<span>勉強</span></button>
-      <button onclick="SC.go('search')">🔍<span>検索</span></button>
+      <button onclick="SC.go('dream')">💭<span>夢・好き</span></button>
       <button onclick="SC.renderStudentDashboard()">👤<span>マイページ</span></button>`;
-    return;
+  }else{
+    nav.innerHTML = `
+      <button onclick="SC.renderGuestHome()">🏠<span>ホーム</span></button>
+      <button onclick="SC.go('dream')">💭<span>夢・好き</span></button>
+      <button onclick="SC.go('search')">🔍<span>検索</span></button>
+      <button onclick="SC.go('compare')">📊<span>比較</span></button>`;
   }
-
-  nav.innerHTML = `
-    <button onclick="SC.renderGuestHome()">🏠<span>ホーム</span></button>
-    <button onclick="SC.go('search')">🔍<span>検索</span></button>
-    <button onclick="SC.go('compare')">📊<span>比較</span></button>
-    <button onclick="SC.openMenu()">☰<span>メニュー</span></button>`;
 };
 
 SC.renderRoleMenu = function(){
@@ -278,13 +304,14 @@ SC.renderRoleMenu = function(){
       <button onclick="SC.renderStudentDashboard()">👤 マイページ</button>
       <button onclick="SC.renderStudyForm()">📚 勉強記録</button>
       <button onclick="SC.loadMyStudyLogs()">📈 自分の記録</button>
+      <button onclick="SC.go('dream')">💭 夢・好き</button>
       <button onclick="SC.go('search')">🔍 大学検索</button>
       <button onclick="SC.renderRoleSelect()">← ユーザー選択へ</button>
       <button onclick="SC.logout()">🚪 ログアウト</button>`;
   }
   return `
     <button onclick="SC.renderGuestHome()">🌎 ゲストホーム</button>
-    <button onclick="SC.go('home')">🏠 ホーム</button>
+    <button onclick="SC.go('dream')">💭 夢・好き</button>
     <button onclick="SC.go('search')">🔍 大学検索</button>
     <button onclick="SC.go('compare')">📊 大学比較</button>
     <button onclick="SC.go('ai')">🤖 AI進路診断</button>

@@ -1,7 +1,6 @@
-// 進学コンパス Ver.13 先生画面・生徒認証アカウント作成対応
-// Secondary Firebase App を使い、先生ログインを保持したまま生徒Authenticationを作成する
+// 進学コンパス Ver.13.1 先生画面・ログイン有効化対応
 
-import { initializeApp, getApps, deleteApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signOut as secondarySignOut } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
 
 const SC = window.SC || (window.SC = {});
@@ -9,7 +8,6 @@ const SC = window.SC || (window.SC = {});
 function todayStr(){ return new Date().toISOString().slice(0,10); }
 function dateDaysAgo(n){ const d = new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
 function ymStr(){ return new Date().toISOString().slice(0,7); }
-function studentIdToEmail(id){ return String(id || "").trim().toLowerCase().replace(/\s+/g,"") + "@shingaku-compass.local"; }
 function safeText(v){ return String(v ?? "").replace(/[<>&]/g, s => ({ "<":"&lt;", ">":"&gt;", "&":"&amp;" }[s])); }
 
 async function createStudentAuthAccount(studentId, password){
@@ -17,10 +15,11 @@ async function createStudentAuthAccount(studentId, password){
   const secondaryApp = initializeApp(window.SCFB_CONFIG, appName);
   const secondaryAuth = getAuth(secondaryApp);
   try{
-    const cred = await createUserWithEmailAndPassword(secondaryAuth, studentIdToEmail(studentId), password);
+    const email = SC.studentIdToEmail ? SC.studentIdToEmail(studentId) : (String(studentId).toLowerCase() + "@student.shingaku-compass.com");
+    const cred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
     await secondarySignOut(secondaryAuth);
     await deleteApp(secondaryApp);
-    return cred.user.uid;
+    return { uid: cred.user.uid, email };
   }catch(e){
     try{ await deleteApp(secondaryApp); }catch(_){}
     throw e;
@@ -66,9 +65,7 @@ SC.renderTeacherSummary = async function(){
   if(!box) return;
   try{
     const { students, logs } = await SC.getAllStudentsAndLogs();
-    const today = todayStr();
-    const weekStart = dateDaysAgo(6);
-    const month = ymStr();
+    const today = todayStr(), weekStart = dateDaysAgo(6), month = ymStr();
     const todayMin = logs.filter(l => l.date === today).reduce((s,l)=>s+Number(l.minutes||0),0);
     const weekMin = logs.filter(l => String(l.date||"") >= weekStart).reduce((s,l)=>s+Number(l.minutes||0),0);
     const monthMin = logs.filter(l => String(l.date||"").startsWith(month)).reduce((s,l)=>s+Number(l.minutes||0),0);
@@ -104,7 +101,7 @@ SC.renderAddStudent = async function(){
 
   box.innerHTML = `
     <h2>＋ 生徒追加</h2>
-    <p class="help">登録すると、生徒本人がこのIDとパスワードでログインできます。</p>
+    <p class="help">登録後、生徒はこのIDとパスワードでログインできます。</p>
     <label>生徒ID</label><input id="newStudentId" value="${nextId}">
     <label>初期パスワード</label><input id="newStudentPassword" value="${pw}">
     <label>氏名</label><input id="newStudentName" placeholder="例：山田太郎">
@@ -131,7 +128,7 @@ SC.createStudent = async function(){
 
   try{
     if(msg) msg.textContent = "登録中...";
-    const authUid = await createStudentAuthAccount(id, pw);
+    const created = await createStudentAuthAccount(id, pw);
 
     const { db, doc, setDoc, serverTimestamp } = window.SCFB;
     const studentKey = id.toLowerCase().replace(/\s+/g,"");
@@ -140,7 +137,7 @@ SC.createStudent = async function(){
       role:"student",
       studentId:id,
       loginId:studentKey,
-      email:studentIdToEmail(id),
+      email:created.email,
       initialPassword:pw,
       name,
       school:school || "",
@@ -148,20 +145,50 @@ SC.createStudent = async function(){
       targetUniversity:target || "",
       createdBy:SC.currentUser?.uid || "",
       createdAt:serverTimestamp(),
-      authEnabled:true,
-      authUid
+      authEnabled:true
     };
 
-    await setDoc(doc(db, "students", authUid), data);
-    await setDoc(doc(db, "users", authUid), data);
+    await setDoc(doc(db, "students", created.uid), data);
+    await setDoc(doc(db, "users", created.uid), data);
 
     if(msg) msg.innerHTML = `登録しました。<br>生徒ID：<b>${id}</b><br>初期PW：<b>${pw}</b>`;
     await SC.loadStudents();
   }catch(e){
     let text = "登録できませんでした。";
-    if(e?.code === "auth/email-already-in-use") text = "この生徒IDはすでに使われています。別のIDにしてください。";
+    if(e?.code === "auth/email-already-in-use") text = "この生徒IDはすでにログイン有効化されています。";
     if(e?.code === "auth/weak-password") text = "パスワードは6文字以上にしてください。";
     if(msg) msg.textContent = text;
+    console.error(e);
+  }
+};
+
+SC.enableStudentLogin = async function(uid, studentId, password, name){
+  try{
+    const created = await createStudentAuthAccount(studentId, password || "123456");
+    const { db, doc, getDoc, setDoc, deleteDoc, serverTimestamp } = window.SCFB;
+    const oldSnap = await getDoc(doc(db, "users", uid));
+    const oldData = oldSnap.exists() ? oldSnap.data() : {};
+
+    const data = {
+      ...oldData,
+      role:"student",
+      studentId,
+      email: created.email,
+      initialPassword: password || "123456",
+      authEnabled:true,
+      authUid: created.uid,
+      updatedAt: serverTimestamp()
+    };
+
+    await setDoc(doc(db, "users", created.uid), data);
+    await setDoc(doc(db, "students", created.uid), data);
+    if(uid !== created.uid){
+      await deleteDoc(doc(db, "users", uid));
+    }
+    alert(`${name || studentId} のログインを有効化しました。`);
+    await SC.loadStudents();
+  }catch(e){
+    alert("有効化できませんでした。IDが既に使われている可能性があります。");
     console.error(e);
   }
 };
@@ -174,15 +201,14 @@ SC.loadStudents = async function(){
     students.sort((a,b)=>String(a.studentId||"").localeCompare(String(b.studentId||"")));
     if(!students.length){ list.innerHTML = `<div class="box">まだ生徒がいません。</div>`; return; }
 
-    const today = todayStr();
-    const weekStart = dateDaysAgo(6);
-    const month = ymStr();
+    const today = todayStr(), weekStart = dateDaysAgo(6), month = ymStr();
 
     list.innerHTML = students.map(s=>{
       const myLogs = logs.filter(l=>l.uid === s.uid);
       const todayMin = myLogs.filter(l=>l.date===today).reduce((a,l)=>a+Number(l.minutes||0),0);
       const weekMin = myLogs.filter(l=>String(l.date||"")>=weekStart).reduce((a,l)=>a+Number(l.minutes||0),0);
       const monthMin = myLogs.filter(l=>String(l.date||"").startsWith(month)).reduce((a,l)=>a+Number(l.minutes||0),0);
+      const pw = s.initialPassword || "123456";
       return `
       <div class="box">
         <h2>${safeText(s.name || "名前未設定")}</h2>
@@ -191,9 +217,11 @@ SC.loadStudents = async function(){
           学校：${safeText(s.school || "-")} / 学年：${safeText(s.grade || "-")}<br>
           志望校：${safeText(s.targetUniversity || "-")}<br>
           ログイン：${s.authEnabled ? "有効" : "未設定"}<br>
+          初期PW：${safeText(s.initialPassword || "-")}<br>
           今日：${todayMin}分 / 直近7日：${weekMin}分 / 今月：${monthMin}分
         </p>
         <div class="actions">
+          ${s.authEnabled ? "" : `<button class="btn navy" onclick="SC.enableStudentLogin('${s.uid}','${safeText(s.studentId || "")}','${safeText(pw)}','${String(s.name||"").replace(/'/g,"")}')">ログイン有効化</button>`}
           <button class="btn primary" onclick="SC.renderAddStudyForStudent('${s.uid}','${String(s.name||"").replace(/'/g,"")}')">記録追加</button>
           <button class="btn light" onclick="SC.showStudentLogs('${s.uid}','${String(s.name||"").replace(/'/g,"")}')">記録を見る</button>
         </div>
@@ -252,13 +280,9 @@ SC.showStudentLogs = async function(uid, name){
     snap.forEach(d=>logs.push({id:d.id, ...d.data()}));
     logs.sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
     const total = logs.reduce((sum,l)=>sum+Number(l.minutes||0),0);
-    const bySubject = {};
-    logs.forEach(l=>bySubject[l.subject||"その他"]=(bySubject[l.subject||"その他"]||0)+Number(l.minutes||0));
-
     box.innerHTML = `
       <h2>📚 ${safeText(name || "生徒")} の記録</h2>
       <p><b>合計：</b>${total}分 / ${logs.length}件</p>
-      <div class="grid two">${Object.entries(bySubject).map(([s,m])=>`<div class="box"><b>${safeText(s)}</b><br>${m}分</div>`).join("")}</div>
       <button class="btn primary" onclick="SC.renderAddStudyForStudent('${uid}','${String(name||"").replace(/'/g,"")}')">記録を追加</button>
       <h3>最近の記録</h3>
       ${logs.length ? logs.slice(0,30).map(l=>`
@@ -295,10 +319,7 @@ SC.renderEditStudyLog = async function(logId, uid, name){
         <button class="btn light" onclick="SC.showStudentLogs('${uid}','${String(name||"").replace(/'/g,"")}')">戻る</button>
       </div>
       <p id="editStudyMsg" class="help"></p>`;
-  }catch(e){
-    box.innerHTML = "編集画面を開けませんでした。";
-    console.error(e);
-  }
+  }catch(e){ box.innerHTML = "編集画面を開けませんでした。"; console.error(e); }
 };
 
 SC.updateStudyLog = async function(logId, uid, name){
@@ -315,10 +336,7 @@ SC.updateStudyLog = async function(logId, uid, name){
     });
     if(msg) msg.textContent = "更新しました。";
     await SC.showStudentLogs(uid, name);
-  }catch(e){
-    if(msg) msg.textContent = "更新できませんでした。";
-    console.error(e);
-  }
+  }catch(e){ if(msg) msg.textContent = "更新できませんでした。"; console.error(e); }
 };
 
 SC.deleteStudyLog = async function(logId, uid, name){
@@ -327,10 +345,7 @@ SC.deleteStudyLog = async function(logId, uid, name){
     const { db, doc, deleteDoc } = window.SCFB;
     await deleteDoc(doc(db, "studyLogs", logId));
     await SC.showStudentLogs(uid, name);
-  }catch(e){
-    alert("削除できませんでした。");
-    console.error(e);
-  }
+  }catch(e){ alert("削除できませんでした。"); console.error(e); }
 };
 
 SC.renderTeacherRanking = async function(){
@@ -351,8 +366,5 @@ SC.renderTeacherRanking = async function(){
         <div><button class="btn light" onclick="SC.showStudentLogs('${r.uid}','${String(r.name||"").replace(/'/g,"")}')">詳細</button></div></div>`).join("") : `<div class="box">記録なし</div>`);
     }
     list.innerHTML = makeRanking(l=>l.date===today,"今日") + makeRanking(l=>String(l.date||"")>=weekStart,"直近7日") + makeRanking(l=>String(l.date||"").startsWith(month),"今月");
-  }catch(e){
-    list.innerHTML = `<div class="box">ランキングを読み込めませんでした。</div>`;
-    console.error(e);
-  }
+  }catch(e){ list.innerHTML = `<div class="box">ランキングを読み込めませんでした。</div>`; console.error(e); }
 };
