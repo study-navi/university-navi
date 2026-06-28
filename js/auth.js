@@ -1,4 +1,4 @@
-// 進学コンパス Ver.10 認証・ログイン継続
+// 進学コンパス Ver.12 認証・ログイン継続
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
 
 const SC = window.SC || (window.SC = {});
@@ -18,21 +18,7 @@ async function loadProfile(uid){
 }
 
 SC.renderLogin = function(){
-  SC.renderWelcome ? SC.renderWelcome() : null;
-};
-
-SC.loginStudent = async function(){
-  const id = document.getElementById("studentIdInput")?.value;
-  const pw = document.getElementById("studentPasswordInput")?.value;
-  const msg = document.getElementById("studentLoginMsg");
-  try{
-    await signInWithEmailAndPassword(window.SCFB.auth, studentIdToEmail(id), pw);
-    localStorage.setItem("sc_last_mode", "student");
-    setTimeout(() => SC.renderStudentDashboard(), 400);
-  }catch(e){
-    if(msg) msg.textContent = "ログインできませんでした。先生側で生徒ログイン有効化後に使えます。";
-    console.error(e);
-  }
+  if(SC.renderRoleSelect) SC.renderRoleSelect();
 };
 
 SC.loginTeacher = async function(){
@@ -41,10 +27,24 @@ SC.loginTeacher = async function(){
   const msg = document.getElementById("teacherLoginMsg");
   try{
     await signInWithEmailAndPassword(window.SCFB.auth, email, pw);
-    localStorage.setItem("sc_last_mode", "teacher");
-    setTimeout(() => SC.renderTeacherDashboard(), 400);
+    localStorage.setItem("sc_current_mode", "teacher");
+    setTimeout(() => SC.renderTeacherHome ? SC.renderTeacherHome() : SC.renderTeacherDashboard(), 600);
   }catch(e){
-    if(msg) msg.textContent = "ログインできませんでした。メールアドレスまたはパスワードを確認してください。";
+    if(msg) msg.textContent = "ログインできませんでした。";
+    console.error(e);
+  }
+};
+
+SC.loginStudent = async function(){
+  const id = document.getElementById("studentIdInput")?.value;
+  const pw = document.getElementById("studentPasswordInput")?.value;
+  const msg = document.getElementById("studentLoginMsg");
+  try{
+    await signInWithEmailAndPassword(window.SCFB.auth, studentIdToEmail(id), pw);
+    localStorage.setItem("sc_current_mode", "student");
+    setTimeout(() => SC.renderStudentHome ? SC.renderStudentHome() : SC.renderStudentDashboard(), 600);
+  }catch(e){
+    if(msg) msg.textContent = "ログインできませんでした。先生側で生徒ログイン有効化後に使えます。";
     console.error(e);
   }
 };
@@ -53,8 +53,8 @@ SC.logout = async function(){
   await signOut(window.SCFB.auth);
   SC.currentUser = null;
   SC.currentProfile = null;
-  localStorage.removeItem("sc_last_mode");
-  SC.renderWelcome ? SC.renderWelcome() : null;
+  localStorage.removeItem("sc_current_mode");
+  if(SC.renderRoleSelect) SC.renderRoleSelect();
 };
 
 onAuthStateChanged(window.SCFB.auth, async user => {
@@ -64,11 +64,8 @@ onAuthStateChanged(window.SCFB.auth, async user => {
   if(user){
     try{
       SC.currentProfile = await loadProfile(user.uid);
-      if(SC.currentProfile?.role === "teacher"){
-        localStorage.setItem("sc_last_mode", "teacher");
-      }else if(SC.currentProfile?.role === "student"){
-        localStorage.setItem("sc_last_mode", "student");
-      }
+      if(SC.currentProfile?.role === "teacher") localStorage.setItem("sc_current_mode", "teacher");
+      if(SC.currentProfile?.role === "student") localStorage.setItem("sc_current_mode", "student");
     }catch(e){
       console.warn("profile load failed", e);
     }
