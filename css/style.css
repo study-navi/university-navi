@@ -1,0 +1,2690 @@
+
+:root{--navy:#143B73;--navy2:#0b2147;--bg:#eef4fb;--line:#dbe7f6;--soft:#f8fbff;--muted:#64748b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--navy2);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;padding-bottom:86px}
+button,input,select{font-family:inherit}
+button{cursor:pointer}
+.topbar{position:sticky;top:0;z-index:50;height:76px;background:linear-gradient(135deg,#143B73,#0b2147);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 22px;box-shadow:0 3px 16px rgba(11,33,71,.15)}
+.brand{display:flex;align-items:center;gap:12px;font-size:24px;font-weight:900}
+.brand img{width:30px;height:30px;object-fit:contain}
+.topMenu{border:0;background:transparent;color:white;font-size:22px;font-weight:900}
+.app{width:100%;max-width:820px;margin:0 auto;padding:18px 16px}
+.card{background:white;border:1px solid var(--line);border-radius:26px;padding:18px;box-shadow:0 8px 24px rgba(20,59,115,.04)}
+.hero{background:linear-gradient(135deg,#eef6ff,#fff 60%,#f5f9ff);border:1px solid var(--line);border-radius:26px;padding:22px 18px}
+.hero h1{margin:0 0 8px;font-size:26px;line-height:1.35;letter-spacing:-.04em}
+.hero p{margin:0 0 14px;color:var(--navy);font-weight:900;line-height:1.6}
+.badge{display:inline-block;border:1px solid #9ee6be;background:#ecfdf3;color:#087443;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:900;margin-bottom:14px}
+.searchLine{height:58px;display:flex;gap:8px;align-items:center;background:white;border-radius:24px;padding:8px 8px 8px 14px;box-shadow:0 6px 18px rgba(20,59,115,.04)}
+.searchIcon{font-size:20px;color:#64748b}
+.searchLine input{flex:1;min-width:0;border:0;background:transparent;font-size:15px;padding:9px 4px}
+.searchLine button,.btn{border:0;background:var(--navy);color:white;border-radius:18px;padding:11px 18px;font-weight:900;text-decoration:none;display:inline-block}
+.btn.light{background:#eef6ff;color:var(--navy)}
+.modeBox{margin:14px 0;display:flex;justify-content:space-between;align-items:center;background:var(--soft);border:1px solid var(--line);border-radius:20px;padding:12px 14px;color:var(--navy);font-weight:900}
+.modeSelect{border:0;background:#eef6ff;color:var(--navy);border-radius:999px;padding:8px 12px;font-weight:900;width:auto}
+.modeDesc{display:block;font-size:11px;color:#64748b;margin-top:2px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.homeCard{border:1px solid var(--line);background:white;border-radius:22px;min-height:138px;padding:14px 8px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;color:var(--navy);font-weight:900}
+.icon{width:54px;height:54px;border-radius:18px;background:#eef6ff;display:flex;align-items:center;justify-content:center;font-size:29px;margin-bottom:9px}
+.homeCard h3{margin:0;font-size:15px;line-height:1.35;word-break:keep-all}
+.homeCard p{margin:6px 0 0;font-size:10.5px;color:var(--muted);line-height:1.45}
+.miniGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.miniBox{background:var(--soft);border:1px solid var(--line);border-radius:18px;padding:11px;color:var(--navy);font-size:12px;font-weight:900}
+.message{text-align:center;margin:18px 0 0;color:var(--muted);font-size:18px;font-weight:900}
+.bottomNav{position:fixed;left:0;right:0;bottom:0;z-index:60;height:76px;background:white;border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;padding-bottom:env(safe-area-inset-bottom)}
+.bottomNav button{border:0;background:transparent;color:var(--navy);font-size:20px;font-weight:900;line-height:1}
+.bottomNav span{display:block;font-size:10px;margin-top:4px;white-space:nowrap}
+.menuOverlay,.tutorial{display:none;position:fixed;inset:0;z-index:100;background:rgba(11,33,71,.35);padding:90px 18px}
+.menuOverlay.on,.tutorial.on{display:block}
+.menuPanel,.tutorialCard{background:white;border-radius:24px;padding:18px;max-width:520px;margin:0 auto}
+.menuPanel h2{margin-top:0}
+.menuPanel button{width:100%;border:1px solid var(--line);background:var(--soft);color:var(--navy);border-radius:16px;padding:12px;margin:5px 0;font-weight:900;text-align:left}
+.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.formGrid label{font-size:12px;color:var(--navy);font-weight:900}
+input,select{width:100%;border:1px solid var(--line);border-radius:14px;padding:10px;background:white;font-size:16px}
+.uniCard{border:1px solid var(--line);background:white;border-radius:22px;padding:14px;margin:12px 0}
+.uniCard h3{margin:0 0 6px;font-size:21px;color:var(--navy)}
+.small{font-size:12px;color:var(--muted);line-height:1.6}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pill{display:inline-block;border:1px solid var(--line);background:#eef6ff;color:var(--navy);border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;margin:3px}
+.choiceCloud{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+.choiceCloud button{border:1px solid var(--line);background:#eef6ff;color:var(--navy);border-radius:999px;padding:8px 10px;font-weight:900}
+.choiceCloud button.on{background:var(--navy);color:white}
+.compareBar{position:fixed;left:12px;right:12px;bottom:82px;z-index:55;background:white;border:1px solid var(--line);border-radius:18px;box-shadow:0 12px 30px rgba(20,59,115,.18);padding:10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.compareBar.hide{display:none}
+.tableWrap{overflow-x:auto}
+table.compare{border-collapse:separate;border-spacing:0;min-width:680px;width:100%;margin-top:12px}
+.compare th,.compare td{border:1px solid var(--line);padding:10px;background:white;font-size:12px;vertical-align:top}
+.compare th{background:var(--soft);color:var(--navy)}
+.opening{position:fixed;inset:0;z-index:999;background:linear-gradient(135deg,#0b2147,#143B73);display:flex;align-items:center;justify-content:center;color:white;transition:opacity .6s}
+.opening.off{opacity:0;pointer-events:none}
+.openingCard{text-align:center;width:min(88vw,420px)}
+.openingCompass{font-size:58px;animation:spinCompass 2.2s ease-in-out}
+.opening h1{font-size:32px;margin:12px 0 5px}
+.opening p{font-weight:900;margin:0 0 18px}
+.loadingBar{height:8px;background:rgba(255,255,255,.25);border-radius:999px;overflow:hidden;margin:16px 0}
+.loadingBar span{display:block;height:100%;width:0;background:white;border-radius:999px;animation:loadBar 3s forwards}
+.loadingChecks{text-align:left;font-size:13px;line-height:1.9;opacity:.92}
+.opening button{margin-top:18px;border:1px solid rgba(255,255,255,.5);background:transparent;color:white;border-radius:999px;padding:8px 14px;font-weight:900}
+@keyframes spinCompass{0%{transform:rotate(-45deg);opacity:0}45%{opacity:1}100%{transform:rotate(315deg)}}
+@keyframes loadBar{to{width:100%}}
+@media(min-width:760px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:390px){.hero h1{font-size:23px}.homeCard{min-height:134px}.homeCard h3{font-size:14px}.homeCard p{font-size:10px}.app{padding:14px}.searchLine button{padding:0 13px}}
+
+/* 4.1.1 オープニング：本体固定・針だけ回転 */
+.openingCompass{
+  animation:none!important;
+}
+.openingCompassFixed{
+  width:86px;
+  height:86px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.compassDial{
+  position:relative;
+  width:76px;
+  height:76px;
+  border:3px solid rgba(255,255,255,.92);
+  border-radius:50%;
+  background:radial-gradient(circle at center, rgba(255,255,255,.18), rgba(255,255,255,.05));
+  box-shadow:0 8px 24px rgba(0,0,0,.16), inset 0 0 0 1px rgba(255,255,255,.25);
+}
+.compassDial::before,
+.compassDial::after{
+  content:"";
+  position:absolute;
+  background:rgba(255,255,255,.55);
+  border-radius:999px;
+}
+.compassDial::before{
+  width:2px;
+  height:58px;
+  left:50%;
+  top:9px;
+  transform:translateX(-50%);
+}
+.compassDial::after{
+  width:58px;
+  height:2px;
+  left:9px;
+  top:50%;
+  transform:translateY(-50%);
+}
+.compassN{
+  position:absolute;
+  left:50%;
+  top:5px;
+  transform:translateX(-50%);
+  font-size:11px;
+  font-weight:900;
+  color:white;
+  z-index:3;
+}
+.compassNeedle{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:6px;
+  height:54px;
+  transform-origin:50% 50%;
+  transform:translate(-50%,-50%) rotate(-40deg);
+  animation:needleSweep411 2.4s cubic-bezier(.18,.84,.23,1) forwards;
+  z-index:4;
+}
+.compassNeedle::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:0;
+  transform:translateX(-50%);
+  width:0;
+  height:0;
+  border-left:6px solid transparent;
+  border-right:6px solid transparent;
+  border-bottom:30px solid #ffffff;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.22));
+}
+.compassNeedle::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:0;
+  transform:translateX(-50%);
+  width:0;
+  height:0;
+  border-left:5px solid transparent;
+  border-right:5px solid transparent;
+  border-top:25px solid rgba(255,255,255,.55);
+}
+.compassCenter{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:12px;
+  height:12px;
+  transform:translate(-50%,-50%);
+  background:#fff;
+  border-radius:50%;
+  box-shadow:0 2px 5px rgba(0,0,0,.2);
+  z-index:5;
+}
+@keyframes needleSweep411{
+  0%{transform:translate(-50%,-50%) rotate(-70deg)}
+  45%{transform:translate(-50%,-50%) rotate(42deg)}
+  72%{transform:translate(-50%,-50%) rotate(8deg)}
+  100%{transform:translate(-50%,-50%) rotate(24deg)}
+}
+
+/* 4.2 AI進路診断フル面談版 */
+.aiStepHeader{
+  background:linear-gradient(135deg,#eef6ff,#fff 60%,#f6f2ff);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:16px;
+  margin-bottom:12px;
+}
+.aiStepHeader h2{margin:0 0 6px}
+.aiProgress{
+  height:10px;
+  background:#e2e8f0;
+  border-radius:999px;
+  overflow:hidden;
+  margin:12px 0 8px;
+}
+.aiProgress span{
+  display:block;
+  height:100%;
+  background:#143B73;
+  border-radius:999px;
+  transition:width .25s ease;
+}
+.aiStepTabs{
+  display:flex;
+  overflow-x:auto;
+  gap:6px;
+  padding-bottom:4px;
+}
+.aiStepTabs button{
+  flex:0 0 auto;
+  border:1px solid var(--line);
+  background:white;
+  color:var(--navy);
+  border-radius:999px;
+  padding:7px 10px;
+  font-size:11px;
+  font-weight:900;
+}
+.aiStepTabs button.on{
+  background:var(--navy);
+  color:white;
+  border-color:var(--navy);
+}
+.aiPanel{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:22px;
+  padding:15px;
+  margin:12px 0;
+}
+.aiPanel h3{margin-top:0;color:var(--navy)}
+.aiSubjectGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.aiSubjectBox{
+  background:var(--soft);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:10px;
+}
+.aiSubjectBox label{
+  display:block;
+  color:var(--navy);
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:5px;
+}
+.aiChoiceCloud{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:10px 0;
+}
+.aiChoiceCloud button{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--navy);
+  border-radius:999px;
+  padding:8px 11px;
+  font-size:12px;
+  font-weight:900;
+  transition:.15s;
+}
+.aiChoiceCloud button.on{
+  background:var(--navy);
+  color:white;
+  border-color:var(--navy);
+  box-shadow:0 4px 12px rgba(20,59,115,.2);
+}
+.aiLevelButtons{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+}
+.aiLevelButtons button{
+  border:1px solid var(--line);
+  background:white;
+  color:var(--navy);
+  border-radius:999px;
+  padding:7px 5px;
+  font-size:12px;
+  font-weight:900;
+}
+.aiLevelButtons button.on{
+  background:var(--navy);
+  color:white;
+  border-color:var(--navy);
+}
+.aiComment{
+  background:#eef6ff;
+  border:1px solid #bfd7ff;
+  color:var(--navy);
+  border-radius:18px;
+  padding:13px;
+  line-height:1.8;
+  font-size:13px;
+  font-weight:800;
+  margin:12px 0;
+}
+.aiResultGrid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+.aiRouteCard{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:20px;
+  padding:13px;
+}
+.aiRouteCard.challenge{background:#fffaf0;border-color:#fbbf24}
+.aiRouteCard.match{background:#f0fdf4;border-color:#86efac}
+.aiRouteCard.safe{background:#eff6ff;border-color:#93c5fd}
+.aiRouteLabel{
+  display:inline-block;
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:11px;
+  font-weight:900;
+  margin-bottom:5px;
+}
+.aiRouteLabel.challenge{background:#fef3c7;color:#92400e}
+.aiRouteLabel.match{background:#dcfce7;color:#166534}
+.aiRouteLabel.safe{background:#dbeafe;color:#1e40af}
+.aiPlan{
+  background:var(--soft);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:12px;
+  margin:10px 0;
+}
+.aiPlanStep{
+  background:white;
+  border-left:4px solid var(--navy);
+  border-radius:12px;
+  padding:9px;
+  margin:8px 0;
+  font-size:13px;
+  line-height:1.7;
+}
+@media(min-width:760px){
+  .aiSubjectGrid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .aiResultGrid{grid-template-columns:repeat(3,1fr)}
+}
+
+/* 4.2.1 選択チップ試験版 */
+.chipSelectBlock{
+  margin:12px 0;
+}
+.chipSelectTitle{
+  color:var(--navy);
+  font-size:13px;
+  font-weight:900;
+  margin:0 0 7px;
+}
+.selectChipGroup{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.selectChip{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--navy);
+  border-radius:999px;
+  padding:9px 12px;
+  font-size:13px;
+  font-weight:900;
+  transition:.15s ease;
+}
+.selectChip.on{
+  background:var(--navy);
+  color:#fff;
+  border-color:var(--navy);
+  box-shadow:0 5px 14px rgba(20,59,115,.18);
+  transform:translateY(-1px);
+}
+.possibilityFormClean{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+.possibilityInputBox label{
+  display:block;
+  color:var(--navy);
+  font-size:13px;
+  font-weight:900;
+  margin-bottom:6px;
+}
+.possibilityInputBox input{
+  height:48px;
+}
+
+/* 4.3 夢・好き心理テスト版 */
+.dreamHero{
+  background:linear-gradient(135deg,#eef6ff,#fff 58%,#f6f2ff);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:17px;
+  margin-bottom:12px;
+}
+.dreamHero h2{margin:0 0 8px}
+.dreamProgress{
+  height:10px;
+  background:#e2e8f0;
+  border-radius:999px;
+  overflow:hidden;
+  margin:12px 0;
+}
+.dreamProgress span{
+  display:block;
+  height:100%;
+  background:#143B73;
+  border-radius:999px;
+  transition:width .25s ease;
+}
+.dreamQuestion{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:22px;
+  padding:16px;
+  margin:12px 0;
+}
+.dreamQuestion h3{
+  margin:0 0 8px;
+  color:var(--navy);
+}
+.dreamChoiceCloud{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
+.dreamChoice{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--navy);
+  border-radius:999px;
+  padding:9px 12px;
+  font-size:13px;
+  font-weight:900;
+  transition:.15s ease;
+}
+.dreamChoice.on{
+  background:var(--navy);
+  color:#fff;
+  border-color:var(--navy);
+  box-shadow:0 5px 14px rgba(20,59,115,.18);
+  transform:translateY(-1px);
+}
+.dreamTypeCard{
+  background:#eef6ff;
+  border:1px solid #bfd7ff;
+  color:var(--navy);
+  border-radius:22px;
+  padding:16px;
+  margin:12px 0;
+}
+.dreamTypeTitle{
+  font-size:24px;
+  font-weight:900;
+  line-height:1.35;
+  margin:6px 0;
+}
+.dreamScoreStars{
+  letter-spacing:2px;
+  color:#f59e0b;
+  font-weight:900;
+}
+.dreamFieldGrid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin:12px 0;
+}
+@media(min-width:760px){.dreamFieldGrid{grid-template-columns:repeat(3,1fr)}}
+.dreamFieldCard{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:18px;
+  padding:12px;
+}
+.dreamFieldCard h3{
+  margin:0 0 6px;
+  color:var(--navy);
+}
+.dreamJobList{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.dreamJobList span{
+  background:#f8fbff;
+  border:1px solid var(--line);
+  color:var(--navy);
+  border-radius:999px;
+  padding:6px 9px;
+  font-size:12px;
+  font-weight:900;
+}
+.dreamNote{
+  background:#fffaf0;
+  border:1px solid #ffd166;
+  color:#795200;
+  border-radius:18px;
+  padding:12px;
+  font-size:13px;
+  line-height:1.7;
+  font-weight:800;
+}
+
+/* 4.3.1 興味→学問マッピング */
+.mappingTags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:8px 0;
+}
+.mappingTags span{
+  background:#eef6ff;
+  border:1px solid var(--line);
+  color:var(--navy);
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:11px;
+  font-weight:900;
+}
+.mappedUniBox{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:18px;
+  padding:12px;
+  margin:10px 0;
+}
+.mappedUniBox h3{
+  margin:0 0 5px;
+  color:var(--navy);
+}
+
+/* 4.4 学部別入試情報・学習計画 */
+.entranceDetailBox{border:1px solid var(--line);background:#fff;border-radius:22px;padding:14px;margin:12px 0}
+.entranceDetailBox h3{color:var(--navy);margin-top:0}
+.methodCard{border:1px solid var(--line);background:#f8fbff;border-radius:18px;padding:12px;margin:10px 0}
+.methodCard h4{margin:0 0 8px;color:var(--navy);font-size:16px}
+.subjectTags{display:flex;flex-wrap:wrap;gap:6px;margin:7px 0}
+.subjectTags span{background:#eef6ff;border:1px solid var(--line);color:var(--navy);border-radius:999px;padding:6px 9px;font-size:12px;font-weight:900}
+.planTimeline{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0}
+.planMonth{border-left:4px solid var(--navy);background:#fff;border-radius:14px;padding:10px}
+.planMonth strong{color:var(--navy)}
+.studentRecord{background:#fffaf0;border:1px solid #ffd166;color:#795200;border-radius:18px;padding:12px;margin:10px 0}
+.recordGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0}
+.recordItem{background:#fff;border:1px solid #ffd166;border-radius:14px;padding:8px;font-size:12px;font-weight:900}
+.officialWarn{background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;border-radius:16px;padding:10px;font-size:12px;line-height:1.7;font-weight:800}
+
+/* 4.5 モード別ホーム画面 */
+.modeHomeHeader{
+  background:linear-gradient(135deg,#eef6ff,#fff 60%,#f5f9ff);
+  border:1px solid var(--line);
+  border-radius:26px;
+  padding:18px;
+  margin-bottom:14px;
+}
+.modeHomeHeader h1{
+  margin:0 0 8px;
+  font-size:25px;
+  line-height:1.35;
+  letter-spacing:-.04em;
+}
+.modeHomeHeader p{
+  margin:0;
+  color:var(--navy);
+  font-weight:900;
+  line-height:1.6;
+}
+.modeSwitchRow{
+  display:flex;
+  gap:8px;
+  margin:12px 0 0;
+  overflow-x:auto;
+}
+.modeSwitchRow button{
+  flex:0 0 auto;
+  border:1px solid var(--line);
+  background:white;
+  color:var(--navy);
+  border-radius:999px;
+  padding:8px 12px;
+  font-weight:900;
+  font-size:12px;
+}
+.modeSwitchRow button.on{
+  background:var(--navy);
+  color:white;
+  border-color:var(--navy);
+}
+.modeMainGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.modeActionCard{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:22px;
+  padding:14px 8px;
+  min-height:132px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:var(--navy);
+  font-weight:900;
+}
+.modeActionCard .modeIcon{
+  width:52px;
+  height:52px;
+  border-radius:18px;
+  background:#eef6ff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  margin-bottom:8px;
+}
+.modeActionCard h3{
+  margin:0;
+  font-size:14px;
+  line-height:1.35;
+}
+.modeActionCard p{
+  margin:6px 0 0;
+  color:var(--muted);
+  font-size:10.5px;
+  line-height:1.45;
+}
+.modeDashboard{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin:14px 0;
+}
+.modeDashCard{
+  background:var(--soft);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:12px;
+  color:var(--navy);
+  font-weight:900;
+}
+.modeDashCard p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+}
+.teacherStudentCard{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:12px;
+  margin:8px 0;
+}
+.teacherStudentCard strong{
+  color:var(--navy);
+}
+.parentAdvice{
+  background:#fffaf0;
+  border:1px solid #ffd166;
+  color:#795200;
+  border-radius:18px;
+  padding:12px;
+  margin:12px 0;
+  font-size:13px;
+  line-height:1.7;
+  font-weight:800;
+}
+@media(min-width:760px){
+  .modeMainGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .modeDashboard{grid-template-columns:repeat(3,1fr)}
+}
+
+/* 4.6 生徒カルテ・地域選択・名市大強化 */
+.prefChipSection{margin:12px 0}
+.prefChipTitle{color:var(--navy);font-size:13px;font-weight:900;margin:0 0 7px}
+.prefChipGroup{display:flex;flex-wrap:wrap;gap:7px}
+.prefChip{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:999px;padding:8px 11px;font-size:12px;font-weight:900;transition:.15s}
+.prefChip.on{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:0 4px 12px rgba(20,59,115,.18)}
+.studentList{display:grid;grid-template-columns:1fr;gap:10px;margin:12px 0}
+.studentCard{border:1px solid var(--line);background:#fff;border-radius:20px;padding:13px}
+.studentCard h3{margin:0 0 6px;color:var(--navy)}
+.studentTag{display:inline-block;border:1px solid var(--line);background:#eef6ff;color:var(--navy);border-radius:999px;padding:5px 8px;font-size:11px;font-weight:900;margin:3px}
+.karteForm{display:grid;grid-template-columns:1fr;gap:9px}
+.karteForm label{color:var(--navy);font-size:12px;font-weight:900}
+.karteTextArea{width:100%;min-height:82px;border:1px solid var(--line);border-radius:14px;padding:10px;font-size:15px}
+.facultyTabs{display:flex;overflow-x:auto;gap:7px;margin:10px 0;padding-bottom:4px}
+.facultyTabs button{flex:0 0 auto;border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:999px;padding:8px 11px;font-size:12px;font-weight:900}
+.facultyTabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.entranceFold summary{cursor:pointer;font-weight:900;color:var(--navy);padding:8px 0}
+@media(min-width:760px){.studentList{grid-template-columns:repeat(2,1fr)}.karteForm{grid-template-columns:repeat(2,1fr)}.karteForm .wide{grid-column:1/-1}}
+
+/* 4.7 ホーム整理・2モード版 */
+.home47Header{
+  background:linear-gradient(135deg,#eef6ff,#fff 60%,#f5f9ff);
+  border:1px solid var(--line);
+  border-radius:26px;
+  padding:18px;
+  margin-bottom:14px;
+}
+.home47Header h1{
+  margin:0 0 8px;
+  font-size:25px;
+  line-height:1.35;
+  letter-spacing:-.04em;
+}
+.home47Header p{
+  margin:0;
+  color:var(--navy);
+  font-weight:900;
+  line-height:1.6;
+}
+.home47Modes{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+}
+.home47Modes button{
+  border:1px solid var(--line);
+  background:white;
+  color:var(--navy);
+  border-radius:999px;
+  padding:8px 14px;
+  font-size:13px;
+  font-weight:900;
+}
+.home47Modes button.on{
+  background:var(--navy);
+  color:white;
+  border-color:var(--navy);
+}
+.home47Search{
+  background:linear-gradient(135deg,#f8fbff,#fff);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:14px;
+  margin-bottom:14px;
+}
+.home47Grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin:12px 0;
+}
+.home47Card{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:22px;
+  padding:14px 8px;
+  min-height:132px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  color:var(--navy);
+  font-weight:900;
+}
+.home47Icon{
+  width:54px;
+  height:54px;
+  border-radius:18px;
+  background:#eef6ff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:29px;
+  margin-bottom:8px;
+}
+.home47Card h3{
+  margin:0;
+  font-size:15px;
+  line-height:1.35;
+}
+.home47Card p{
+  margin:6px 0 0;
+  color:var(--muted);
+  font-size:10.5px;
+  line-height:1.45;
+}
+.home47MiniRow{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:14px;
+}
+.home47Mini{
+  border:1px solid var(--line);
+  background:#f8fbff;
+  border-radius:18px;
+  padding:11px;
+  color:var(--navy);
+  font-weight:900;
+  font-size:13px;
+}
+.home47Mini span{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-top:3px;
+}
+.home47Action{
+  margin-top:10px;
+  border:1px solid var(--line);
+  background:#fffaf0;
+  color:#795200;
+  border-radius:18px;
+  padding:11px;
+  font-size:12px;
+  line-height:1.6;
+  font-weight:900;
+}
+.home47TeacherNotice{
+  background:#eef6ff;
+  border:1px solid #bfd7ff;
+  color:var(--navy);
+  border-radius:18px;
+  padding:12px;
+  margin:12px 0;
+  font-size:13px;
+  line-height:1.7;
+  font-weight:900;
+}
+@media(min-width:760px){
+  .home47Grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+/* 4.7.1 学部アコーディオン */
+.facultyTabs{
+  display:none!important;
+}
+.facultyAccordion{
+  margin:12px 0;
+}
+.facultyAccordionTitle{
+  color:var(--navy);
+  font-size:15px;
+  font-weight:900;
+  margin:0 0 8px;
+}
+.facultyAccItem{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:18px;
+  margin:9px 0;
+  overflow:hidden;
+}
+.facultyAccHead{
+  width:100%;
+  border:0;
+  background:#f8fbff;
+  color:var(--navy);
+  padding:13px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  font-weight:900;
+  text-align:left;
+}
+.facultyAccHead .left{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.facultyAccHead .sub{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+}
+.facultyAccStatus{
+  display:inline-block;
+  border:1px solid var(--line);
+  background:#eef6ff;
+  color:var(--navy);
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:10px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.facultyAccBody{
+  padding:13px;
+}
+.facultyAccBody.closed{
+  display:none;
+}
+.departmentChips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:7px 0 10px;
+}
+.departmentChips span{
+  background:#eef6ff;
+  border:1px solid var(--line);
+  color:var(--navy);
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:11px;
+  font-weight:900;
+}
+.facultyQuickInfo{
+  background:#fffaf0;
+  border:1px solid #ffd166;
+  color:#795200;
+  border-radius:15px;
+  padding:9px;
+  margin:8px 0;
+  font-size:12px;
+  line-height:1.6;
+  font-weight:800;
+}
+
+/* 4.7.2 学部リスト→専攻詳細画面 */
+.facultyAccordion,
+.facultyTabs{
+  display:none!important;
+}
+.facultyListBox{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:22px;
+  padding:14px;
+  margin:12px 0;
+}
+.facultyListHeader{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+.facultyListHeader h3{
+  margin:0;
+  color:var(--navy);
+}
+.facultyGroup{
+  border:1px solid var(--line);
+  background:#f8fbff;
+  border-radius:18px;
+  margin:10px 0;
+  overflow:hidden;
+}
+.facultyGroupHead{
+  padding:12px 13px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  color:var(--navy);
+  font-weight:900;
+}
+.facultyGroupHead span.sub{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+  margin-top:3px;
+}
+.majorList{
+  background:white;
+  padding:8px;
+  border-top:1px solid var(--line);
+}
+.majorRow{
+  width:100%;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--navy);
+  border-radius:14px;
+  padding:10px 11px;
+  margin:6px 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  text-align:left;
+  font-weight:900;
+}
+.majorRow .majorSub{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+  margin-top:3px;
+}
+.majorStatus{
+  flex:0 0 auto;
+  border:1px solid var(--line);
+  background:#eef6ff;
+  color:var(--navy);
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:10px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.detailPageHeader{
+  background:linear-gradient(135deg,#eef6ff,#fff 60%,#f5f9ff);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:15px;
+  margin-bottom:12px;
+}
+.detailPageHeader h2{
+  margin:0 0 7px;
+  line-height:1.35;
+}
+.detailMiniNav{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin:10px 0;
+}
+.detailMiniNav button{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--navy);
+  border-radius:14px;
+  padding:9px;
+  font-weight:900;
+  font-size:12px;
+}
+.detailSectionCard{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:20px;
+  padding:13px;
+  margin:10px 0;
+}
+.detailSectionCard h3{
+  margin-top:0;
+  color:var(--navy);
+}
+.backStrip{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+@media(min-width:760px){
+  .detailMiniNav{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+
+/* 4.7.3 学部だけ表示→学科展開 */
+.facultyOnlyList{
+  margin:12px 0;
+}
+.facultyOnlyItem{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:18px;
+  margin:9px 0;
+  overflow:hidden;
+}
+.facultyOnlyHead{
+  width:100%;
+  border:0;
+  background:#f8fbff;
+  color:var(--navy);
+  padding:14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  font-weight:900;
+  text-align:left;
+}
+.facultyOnlyHead .facultyName{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.facultyOnlyHead .facultySub{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+}
+.facultyOnlyHead .arrow{
+  font-size:18px;
+  color:var(--navy);
+}
+.majorHiddenList{
+  display:none;
+  background:white;
+  border-top:1px solid var(--line);
+  padding:8px;
+}
+.majorHiddenList.open{
+  display:block;
+}
+.majorCompactRow{
+  width:100%;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--navy);
+  border-radius:14px;
+  padding:10px 11px;
+  margin:6px 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  text-align:left;
+  font-weight:900;
+}
+.majorCompactRow .majorName{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+.majorCompactRow .majorNote{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+}
+.facultyOpenStatus{
+  border:1px solid var(--line);
+  background:#eef6ff;
+  color:var(--navy);
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:10px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+/* 4.7.4 並び替え・大学名タップ */
+.uniTitleButton{
+  border:0;
+  background:transparent;
+  color:var(--navy);
+  font:inherit;
+  font-weight:900;
+  padding:0;
+  margin:0 0 6px;
+  text-align:left;
+  cursor:pointer;
+}
+.uniTitleButton:hover{
+  text-decoration:underline;
+}
+.uniCard.clickable{
+  transition:.15s ease;
+}
+.uniCard.clickable:active{
+  transform:scale(.99);
+}
+.sortBox{
+  border:1px solid var(--line);
+  background:#f8fbff;
+  border-radius:18px;
+  padding:10px;
+  margin:12px 0;
+}
+.sortBoxTitle{
+  color:var(--navy);
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:8px;
+}
+.sortChips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+}
+.sortChip{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--navy);
+  border-radius:999px;
+  padding:8px 10px;
+  font-size:12px;
+  font-weight:900;
+}
+.sortChip.on{
+  background:var(--navy);
+  color:#fff;
+  border-color:var(--navy);
+}
+
+/* 4.7.5 戻る導線・お気に入り操作 */
+.detailTopNav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+.backBtn475{
+  border:1px solid var(--line);
+  background:#eef6ff;
+  color:var(--navy);
+  border-radius:999px;
+  padding:9px 12px;
+  font-size:12px;
+  font-weight:900;
+}
+.favRoundBtn{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--navy);
+  border-radius:999px;
+  width:44px;
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  font-weight:900;
+  box-shadow:0 6px 18px rgba(20,59,115,.08);
+}
+.favRoundBtn.saved{
+  background:#143B73;
+  color:white;
+  border-color:#143B73;
+}
+.favToast{
+  position:fixed;
+  left:50%;
+  bottom:96px;
+  transform:translateX(-50%);
+  z-index:200;
+  background:#143B73;
+  color:#fff;
+  border-radius:999px;
+  padding:10px 14px;
+  font-weight:900;
+  font-size:13px;
+  box-shadow:0 10px 28px rgba(20,59,115,.26);
+  animation:favPop475 1.2s ease forwards;
+}
+@keyframes favPop475{
+  0%{opacity:0;transform:translate(-50%,10px) scale(.95)}
+  18%{opacity:1;transform:translate(-50%,0) scale(1)}
+  75%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-10px) scale(.98)}
+}
+.detailTitleRow{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+.detailTitleRow h2{
+  margin:0;
+  flex:1;
+}
+
+/* 4.7.6 学部一覧UI改善 */
+.facultyListHeader{
+  align-items:center!important;
+}
+.facultyListHeader h3{
+  font-size:17px!important;
+  white-space:nowrap;
+}
+.facultyCountBadge{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--line);
+  background:#143B73;
+  color:white;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:12px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.facultyOnlyHead{
+  padding:12px 13px!important;
+}
+.facultyOnlyHead .facultyName{
+  min-width:0;
+}
+.facultyOnlyHead .facultyName span:first-child{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.facultyOnlyHead .facultySub{
+  white-space:nowrap;
+}
+.facultyOpenStatus{
+  font-size:10px!important;
+  padding:4px 7px!important;
+}
+.facultyOnlyHead .arrow{
+  font-size:15px!important;
+}
+.majorCompactRow{
+  padding:9px 10px!important;
+}
+.majorCompactRow .majorName span:first-child{
+  white-space:normal;
+  line-height:1.35;
+}
+@media(max-width:390px){
+  .facultyListHeader{
+    gap:8px;
+  }
+  .facultyListHeader h3{
+    font-size:16px!important;
+  }
+  .facultyCountBadge{
+    font-size:11px;
+    padding:5px 9px;
+  }
+}
+
+/* 4.8 名市大学部別受験データ強化 */
+.requirementBox,.aiAdviceBox{
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:12px;
+  margin:10px 0;
+  font-size:13px;
+  line-height:1.75;
+  font-weight:800;
+}
+.requirementBox{
+  background:#fffaf0;
+  border-color:#ffd166;
+  color:#795200;
+}
+.aiAdviceBox{
+  background:#eef6ff;
+  border-color:#bfd7ff;
+  color:var(--navy);
+}
+.dataQualityRow{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:8px 0;
+}
+.dataQualityRow span{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--navy);
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:11px;
+  font-weight:900;
+}
+
+/* 4.8.1 配点カード・入試概要 */
+.examSummaryCard{
+  border:1px solid var(--line);
+  background:linear-gradient(135deg,#eef6ff,#fff 65%);
+  border-radius:22px;
+  padding:14px;
+  margin:12px 0;
+}
+.examSummaryGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin-top:10px;
+}
+.examSummaryMini{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:15px;
+  padding:9px;
+  color:var(--navy);
+  font-size:12px;
+  font-weight:900;
+  line-height:1.6;
+}
+.scoreCard{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:20px;
+  padding:13px;
+  margin:10px 0;
+}
+.scoreCard h4{
+  margin:0 0 9px;
+  color:var(--navy);
+  font-size:16px;
+}
+.scoreGrid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+.scorePanel{
+  border:1px solid var(--line);
+  background:#f8fbff;
+  border-radius:16px;
+  padding:10px;
+}
+.scorePanel strong{
+  color:var(--navy);
+}
+.scoreLine{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  border-bottom:1px dashed #dbe7f6;
+  padding:5px 0;
+  font-size:13px;
+}
+.scoreLine:last-child{border-bottom:0}
+.examRatio{
+  background:#fffaf0;
+  border:1px solid #ffd166;
+  color:#795200;
+  border-radius:14px;
+  padding:8px;
+  margin-top:8px;
+  font-size:12px;
+  font-weight:900;
+}
+.competitionBox{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:20px;
+  padding:13px;
+  margin:10px 0;
+}
+.competitionBox h3{margin-top:0;color:var(--navy)}
+@media(min-width:760px){.scoreGrid{grid-template-columns:1fr 1fr}.examSummaryGrid{grid-template-columns:repeat(4,1fr)}}
+
+/* 4.8.2 専攻詳細アコーディオン整理 */
+.detailAccordionWrap{
+  margin:12px 0;
+}
+.detailAcc{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:20px;
+  margin:10px 0;
+  overflow:hidden;
+}
+.detailAcc summary{
+  list-style:none;
+  cursor:pointer;
+  padding:14px;
+  color:var(--navy);
+  font-weight:900;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  background:#f8fbff;
+}
+.detailAcc summary::-webkit-details-marker{display:none}
+.detailAcc summary::after{
+  content:"▼";
+  font-size:12px;
+  color:var(--navy);
+  transition:.15s;
+}
+.detailAcc[open] summary::after{
+  content:"▲";
+}
+.detailAccBody{
+  padding:13px;
+}
+.detailAccHint{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+}
+.compactMethodCard{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:16px;
+  padding:11px;
+  margin:8px 0;
+}
+.compactMethodCard h4{
+  margin:0 0 8px;
+  color:var(--navy);
+  font-size:15px;
+}
+.scoreCard{
+  margin:8px 0!important;
+}
+.detailMiniNav{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+.detailMiniNav button{
+  font-size:11px!important;
+  padding:8px 6px!important;
+}
+@media(max-width:390px){
+  .detailMiniNav{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+}
+
+/* 4.8.3 共通テスト配点表示 */
+.commonScoreCard{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:20px;
+  padding:13px;
+  margin:10px 0;
+}
+.commonScoreHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:9px;
+}
+.commonScoreHeader h4{
+  margin:0;
+  color:var(--navy);
+  font-size:16px;
+}
+.totalBadge{
+  background:#143B73;
+  color:white;
+  border-radius:999px;
+  padding:6px 9px;
+  font-size:12px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.scoreBarLine{
+  display:grid;
+  grid-template-columns:76px 1fr 48px;
+  gap:8px;
+  align-items:center;
+  padding:7px 0;
+  border-bottom:1px dashed #dbe7f6;
+}
+.scoreBarLine:last-child{
+  border-bottom:0;
+}
+.scoreSubject{
+  color:var(--navy);
+  font-size:13px;
+  font-weight:900;
+}
+.scoreBarTrack{
+  height:10px;
+  background:#e5eef8;
+  border-radius:999px;
+  overflow:hidden;
+}
+.scoreBarFill{
+  display:block;
+  height:100%;
+  background:#143B73;
+  border-radius:999px;
+}
+.scorePoint{
+  text-align:right;
+  color:var(--navy);
+  font-size:12px;
+  font-weight:900;
+}
+.scoreTargetBox{
+  background:#eef6ff;
+  border:1px solid #bfd7ff;
+  color:var(--navy);
+  border-radius:16px;
+  padding:10px;
+  margin-top:10px;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.7;
+}
+.scoreUnknown{
+  background:#fffaf0;
+  border:1px solid #ffd166;
+  color:#795200;
+  border-radius:16px;
+  padding:10px;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.7;
+}
+
+/* 4.8.4 共通テスト配点UI改善 */
+.scoreBarLine{
+  grid-template-columns:72px 96px 46px!important;
+  justify-content:start;
+}
+.scoreBarTrack{
+  width:96px!important;
+  max-width:96px!important;
+}
+.scoreBarFill{
+  background:#143B73;
+}
+.commonScoreHeader{
+  align-items:flex-start!important;
+}
+.commonScoreHeader .totalBadge{
+  margin-top:2px;
+}
+.optionDetails{
+  margin-top:8px;
+}
+.optionDetails details{
+  border:1px solid var(--line);
+  background:#f8fbff;
+  border-radius:14px;
+  margin:7px 0;
+  overflow:hidden;
+}
+.optionDetails summary{
+  cursor:pointer;
+  padding:9px 10px;
+  color:var(--navy);
+  font-size:12px;
+  font-weight:900;
+  list-style:none;
+  display:flex;
+  justify-content:space-between;
+}
+.optionDetails summary::-webkit-details-marker{display:none}
+.optionDetails summary::after{content:"▼";font-size:10px}
+.optionDetails details[open] summary::after{content:"▲"}
+.optionBody{
+  padding:0 10px 10px;
+}
+.priorityStars{
+  color:#143B73;
+  font-size:12px;
+  font-weight:900;
+  margin-top:3px;
+}
+.scoreTargetBox{
+  font-size:11.5px!important;
+}
+.detailAcc.hideCommonSubject{
+  display:none!important;
+}
+
+/* 4.8.5 データ拡張管理 */
+.dataDashHero{
+  background:linear-gradient(135deg,#eef6ff,#fff 65%);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:16px;
+  margin:12px 0;
+}
+.dataDashHero h2{
+  margin:0 0 8px;
+  color:var(--navy);
+}
+.dataStatsGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin:12px 0;
+}
+.dataStat{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:18px;
+  padding:12px;
+  color:var(--navy);
+  font-weight:900;
+}
+.dataStat strong{
+  display:block;
+  font-size:22px;
+  margin-bottom:3px;
+}
+.dataStat span{
+  color:var(--muted);
+  font-size:11px;
+}
+.priorityUni{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:18px;
+  padding:12px;
+  margin:9px 0;
+}
+.priorityUni h3{
+  margin:0 0 6px;
+  color:var(--navy);
+  font-size:16px;
+}
+.priorityMeta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:8px 0;
+}
+.priorityMeta span{
+  border:1px solid var(--line);
+  background:#eef6ff;
+  color:var(--navy);
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:11px;
+  font-weight:900;
+}
+.progressBar{
+  height:10px;
+  background:#e5eef8;
+  border-radius:999px;
+  overflow:hidden;
+  margin:8px 0;
+}
+.progressBar span{
+  display:block;
+  height:100%;
+  background:#143B73;
+  border-radius:999px;
+}
+.todoChecklist{
+  border:1px solid var(--line);
+  background:#fffaf0;
+  border-radius:18px;
+  padding:12px;
+  margin:12px 0;
+  color:#795200;
+  font-weight:800;
+  line-height:1.7;
+}
+.dataNeedBox{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:18px;
+  padding:12px;
+  margin:10px 0;
+}
+.dataNeedBox h3{
+  color:var(--navy);
+  margin:0 0 7px;
+}
+.needList{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:7px;
+}
+.needItem{
+  border:1px solid var(--line);
+  background:#f8fbff;
+  border-radius:14px;
+  padding:9px;
+  color:var(--navy);
+  font-size:12px;
+  font-weight:900;
+}
+.home47Card.dataCard .home47Icon{
+  background:#fffaf0;
+}
+@media(min-width:760px){
+  .dataStatsGrid{grid-template-columns:repeat(4,1fr)}
+  .needList{grid-template-columns:repeat(2,1fr)}
+}
+
+/* 4.9.0 データ品質・テンプレート */
+.qualityMeter{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:18px;
+  padding:12px;
+  margin:10px 0;
+}
+.qualityMeter h3{margin:0 0 7px;color:var(--navy)}
+.qualityBar{
+  height:10px;
+  border-radius:999px;
+  background:#e5eef8;
+  overflow:hidden;
+}
+.qualityBar span{
+  display:block;
+  height:100%;
+  background:#143B73;
+}
+.qualityChecks{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:6px;
+  margin-top:8px;
+}
+.qualityChecks span{
+  background:#f8fbff;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:7px;
+  color:var(--navy);
+  font-size:12px;
+  font-weight:900;
+}
+.templateNotice{
+  background:#eef6ff;
+  border:1px solid #bfd7ff;
+  color:var(--navy);
+  border-radius:18px;
+  padding:12px;
+  margin:10px 0;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.7;
+}
+@media(min-width:760px){.qualityChecks{grid-template-columns:repeat(2,1fr)}}
+
+/* 4.9.1 名市大完成型テンプレート */
+.sourcePanel491{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:18px;
+  padding:12px;
+  margin:10px 0;
+}
+.sourcePanel491 h3{margin:0 0 8px;color:var(--navy)}
+.sourceList491{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:7px;
+}
+.sourceList491 a{
+  border:1px solid var(--line);
+  background:#f8fbff;
+  color:var(--navy);
+  border-radius:14px;
+  padding:9px;
+  font-size:12px;
+  font-weight:900;
+  text-decoration:none;
+}
+.missingBox491{
+  border:1px solid #ffd166;
+  background:#fffaf0;
+  color:#795200;
+  border-radius:18px;
+  padding:12px;
+  margin:10px 0;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.7;
+}
+.missingTags491{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:8px;
+}
+.missingTags491 span{
+  background:#fff;
+  border:1px solid #ffd166;
+  color:#795200;
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:11px;
+  font-weight:900;
+}
+.templateBadge491{
+  background:#143B73;
+  color:white;
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:11px;
+  font-weight:900;
+}
+@media(min-width:760px){.sourceList491{grid-template-columns:repeat(2,1fr)}}
+
+/* 5.0 マイページ・バックアップ */
+.myHero{
+  background:linear-gradient(135deg,#eef6ff,#fff 65%);
+  border:1px solid var(--line);
+  border-radius:26px;
+  padding:16px;
+  margin-bottom:12px;
+}
+.myHero h2{
+  margin:0 0 7px;
+  color:var(--navy);
+  line-height:1.35;
+}
+.myHero p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.7;
+  font-weight:800;
+}
+.myGrid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin:12px 0;
+}
+.myCard{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:22px;
+  padding:14px;
+}
+.myCard h3{
+  margin:0 0 8px;
+  color:var(--navy);
+}
+.myCard .empty{
+  background:#f8fbff;
+  border:1px dashed #bfd7ff;
+  color:var(--muted);
+  border-radius:16px;
+  padding:11px;
+  font-size:12px;
+  line-height:1.7;
+  font-weight:800;
+}
+.goalBox{
+  border:1px solid var(--line);
+  background:#f8fbff;
+  border-radius:16px;
+  padding:11px;
+  margin:8px 0;
+}
+.goalBox strong{
+  color:var(--navy);
+}
+.recordItem50{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:16px;
+  padding:11px;
+  margin:8px 0;
+}
+.recordItem50 strong{
+  color:var(--navy);
+}
+.backupBox{
+  border:1px solid #ffd166;
+  background:#fffaf0;
+  color:#795200;
+  border-radius:18px;
+  padding:12px;
+  font-size:12px;
+  line-height:1.7;
+  font-weight:800;
+}
+.myForm{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:9px;
+}
+.myForm label{
+  color:var(--navy);
+  font-size:12px;
+  font-weight:900;
+}
+.myForm input,.myForm select,.myForm textarea{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px;
+  font-size:15px;
+  background:#fff;
+}
+.myForm textarea{
+  min-height:78px;
+}
+.bottomNav .myNavBtn{
+  display:flex;
+}
+.mypageQuick{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin:10px 0;
+}
+.mypageQuick button{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--navy);
+  border-radius:16px;
+  padding:10px 6px;
+  font-weight:900;
+  font-size:12px;
+}
+@media(min-width:760px){
+  .myGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .myForm{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .myForm .wide{grid-column:1/-1}
+}
+
+/* 5.1 マイページ選択入力 */
+.bottomNav button:nth-child(5){
+  display:none!important;
+}
+.mypageSelectBox{
+  border:1px solid var(--line);
+  background:#f8fbff;
+  border-radius:18px;
+  padding:12px;
+  margin:10px 0;
+}
+.universityPickList{
+  max-height:240px;
+  overflow:auto;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:16px;
+  padding:8px;
+}
+.universityPickItem{
+  width:100%;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--navy);
+  border-radius:14px;
+  padding:10px;
+  margin:6px 0;
+  text-align:left;
+  font-weight:900;
+}
+.universityPickItem small{
+  display:block;
+  color:var(--muted);
+  font-weight:800;
+  margin-top:3px;
+}
+.linkedSelectHint{
+  background:#eef6ff;
+  border:1px solid #bfd7ff;
+  color:var(--navy);
+  border-radius:14px;
+  padding:9px;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.7;
+  margin:8px 0;
+}
+
+/* 5.1.1 右上メニュー修正 */
+.topbar button.menuBtn,
+.header button.menuBtn,
+#menuButton{
+  white-space:nowrap;
+}
+
+/* 5.1.2 志望校選択UI整理 */
+.selectedGoalCard512{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:20px;
+  padding:13px;
+  margin:12px 0;
+}
+.selectedGoalCard512 h3{
+  margin:0 0 8px;
+  color:var(--navy);
+}
+.selectedGoalCard512 .uniName{
+  color:var(--navy);
+  font-size:20px;
+  font-weight:900;
+  line-height:1.35;
+}
+.selectedGoalCard512 .meta{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  line-height:1.7;
+}
+.searchResultTitle512{
+  color:var(--navy);
+  font-size:15px;
+  font-weight:900;
+  margin:14px 0 8px;
+}
+.universityPickList{
+  max-height:none!important;
+  overflow:visible!important;
+  border:0!important;
+  background:transparent!important;
+  border-radius:0!important;
+  padding:0!important;
+}
+.universityPickItem{
+  border-radius:18px!important;
+  padding:12px!important;
+  margin:8px 0!important;
+  box-shadow:0 4px 14px rgba(20,59,115,.04);
+}
+.universityPickItem .pickTitle{
+  display:block;
+  color:var(--navy);
+  font-size:16px;
+  font-weight:900;
+}
+.universityPickItem .pickMeta{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  margin-top:4px;
+}
+.noResult512{
+  border:1px dashed #bfd7ff;
+  background:#f8fbff;
+  color:var(--muted);
+  border-radius:16px;
+  padding:12px;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.7;
+}
+
+/* 5.1.3 データ完成度コンパクト化 */
+.qualityMeter{
+  padding:0!important;
+  overflow:hidden;
+  border-radius:18px!important;
+}
+.qualityCompact513{
+  width:100%;
+  border:0;
+  background:#f8fbff;
+  padding:12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  color:var(--navy);
+  font-weight:900;
+  text-align:left;
+}
+.qualityCompact513 .qLeft{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  min-width:0;
+}
+.qualityCompact513 .qTitle{
+  font-size:16px;
+  white-space:nowrap;
+}
+.qualityCompact513 .qSub{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+}
+.qualityCompact513 .qPercent{
+  background:#143B73;
+  color:#fff;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:12px;
+  white-space:nowrap;
+}
+.qualityMiniBar{
+  height:7px;
+  width:100%;
+  max-width:190px;
+  border-radius:999px;
+  background:#e5eef8;
+  overflow:hidden;
+}
+.qualityMiniBar span{
+  display:block;
+  height:100%;
+  background:#143B73;
+  border-radius:999px;
+}
+.qualityDetails513{
+  border-top:1px solid var(--line);
+  padding:10px 12px 12px;
+  background:#fff;
+}
+.qualityDetails513[hidden]{
+  display:none!important;
+}
+.qualityDetails513 .qualityChecks{
+  margin-top:0!important;
+}
+.templateNotice{
+  font-size:12px!important;
+  padding:10px!important;
+  margin:10px 0!important;
+}
+
+/* 5.1.4 成績合計自動計算 */
+.totalAutoBox514{
+  border:1px solid var(--line);
+  background:linear-gradient(135deg,#eef6ff,#fff 70%);
+  border-radius:18px;
+  padding:13px;
+  margin:10px 0;
+  color:var(--navy);
+  font-weight:900;
+}
+.totalAutoBox514 .totalNum{
+  font-size:28px;
+  line-height:1.2;
+}
+.totalAutoBox514 .totalNote{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+  margin-top:4px;
+}
+.subjectInputTitle514{
+  grid-column:1/-1;
+  color:var(--navy);
+  font-weight:900;
+  margin-top:4px;
+}
+
+/* 5.2 志望校変更UI・検索修正 */
+.goalEditPanel52{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:22px;
+  padding:14px;
+  margin:12px 0;
+}
+.goalEditPanel52 h3{
+  margin:0 0 8px;
+  color:var(--navy);
+}
+.goalSelected52{
+  border:1px solid var(--line);
+  background:#f8fbff;
+  border-radius:20px;
+  padding:13px;
+  margin:10px 0;
+}
+.goalSelected52 .goalLabel{
+  color:var(--navy);
+  font-weight:900;
+  font-size:15px;
+  margin-bottom:6px;
+}
+.goalSelected52 .goalUni{
+  color:var(--navy);
+  font-weight:900;
+  font-size:22px;
+  line-height:1.3;
+}
+.goalSelected52 .goalMeta{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  margin-top:5px;
+}
+.goalMajorBox52{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:10px;
+  margin-top:10px;
+  color:var(--navy);
+  font-weight:900;
+}
+.goalMajorBox52 small{
+  display:block;
+  color:var(--muted);
+  font-weight:800;
+  margin-top:4px;
+}
+.goalChangeArea52{
+  border:1px solid #bfd7ff;
+  background:#eef6ff;
+  border-radius:20px;
+  padding:12px;
+  margin:12px 0;
+}
+.goalChangeArea52[hidden]{
+  display:none!important;
+}
+.goalSearchInput52{
+  width:100%;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:16px;
+  padding:12px;
+  font-size:16px;
+  margin:8px 0 10px;
+}
+.goalResultCard52{
+  width:100%;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--navy);
+  border-radius:18px;
+  padding:12px;
+  margin:8px 0;
+  text-align:left;
+  font-weight:900;
+}
+.goalResultCard52 .title{
+  display:block;
+  font-size:17px;
+}
+.goalResultCard52 .meta{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  margin-top:4px;
+}
+.goalResultCard52 .fac{
+  display:block;
+  color:var(--navy);
+  font-size:11px;
+  margin-top:6px;
+  opacity:.85;
+}
+.noGoalResult52{
+  border:1px dashed #bfd7ff;
+  background:#fff;
+  color:var(--muted);
+  border-radius:16px;
+  padding:12px;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.7;
+}
+.goalSelectGrid52{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:9px;
+  margin-top:10px;
+}
+.goalSelectGrid52 label{
+  color:var(--navy);
+  font-size:12px;
+  font-weight:900;
+}
+.goalSelectGrid52 select{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px;
+  font-size:15px;
+  background:#fff;
+}
+.aliasHint52{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+  line-height:1.6;
+}
+@media(min-width:760px){
+  .goalSelectGrid52{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* 5.2.1 志望校検索入力修正 */
+.goalResultsOnly521{
+  margin-top:10px;
+}
+
+/* 5.2.2 志望校検索完全修正 */
+.searchDebugHint522{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+  margin-top:6px;
+}
+
+/* 5.3 志望校カード統一 */
+.goalStack53{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+.goalCard53{
+  border:1px solid var(--line);
+  background:#f8fbff;
+  border-radius:22px;
+  padding:14px;
+}
+.goalCard53.rank1{background:#f4f8ff}
+.goalCard53.rank2{background:#f4fff8}
+.goalCard53.rank3{background:#fffdf3}
+.goalCard53 .rankLabel{
+  color:var(--navy);
+  font-size:15px;
+  font-weight:900;
+  margin-bottom:8px;
+}
+.goalCard53 .uni{
+  color:var(--navy);
+  font-size:21px;
+  font-weight:900;
+  line-height:1.35;
+}
+.goalCard53 .meta{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  margin-top:5px;
+}
+.goalCard53 .major{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:10px;
+  margin-top:10px;
+  color:var(--navy);
+  font-weight:900;
+}
+.goalCard53 .major small{
+  display:block;
+  color:var(--muted);
+  font-weight:800;
+  margin-top:4px;
+}
+.goalSearchPanel53{
+  border:1px solid #bfd7ff;
+  background:#eef6ff;
+  border-radius:20px;
+  padding:12px;
+  margin:12px 0;
+}
+.goalSearchPanel53[hidden]{
+  display:none!important;
+}
+.goalSelectGrid53{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:9px;
+  margin-top:10px;
+}
+.goalSelectGrid53 label{
+  color:var(--navy);
+  font-size:12px;
+  font-weight:900;
+}
+.goalSelectGrid53 select{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px;
+  font-size:15px;
+  background:#fff;
+}
+.goalAdd53{
+  border:1px dashed #bfd7ff;
+  background:#fff;
+  color:var(--navy);
+  border-radius:20px;
+  padding:14px;
+  font-weight:900;
+  text-align:center;
+}
+@media(min-width:760px){
+  .goalSelectGrid53{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* 5.3.2 データ品質基準 */
+.qualityDetails513 .missingQuality532{
+  background:#fffaf0;
+  border:1px solid #ffd166;
+  color:#795200;
+}
+.qualityRank532{
+  font-size:11px;
+  color:var(--muted);
+  font-weight:800;
+}
+
+/* 5.4 入試結果・合格ライン */
+.resultCard54{border:1px solid var(--line);background:#fff;border-radius:20px;padding:13px;margin:10px 0}
+.resultCard54 h3{margin:0 0 8px;color:var(--navy)}
+.resultGrid54{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0}
+.resultMini54{border:1px solid var(--line);background:#f8fbff;border-radius:16px;padding:9px;color:var(--navy);font-weight:900;font-size:12px;line-height:1.55}
+.resultMini54 strong{display:block;font-size:18px;line-height:1.25}
+.passLineBox54{border:1px solid #bfd7ff;background:#eef6ff;color:var(--navy);border-radius:18px;padding:11px;margin:9px 0}
+.passLineRow54{display:flex;justify-content:space-between;border-bottom:1px dashed #bfd7ff;padding:7px 0;font-size:13px;font-weight:900}
+.passLineRow54:last-child{border-bottom:0}
+.passLineRow54 span:last-child{font-size:16px}
+.resultSource54{color:var(--muted);font-size:11px;font-weight:800;line-height:1.6}
+.resultSource54 a{color:var(--navy);font-weight:900}
+@media(min-width:760px){.resultGrid54{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* 5.5 先生版・生徒管理 */
+.teacherHero55{
+  background:linear-gradient(135deg,#eef6ff,#fff 70%);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:16px;
+  margin:10px 0 14px;
+}
+.teacherHero55 h2{margin:0 0 8px;color:var(--navy)}
+.teacherHero55 p{margin:0;color:var(--muted);font-size:13px;font-weight:800;line-height:1.7}
+.studentList55{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin:12px 0;
+}
+.studentCard55{
+  width:100%;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--navy);
+  border-radius:20px;
+  padding:13px;
+  text-align:left;
+}
+.studentCard55 .name{
+  font-size:20px;
+  font-weight:900;
+  display:block;
+}
+.studentCard55 .meta{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  margin-top:5px;
+  display:block;
+  line-height:1.6;
+}
+.studentCard55 .goals{
+  background:#f8fbff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:8px;
+  margin-top:9px;
+  font-size:12px;
+  font-weight:900;
+  line-height:1.6;
+}
+.studentEmpty55{
+  border:1px dashed #bfd7ff;
+  background:#f8fbff;
+  color:var(--muted);
+  border-radius:18px;
+  padding:14px;
+  font-size:13px;
+  font-weight:800;
+  line-height:1.7;
+}
+.teacherForm55{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+.teacherForm55 label{
+  color:var(--navy);
+  font-size:12px;
+  font-weight:900;
+}
+.teacherForm55 input,.teacherForm55 select,.teacherForm55 textarea{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px;
+  font-size:15px;
+  background:#fff;
+}
+.teacherForm55 textarea{min-height:84px}
+.studentProfile55{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:22px;
+  padding:14px;
+  margin:10px 0;
+}
+.studentProfile55 h3{margin:0 0 8px;color:var(--navy)}
+.karteGrid55{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+.karteCard55{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:20px;
+  padding:13px;
+}
+.karteCard55 h3{margin:0 0 8px;color:var(--navy)}
+.memoItem55{
+  border:1px solid var(--line);
+  background:#f8fbff;
+  border-radius:16px;
+  padding:10px;
+  margin:8px 0;
+  color:var(--navy);
+  font-weight:800;
+  line-height:1.7;
+}
+.memoItem55 strong{font-weight:900}
+.modeNotice55{
+  border:1px solid #ffd166;
+  background:#fffaf0;
+  color:#795200;
+  border-radius:16px;
+  padding:10px;
+  margin:10px 0;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.7;
+}
+.teacherQuick55{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin:10px 0;
+}
+.teacherQuick55 button{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--navy);
+  border-radius:16px;
+  padding:10px 6px;
+  font-weight:900;
+  font-size:12px;
+}
+@media(min-width:760px){
+  .teacherForm55{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .teacherForm55 .wide{grid-column:1/-1}
+  .karteGrid55{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* 6.0.1 医学科公式確認 */
+.officialComplete601{border:1px solid #bfd7ff;background:#eef6ff;color:var(--navy);border-radius:20px;padding:13px;margin:10px 0}
+.officialComplete601 h3{margin:0 0 8px;color:var(--navy)}
+.officialGrid601{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.officialMini601{background:#fff;border:1px solid var(--line);border-radius:15px;padding:9px;font-size:12px;font-weight:900}
+.officialMini601 strong{display:block;font-size:16px}
+@media(min-width:760px){.officialGrid601{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* 6.0.2 看護学専攻公式確認 */
+.nursingComplete602{border:1px solid #bfd7ff;background:#eef6ff;color:var(--navy);border-radius:20px;padding:13px;margin:10px 0}
+.nursingComplete602 h3{margin:0 0 8px;color:var(--navy)}
+.nursingGrid602{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.nursingMini602{background:#fff;border:1px solid var(--line);border-radius:15px;padding:9px;font-size:12px;font-weight:900}
+.nursingMini602 strong{display:block;font-size:16px}
+@media(min-width:760px){.nursingGrid602{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* 6.0.3 理学療法学コース公式確認 */
+.ptComplete603{border:1px solid #bfd7ff;background:#eef6ff;color:var(--navy);border-radius:20px;padding:13px;margin:10px 0}
+.ptComplete603 h3{margin:0 0 8px;color:var(--navy)}
+.ptGrid603{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ptMini603{background:#fff;border:1px solid var(--line);border-radius:15px;padding:9px;font-size:12px;font-weight:900}
+.ptMini603 strong{display:block;font-size:16px}
+@media(min-width:760px){.ptGrid603{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* 6.0.4 作業療法学コース公式確認 */
+.otComplete604{border:1px solid #bfd7ff;background:#eef6ff;color:var(--navy);border-radius:20px;padding:13px;margin:10px 0}
+.otComplete604 h3{margin:0 0 8px;color:var(--navy)}
+.otGrid604{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.otMini604{background:#fff;border:1px solid var(--line);border-radius:15px;padding:9px;font-size:12px;font-weight:900}
+.otMini604 strong{display:block;font-size:16px}
+@media(min-width:760px){.otGrid604{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* 6.1.0 Phase1 受験科目・配点カード */
+.phase1Box610{border:1px solid #bfd7ff;background:#eef6ff;color:var(--navy);border-radius:22px;padding:14px;margin:12px 0}
+.phase1Box610 h3{margin:0 0 8px;color:var(--navy)}
+.phase1Box610 .phaseStatus{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;display:inline-block;margin:4px 0 8px}
+.phase1Card610{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin:9px 0}
+.phase1Card610 h4{margin:0 0 8px;color:var(--navy)}
+.phase1Row610{border-top:1px dashed #bfd7ff;padding:8px 0;font-size:13px;font-weight:800;line-height:1.65}
+.phase1Row610:first-of-type{border-top:0}
+.phase1Row610 strong{color:var(--navy);display:block;margin-bottom:2px}
+.phase1Source610{font-size:11px;color:var(--muted);font-weight:800;line-height:1.6}
+.phase1Source610 a{color:var(--navy);font-weight:900}
+
+/* 6.1.1 立て直し：Phase1カードは廃止 */
+.phase1Box610{
+  display:none!important;
+}
+.rebuildNotice611{
+  border:1px solid #bfd7ff;
+  background:#eef6ff;
+  color:var(--navy);
+  border-radius:20px;
+  padding:12px;
+  margin:10px 0;
+  font-weight:900;
+  line-height:1.7;
+}
+.rebuildNotice611 small{
+  display:block;
+  color:var(--muted);
+  font-weight:800;
+  margin-top:4px;
+}
