@@ -1,1 +1,27 @@
-import { signInWithEmailAndPassword,signOut,onAuthStateChanged,setPersistence,browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";const SC=window.SC||(window.SC={});SC.currentUser=null;SC.currentProfile=null;setPersistence(window.SCFB.auth,browserLocalPersistence).catch(console.error);SC.studentIdToEmail=id=>String(id||"").trim().toLowerCase().replace(/\s+/g,"")+"@student.shingaku-compass.com";async function loadProfile(uid){const{db,doc,getDoc}=window.SCFB;const snap=await getDoc(doc(db,"users",uid));return snap.exists()?{id:snap.id,...snap.data()}:null}SC.loginTeacher=async function(){const email=document.getElementById("teacherEmailInput")?.value,pw=document.getElementById("teacherPasswordInput")?.value,msg=document.getElementById("teacherLoginMsg");try{await signInWithEmailAndPassword(window.SCFB.auth,email,pw);localStorage.setItem("sc_current_mode","teacher");setTimeout(()=>SC.renderTeacherHome(),600)}catch(e){if(msg)msg.textContent="ログインできませんでした。";console.error(e)}};SC.loginStudent=async function(){const id=document.getElementById("studentIdInput")?.value,pw=document.getElementById("studentPasswordInput")?.value,msg=document.getElementById("studentLoginMsg");try{await signInWithEmailAndPassword(window.SCFB.auth,SC.studentIdToEmail(id),pw);localStorage.setItem("sc_current_mode","student");setTimeout(()=>SC.renderStudentHome(),600)}catch(e){if(msg)msg.textContent="ログインできませんでした。";console.error(e)}};SC.logout=async function(){await signOut(window.SCFB.auth);SC.currentUser=null;SC.currentProfile=null;localStorage.removeItem("sc_current_mode");SC.renderRoleSelect()};onAuthStateChanged(window.SCFB.auth,async user=>{SC.currentUser=user||null;SC.currentProfile=null;if(user){try{SC.currentProfile=await loadProfile(user.uid);if(SC.currentProfile?.role==="teacher")localStorage.setItem("sc_current_mode","teacher");if(SC.currentProfile?.role==="student")localStorage.setItem("sc_current_mode","student")}catch(e){console.warn(e)}}SC.updateRoleNav?.()});
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+const SC = window.SC || (window.SC = {});
+SC.currentUser = null;
+SC.currentProfile = null;
+setPersistence(window.SCFB.auth, browserLocalPersistence).catch(console.error);
+SC.studentIdToEmail = id => String(id || "").trim().toLowerCase().replace(/\s+/g,"") + "@student.shingaku-compass.com";
+async function loadProfile(uid){
+  const {db,doc,getDoc}=window.SCFB;
+  const snap=await getDoc(doc(db,"users",uid));
+  return snap.exists()?{id:snap.id,...snap.data()}:null;
+}
+SC.loginTeacher = async function(){
+  const msg=document.getElementById("teacherLoginMsg");
+  try{await signInWithEmailAndPassword(window.SCFB.auth,document.getElementById("teacherEmailInput").value,document.getElementById("teacherPasswordInput").value);localStorage.setItem("sc_current_mode","teacher");setTimeout(()=>SC.renderTeacherHome(),500)}
+  catch(e){if(msg)msg.textContent="ログインできませんでした。";console.error(e)}
+};
+SC.loginStudent = async function(){
+  const msg=document.getElementById("studentLoginMsg");
+  try{await signInWithEmailAndPassword(window.SCFB.auth,SC.studentIdToEmail(document.getElementById("studentIdInput").value),document.getElementById("studentPasswordInput").value);localStorage.setItem("sc_current_mode","student");setTimeout(()=>SC.renderStudentHome(),500)}
+  catch(e){if(msg)msg.textContent="ログインできませんでした。";console.error(e)}
+};
+SC.logout=async function(){await signOut(window.SCFB.auth);SC.currentUser=null;SC.currentProfile=null;localStorage.removeItem("sc_current_mode");SC.renderRoleSelect()};
+onAuthStateChanged(window.SCFB.auth,async user=>{
+  SC.currentUser=user||null;SC.currentProfile=null;
+  if(user){try{SC.currentProfile=await loadProfile(user.uid);if(SC.currentProfile?.role==="teacher")localStorage.setItem("sc_current_mode","teacher");if(SC.currentProfile?.role==="student")localStorage.setItem("sc_current_mode","student")}catch(e){console.warn(e)}}
+  SC.updateRoleNav?.();
+});

@@ -1,1 +1,59 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>進学コンパス｜完成版</title><style>:root{--navy:#143b73;--blue:#0a63c7;--bg:#eef6ff;--card:#fff;--line:#dce9f8;--text:#0b2d5c}*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#eef6ff,#fff);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Noto Sans JP",sans-serif;color:var(--text);padding-bottom:82px}.topbar{position:sticky;top:0;z-index:20;background:linear-gradient(90deg,#143b73,#0a63c7);color:white;display:grid;grid-template-columns:64px minmax(0,1fr) auto;align-items:center;gap:8px;padding:10px;box-shadow:0 6px 18px rgba(0,0,0,.12)}.brand{display:flex;align-items:center;justify-content:center;gap:8px;min-width:0;overflow:hidden;font-weight:900}.brandIcon{width:32px;height:32px;border-radius:999px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.18)}.brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:clamp(22px,6vw,32px);line-height:1.1}#roleSwitchBtn,.topMenu{border:0;background:rgba(255,255,255,.16);color:#fff;font-weight:900;border-radius:999px;padding:9px 10px;font-size:14px;white-space:nowrap}#app{max-width:920px;margin:0 auto;padding:14px}.card,.box{background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:0 10px 24px rgba(20,59,115,.08);padding:18px;margin:14px 0}.box{border-radius:18px;padding:14px;box-shadow:0 6px 16px rgba(20,59,115,.06)}h1{margin:0 0 10px;font-size:28px}h2{margin:10px 0;font-size:22px}.help{color:#58708f;line-height:1.55}label{display:block;font-weight:800;margin:12px 0 6px}input,select,textarea{width:100%;border:1px solid #cfe0f5;border-radius:14px;padding:12px;font-size:16px;background:#fff}textarea{min-height:90px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btn,button{font-family:inherit}.btn{border:0;border-radius:999px;padding:11px 14px;font-weight:900;cursor:pointer}.primary{background:#0a63c7;color:#fff}.navy{background:#143b73;color:#fff}.light{background:#eef6ff;color:#143b73}.grid{display:grid;gap:12px}.two{grid-template-columns:1fr 1fr}.roleHero{margin:20px auto;border-radius:30px;padding:30px 22px;background:linear-gradient(160deg,#fff 0%,#eef6ff 52%,#dcecff 100%);box-shadow:0 18px 45px rgba(20,59,115,.12);border:1px solid #d6e6fb}.roleHeroTitle{text-align:center;margin-bottom:24px}.roleLogo{width:78px;height:78px;border-radius:24px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#143b73,#2268bd);color:white;font-size:42px;box-shadow:0 12px 28px rgba(20,59,115,.25)}.roleCards,.modeHomeGrid{display:grid;gap:14px}.roleCard,.modeTile{width:100%;border:0;border-radius:24px;padding:20px;text-align:left;background:white;color:#0b2d5c;box-shadow:0 10px 24px rgba(20,59,115,.10);border:1px solid #dce9f8;cursor:pointer}.roleCard h2,.modeTile h2{font-size:23px;margin:0 0 8px}.roleCard p,.modeTile p{margin:0 0 12px;line-height:1.55;color:#58708f}.rolePill,.modeNotice{display:inline-block;border-radius:999px;padding:7px 12px;background:#e8f2ff;color:#143b73;font-weight:800;font-size:13px}.modeNotice{display:block;border-radius:18px;margin:0 0 14px}.bottomNav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);z-index:30;box-shadow:0 -8px 22px rgba(20,59,115,.08)}.bottomNav button{border:0;background:white;padding:8px 4px;color:#143b73;font-weight:900}.bottomNav span{display:block;font-size:11px;margin-top:2px}.menuPanel{position:fixed;right:12px;top:64px;z-index:40;background:white;border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 18px 45px rgba(20,59,115,.18);display:grid;gap:8px;min-width:220px}.menuPanel button{border:0;border-radius:12px;background:#eef6ff;color:#143b73;padding:11px;text-align:left;font-weight:900}@media(min-width:720px){.roleCards{grid-template-columns:1fr 1fr 1fr}.modeHomeGrid{grid-template-columns:1fr 1fr}.two{grid-template-columns:repeat(4,1fr)}}</style></head><body><header class="topbar"><button id="roleSwitchBtn" onclick="SC.renderRoleSelect()">切替</button><div class="brand"><div class="brandIcon">🧭</div><span>進学コンパス</span></div><button class="topMenu" onclick="SC.openMenu()">☰</button></header><main id="app"></main><nav class="bottomNav"></nav><script type="module" src="./js/firebase.js"></script><script type="module" src="./js/auth.js"></script><script type="module" src="./js/teacher.js"></script><script type="module" src="./js/student.js"></script><script type="module" src="./js/ai-scan.js"></script><script type="module" src="./js/role-ui.js"></script></body></html>
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>進学コンパス 完成版</title>
+  <style>
+    :root{--navy:#12396f;--blue:#0b66c3;--bg:#eef6ff;--line:#d8e8fb;--text:#0b2d5c}
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#edf6ff,#fff);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Noto Sans JP",sans-serif;color:var(--text);padding-bottom:82px}
+    .topbar{position:sticky;top:0;z-index:20;background:linear-gradient(90deg,#12396f,#0b66c3);color:white;display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:8px;padding:10px;box-shadow:0 6px 18px rgba(0,0,0,.14)}
+    .brand{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:900;min-width:0}
+    .brandIcon{width:32px;height:32px;border-radius:999px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center}
+    .brand span{font-size:clamp(22px,6vw,32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    #roleSwitchBtn,.topMenu{border:0;background:rgba(255,255,255,.16);color:white;font-weight:900;border-radius:999px;padding:9px 10px;font-size:14px}
+    #app{max-width:920px;margin:0 auto;padding:14px}
+    .card,.box{background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:0 10px 24px rgba(20,59,115,.08);padding:18px;margin:14px 0}
+    .box{border-radius:18px;padding:14px;box-shadow:0 6px 16px rgba(20,59,115,.06)}
+    h1{margin:0 0 10px;font-size:28px} h2{margin:10px 0;font-size:22px}
+    .help{color:#58708f;line-height:1.55}
+    label{display:block;font-weight:800;margin:12px 0 6px}
+    input,select,textarea{width:100%;border:1px solid #cfe0f5;border-radius:14px;padding:12px;font-size:16px;background:#fff}
+    textarea{min-height:90px}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .btn{border:0;border-radius:999px;padding:11px 14px;font-weight:900;cursor:pointer}
+    .primary{background:#0b66c3;color:white}.navy{background:#12396f;color:white}.light{background:#eef6ff;color:#12396f}.danger{background:#fff0f0;color:#a12}
+    .grid{display:grid;gap:12px}.two{grid-template-columns:1fr 1fr}
+    .roleHero{margin:20px auto;border-radius:30px;padding:30px 22px;background:linear-gradient(160deg,#fff,#eef6ff 55%,#dcecff);box-shadow:0 18px 45px rgba(20,59,115,.12);border:1px solid #d6e6fb}
+    .roleHeroTitle{text-align:center;margin-bottom:24px}
+    .roleLogo{width:78px;height:78px;border-radius:24px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#12396f,#2268bd);color:white;font-size:42px;box-shadow:0 12px 28px rgba(20,59,115,.25)}
+    .roleCards,.modeHomeGrid{display:grid;gap:14px}
+    .roleCard,.modeTile{width:100%;border:0;border-radius:24px;padding:20px;text-align:left;background:white;color:#0b2d5c;box-shadow:0 10px 24px rgba(20,59,115,.10);border:1px solid #dce9f8;cursor:pointer}
+    .roleCard h2,.modeTile h2{font-size:23px;margin:0 0 8px}.roleCard p,.modeTile p{margin:0 0 12px;line-height:1.55;color:#58708f}
+    .rolePill,.modeNotice{display:inline-block;border-radius:999px;padding:7px 12px;background:#e8f2ff;color:#12396f;font-weight:800;font-size:13px}
+    .modeNotice{display:block;border-radius:18px;margin:0 0 14px}
+    .bottomNav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);z-index:30;box-shadow:0 -8px 22px rgba(20,59,115,.08)}
+    .bottomNav button{border:0;background:white;padding:8px 4px;color:#12396f;font-weight:900}
+    .bottomNav span{display:block;font-size:11px;margin-top:2px}
+    .menuPanel{position:fixed;right:12px;top:64px;z-index:40;background:white;border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 18px 45px rgba(20,59,115,.18);display:grid;gap:8px;min-width:220px}
+    .menuPanel button{border:0;border-radius:12px;background:#eef6ff;color:#12396f;padding:11px;text-align:left;font-weight:900}
+    @media(min-width:720px){.roleCards{grid-template-columns:1fr 1fr 1fr}.modeHomeGrid{grid-template-columns:1fr 1fr}.two{grid-template-columns:repeat(4,1fr)}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <button id="roleSwitchBtn" onclick="SC.renderRoleSelect()">切替</button>
+    <div class="brand"><div class="brandIcon">🧭</div><span>進学コンパス</span></div>
+    <button class="topMenu" onclick="SC.openMenu()">☰</button>
+  </header>
+  <main id="app"></main>
+  <nav class="bottomNav"></nav>
+  <script type="module" src="./js/firebase.js"></script>
+  <script type="module" src="./js/auth.js"></script>
+  <script type="module" src="./js/teacher.js"></script>
+  <script type="module" src="./js/student.js"></script>
+  <script type="module" src="./js/ai-scan.js"></script>
+  <script type="module" src="./js/role-ui.js"></script>
+</body>
+</html>
