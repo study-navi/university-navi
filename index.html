@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>進学コンパス 完成版＋戻る＋AIスキャン</title>
+  <title>進学コンパス｜戻る確実＋下メニュー拡大版</title>
   <style>
     :root{--navy:#12396f;--blue:#0b66c3;--bg:#eef6ff;--line:#d8e8fb;--text:#0b2d5c}
     *{box-sizing:border-box}
@@ -41,6 +41,53 @@
     .menuPanel{position:fixed;right:12px;top:64px;z-index:40;background:white;border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 18px 45px rgba(20,59,115,.18);display:grid;gap:8px;min-width:220px}
     .menuPanel button{border:0;border-radius:12px;background:#eef6ff;color:#12396f;padding:11px;text-align:left;font-weight:900}
     @media(min-width:720px){.roleCards{grid-template-columns:1fr 1fr 1fr}.modeHomeGrid{grid-template-columns:1fr 1fr}.two{grid-template-columns:repeat(4,1fr)}}
+  
+    /* 戻るボタン確実版 */
+    #backBtn{
+      display:inline-block;
+      min-width:64px;
+      border:0;
+      background:rgba(255,255,255,.22);
+      color:white;
+      font-weight:900;
+      border-radius:999px;
+      padding:10px 11px;
+      font-size:14px;
+      white-space:nowrap;
+    }
+    #backBtn.is-disabled{
+      opacity:.38;
+      pointer-events:none;
+    }
+    /* 下メニュー拡大版 */
+    body{padding-bottom:98px}
+    .bottomNav{
+      min-height:76px;
+      grid-template-columns:repeat(4,1fr);
+    }
+    .bottomNav button{
+      padding:10px 4px 12px !important;
+      font-size:24px !important;
+      line-height:1.05;
+      min-height:72px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+    }
+    .bottomNav span{
+      font-size:13px !important;
+      font-weight:900;
+      line-height:1.1;
+      white-space:nowrap;
+    }
+    @media(max-width:380px){
+      .bottomNav button{font-size:22px !important}
+      .bottomNav span{font-size:12px !important}
+      #backBtn,#roleSwitchBtn,.topMenu{font-size:13px;padding:9px 8px}
+    }
+
   </style>
 </head>
 <body>

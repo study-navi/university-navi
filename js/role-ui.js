@@ -61,3 +61,93 @@ SC.goDream=()=>{SC.pushHistory("goDream");document.getElementById("app").innerHT
 SC.goSearch=()=>{SC.pushHistory("goSearch");document.getElementById("app").innerHTML=`<section class="card"><h1>🔍 大学検索</h1><div class="box">大学検索機能です。</div></section>`;SC.updateBackButton();};
 SC.goCompare=()=>{SC.pushHistory("goCompare");document.getElementById("app").innerHTML=`<section class="card"><h1>📊 大学比較</h1><div class="box">大学比較機能です。</div></section>`;SC.updateBackButton();};
 window.addEventListener("load",()=>setTimeout(()=>{if(SC.currentUser&&SC.currentProfile?.role==="teacher")SC.renderTeacherHome();else if(SC.currentUser&&SC.currentProfile?.role==="student")SC.renderStudentHome();else SC.renderRoleSelect()},800));
+
+
+
+/* 戻るボタン確実版 v2 */
+SC.__viewHistory = SC.__viewHistory || [];
+SC.__currentView = SC.__currentView || "";
+SC.__backLock = false;
+
+SC.recordView = function(viewName){
+  if(!viewName || SC.__backLock) return;
+  if(SC.__currentView && SC.__currentView !== viewName){
+    SC.__viewHistory.push(SC.__currentView);
+    if(SC.__viewHistory.length > 30) SC.__viewHistory.shift();
+  }
+  SC.__currentView = viewName;
+  SC.updateBackButton?.();
+};
+
+SC.updateBackButton = function(){
+  const btn = document.getElementById("backBtn");
+  if(!btn) return;
+  if(SC.__viewHistory.length > 0){
+    btn.classList.remove("is-disabled");
+    btn.style.visibility = "visible";
+  }else{
+    btn.classList.add("is-disabled");
+    btn.style.visibility = "visible";
+  }
+};
+
+SC.goBack = function(){
+  const prev = SC.__viewHistory.pop();
+  SC.updateBackButton?.();
+
+  if(prev && typeof SC[prev] === "function"){
+    SC.__backLock = true;
+    try{ SC[prev](); }
+    finally{
+      SC.__currentView = prev;
+      SC.__backLock = false;
+      SC.updateBackButton?.();
+    }
+    return;
+  }
+
+  const mode = SC.currentProfile?.role || SC.currentMode || "guest";
+  if(mode === "teacher" && typeof SC.renderTeacherHome === "function") SC.renderTeacherHome();
+  else if(mode === "student" && typeof SC.renderStudentHome === "function") SC.renderStudentHome();
+  else if(typeof SC.renderGuestHome === "function") SC.renderGuestHome();
+};
+
+SC.__wrapView = function(name){
+  const original = SC[name];
+  if(typeof original !== "function" || original.__wrappedBack) return;
+  const wrapped = function(...args){
+    SC.recordView(name);
+    return original.apply(this,args);
+  };
+  wrapped.__wrappedBack = true;
+  SC[name] = wrapped;
+};
+
+setTimeout(()=>{
+  [
+    "renderRoleSelect",
+    "renderTeacherLogin",
+    "renderStudentLogin",
+    "renderTeacherHome",
+    "renderStudentHome",
+    "renderGuestHome",
+    "renderTeacherDashboard",
+    "renderAddStudentPage",
+    "renderTeacherRanking",
+    "renderAllTestRecordsForTeacher",
+    "renderStudentDashboard",
+    "renderStudyForm",
+    "loadMyStudyLogs",
+    "renderAIScan",
+    "renderAIScanGuestNotice",
+    "renderOCRSettings",
+    "renderMyTestRecords",
+    "goDream",
+    "goSearch",
+    "goCompare"
+  ].forEach(SC.__wrapView);
+  SC.updateBackButton?.();
+}, 500);
+
+/* 旧履歴APIとの互換 */
+SC.pushHistory = function(viewName){ SC.recordView?.(viewName); };
