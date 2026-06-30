@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>進学コンパス｜戻る確実＋下メニュー拡大版</title>
+  <title>進学コンパス｜UI改善・写真選択対応版</title>
   <style>
     :root{--navy:#12396f;--blue:#0b66c3;--bg:#eef6ff;--line:#d8e8fb;--text:#0b2d5c}
     *{box-sizing:border-box}
@@ -88,14 +88,135 @@
       #backBtn,#roleSwitchBtn,.topMenu{font-size:13px;padding:9px 8px}
     }
 
+  
+    /* UI改善版：ヘッダー */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:20;
+      background:linear-gradient(90deg,#12396f,#0b66c3);
+      color:white;
+      display:grid;
+      grid-template-columns:86px minmax(0,1fr) 108px;
+      align-items:center;
+      gap:8px;
+      padding:12px 12px;
+      box-shadow:0 6px 18px rgba(0,0,0,.14);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      min-width:0;
+      overflow:hidden;
+      font-weight:900;
+    }
+    .brandIcon{
+      width:34px;
+      height:34px;
+      border-radius:999px;
+      background:rgba(255,255,255,.20);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 5px 14px rgba(0,0,0,.16);
+      flex:0 0 auto;
+    }
+    .brand span{
+      font-size:clamp(22px,5.6vw,32px);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      line-height:1.05;
+    }
+    #backBtn,.topMenu{
+      border:0;
+      background:rgba(255,255,255,.20);
+      color:white;
+      font-weight:900;
+      border-radius:999px;
+      padding:10px 10px;
+      font-size:14px;
+      white-space:nowrap;
+      min-height:44px;
+    }
+    #backBtn{
+      visibility:hidden;
+    }
+    #backBtn.is-visible{
+      visibility:visible;
+    }
+    #menuToggleBtn{
+      text-align:center;
+    }
+
+    /* 下メニュー拡大版 */
+    body{padding-bottom:112px !important;}
+    .bottomNav{
+      min-height:88px !important;
+      grid-template-columns:repeat(4,1fr);
+      padding-bottom:env(safe-area-inset-bottom);
+    }
+    .bottomNav button{
+      padding:12px 4px 14px !important;
+      font-size:28px !important;
+      line-height:1 !important;
+      min-height:84px !important;
+      display:flex !important;
+      flex-direction:column !important;
+      align-items:center !important;
+      justify-content:center !important;
+      gap:6px !important;
+    }
+    .bottomNav span{
+      font-size:14px !important;
+      font-weight:900 !important;
+      line-height:1.1 !important;
+      white-space:nowrap;
+    }
+
+    /* AIスキャン画像選択 */
+    .scanButtons{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .scanChoice{
+      border:1px solid #cfe0f5;
+      border-radius:18px;
+      background:#f7fbff;
+      color:#12396f;
+      padding:14px;
+      font-weight:900;
+      font-size:16px;
+      text-align:left;
+    }
+    .hiddenFileInput{
+      position:absolute;
+      left:-9999px;
+      width:1px;
+      height:1px;
+      opacity:0;
+    }
+
+    @media(max-width:390px){
+      .topbar{grid-template-columns:78px minmax(0,1fr) 96px;padding:10px 8px;gap:6px}
+      #backBtn,.topMenu{font-size:13px;padding:9px 8px;min-height:42px}
+      .brandIcon{width:30px;height:30px}
+      .brand span{font-size:clamp(20px,5.2vw,28px)}
+      .bottomNav button{font-size:25px !important}
+      .bottomNav span{font-size:13px !important}
+    }
+
   </style>
 </head>
 <body>
   <header class="topbar">
     <button id="backBtn" onclick="SC.goBack()">← 戻る</button>
-    <button id="roleSwitchBtn" onclick="SC.renderRoleSelect()">切替</button>
     <div class="brand"><div class="brandIcon">🧭</div><span>進学コンパス</span></div>
-    <button class="topMenu" onclick="SC.openMenu()">☰</button>
+    <button id="menuToggleBtn" class="topMenu" onclick="SC.toggleMenu()">☰ メニュー</button>
   </header>
   <main id="app"></main>
   <nav class="bottomNav"></nav>

@@ -10,3 +10,129 @@ SC.runOCRScan=async function(){const st=document.getElementById("ocrStatus"),raw
 SC.autoFillFromOCRText=function(){const t=(document.getElementById("ocrRawText").value||"").replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));const find=ls=>{for(const l of ls){const m=t.match(new RegExp(l+"[^0-9]{0,10}([0-9]{1,3})"));if(m)return m[1]}return""};for(const[id,v]of Object.entries({scoreEnglish:find(["英語","英"]),scoreMath:find(["数学","数"]),scoreJapanese:find(["国語","国"]),scoreScience:find(["理科","理"]),scoreSocial:find(["社会","社"])})){if(v)document.getElementById(id).value=v}const dev=(t.match(/偏差値[^0-9]{0,10}([0-9]{2}(?:\.[0-9])?)/)||[])[1];if(dev)document.getElementById("testDeviation").value=dev;const j=(t.match(/[ABCDEＡＢＣＤＥ]判定/)||[])[0];if(j)document.getElementById("testJudgement").value=j.replace("Ａ","A").replace("Ｂ","B").replace("Ｃ","C").replace("Ｄ","D").replace("Ｅ","E");if(!document.getElementById("testName").value)document.getElementById("testName").value=document.getElementById("scanType").value};
 SC.saveTestRecord=async function(){const msg=document.getElementById("testSaveMsg");try{const{db,collection,addDoc,serverTimestamp}=window.SCFB;await addDoc(collection(db,"testRecords"),{uid:SC.currentUser.uid,studentName:SC.currentProfile?.name||"",studentId:SC.currentProfile?.studentId||"",type:document.getElementById("scanType").value,testName:document.getElementById("testName").value,testDate:document.getElementById("testDate").value,scores:{english:+(document.getElementById("scoreEnglish").value||0),math:+(document.getElementById("scoreMath").value||0),japanese:+(document.getElementById("scoreJapanese").value||0),science:+(document.getElementById("scoreScience").value||0),social:+(document.getElementById("scoreSocial").value||0)},deviation:+(document.getElementById("testDeviation").value||0),judgement:document.getElementById("testJudgement").value,memo:document.getElementById("testMemo").value,rawText:document.getElementById("ocrRawText").value,createdAt:serverTimestamp()});msg.textContent="保存しました。"}catch(e){msg.textContent="保存できませんでした。Firestore Rulesを確認してください。";console.error(e)}};
 SC.renderMyTestRecords=async function(){SC.pushHistory?.("renderMyTestRecords");document.getElementById("app").innerHTML=`<section class="card"><h1>🧾 テスト記録</h1><div id="myTests" class="box">読み込み中...</div></section>`;try{const{db,collection,getDocs,query,where}=window.SCFB;const q=query(collection(db,"testRecords"),where("uid","==",SC.currentUser.uid));const snap=await getDocs(q);const rec=[];snap.forEach(d=>rec.push(d.data()));document.getElementById("myTests").innerHTML=rec.length?rec.map(r=>`<div class="box"><b>${escAI(r.testDate||"")} ${escAI(r.testName||r.type||"")}</b><br>英:${r.scores?.english||"-"} 数:${r.scores?.math||"-"} 国:${r.scores?.japanese||"-"}<br>偏差値:${r.deviation||"-"} 判定:${escAI(r.judgement||"-")}</div>`).join(""):"まだ記録がありません。"}catch(e){document.getElementById("myTests").textContent="読み込めませんでした。"}SC.updateBackButton?.()};
+
+
+
+/* UI改善版：カメラ撮影と写真・ファイル選択を分離 */
+SC.renderAIScan = function(){
+  SC.pushHistory?.("renderAIScan");
+  if(!SC.currentUser || SC.currentProfile?.role !== "student"){
+    SC.renderAIScanGuestNotice();
+    return;
+  }
+
+  document.getElementById("app").innerHTML = `
+  <section class="card">
+    <h1>📷 AIスキャン</h1>
+    <p class="help">写真を選んで読み取り、内容を確認して保存します。</p>
+
+    <div class="box">
+      <label>種類</label>
+      <select id="scanType">
+        <option>模試</option>
+        <option>定期テスト</option>
+        <option>通知表</option>
+        <option>共通テスト自己採点</option>
+      </select>
+
+      <label>画像</label>
+      <div class="scanButtons">
+        <button type="button" class="scanChoice" onclick="document.getElementById('scanCameraInput').click()">📷 カメラで撮影</button>
+        <button type="button" class="scanChoice" onclick="document.getElementById('scanFileInput').click()">🖼 写真・ファイルから選択</button>
+      </div>
+
+      <input id="scanCameraInput" class="hiddenFileInput" type="file" accept="image/*" capture="environment" onchange="SC.handleScanFile(event)">
+      <input id="scanFileInput" class="hiddenFileInput" type="file" accept="image/*,.jpg,.jpeg,.png,.webp,.heic" onchange="SC.handleScanFile(event)">
+
+      <div id="scanPreview" style="display:none"></div>
+
+      <div class="actions">
+        <button class="btn navy" onclick="SC.runOCRScan()">画像を読み取る</button>
+        <button class="btn light" onclick="SC.renderOCRSettings()">OCR設定</button>
+      </div>
+      <p id="ocrStatus" class="help">${SC.ocrSpaceApiKey ? "OCRキー設定済み" : "OCRキー未設定：手入力可能"}</p>
+    </div>
+
+    <div class="box">
+      <h2>読み取り結果</h2>
+      <textarea id="ocrRawText" placeholder="OCR結果がここに入ります"></textarea>
+      <button class="btn light" onclick="SC.autoFillFromOCRText()">フォームへ反映</button>
+    </div>
+
+    <div class="box">
+      <h2>確認して保存</h2>
+      <label>テスト名</label><input id="testName">
+      <label>実施日</label><input id="testDate" type="date" value="${new Date().toISOString().slice(0,10)}">
+      <label>英語</label><input id="scoreEnglish" type="number">
+      <label>数学</label><input id="scoreMath" type="number">
+      <label>国語</label><input id="scoreJapanese" type="number">
+      <label>理科</label><input id="scoreScience" type="number">
+      <label>社会</label><input id="scoreSocial" type="number">
+      <label>偏差値</label><input id="testDeviation" type="number" step="0.1">
+      <label>判定</label>
+      <select id="testJudgement">
+        <option></option><option>A判定</option><option>B判定</option><option>C判定</option><option>D判定</option><option>E判定</option>
+      </select>
+      <label>メモ</label><textarea id="testMemo"></textarea>
+      <div class="actions">
+        <button class="btn primary" onclick="SC.saveTestRecord()">保存</button>
+        <button class="btn light" onclick="SC.renderMyTestRecords()">保存済みを見る</button>
+      </div>
+      <p id="testSaveMsg" class="help"></p>
+    </div>
+  </section>`;
+  SC.updateBackButton?.();
+};
+
+SC.selectedScanFile = null;
+
+SC.handleScanFile = function(event){
+  const file = event.target.files?.[0];
+  SC.selectedScanFile = file || null;
+  const box = document.getElementById("scanPreview");
+  if(!file || !box) return;
+  const url = URL.createObjectURL(file);
+  box.style.display = "block";
+  box.innerHTML = `
+    <p class="ok">選択しました：${file.name || "画像"}</p>
+    <img class="previewImg" src="${url}">
+  `;
+};
+
+SC.previewScanImage = SC.handleScanFile;
+
+SC.runOCRScan = async function(){
+  const st = document.getElementById("ocrStatus");
+  const raw = document.getElementById("ocrRawText");
+  const file = SC.selectedScanFile || document.getElementById("scanCameraInput")?.files?.[0] || document.getElementById("scanFileInput")?.files?.[0];
+
+  if(!file){
+    st.textContent = "画像を選択してください。";
+    return;
+  }
+  if(!SC.ocrSpaceApiKey){
+    st.textContent = "OCRキー未設定です。OCR設定から入力してください。";
+    return;
+  }
+
+  try{
+    st.textContent = "読み取り中...";
+    const form = new FormData();
+    form.append("apikey", SC.ocrSpaceApiKey);
+    form.append("language", "jpn");
+    form.append("OCREngine", "2");
+    form.append("isOverlayRequired", "false");
+    form.append("file", file);
+
+    const res = await fetch("https://api.ocr.space/parse/image", { method:"POST", body:form });
+    const data = await res.json();
+    if(data.IsErroredOnProcessing) throw new Error(data.ErrorMessage || "OCRエラー");
+
+    raw.value = (data.ParsedResults || []).map(r => r.ParsedText || "").join("\n").trim();
+    st.innerHTML = `<span class="ok">読み取り完了。</span> 内容を確認してください。`;
+    SC.autoFillFromOCRText();
+  }catch(e){
+    st.innerHTML = `<span class="warn">読み取り失敗。</span> 手入力で保存できます。`;
+    console.error(e);
+  }
+};

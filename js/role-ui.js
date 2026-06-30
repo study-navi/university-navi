@@ -151,3 +151,44 @@ setTimeout(()=>{
 
 /* 旧履歴APIとの互換 */
 SC.pushHistory = function(viewName){ SC.recordView?.(viewName); };
+
+
+
+/* UI改善版：メニュー開閉・戻る表示 */
+SC.toggleMenu = function(){
+  const existing = document.querySelector(".menuPanel");
+  if(existing){
+    existing.remove();
+    return;
+  }
+  SC.openMenu();
+};
+
+const __oldCloseMenuUiFix = SC.closeMenu;
+SC.closeMenu = function(){
+  document.querySelector(".menuPanel")?.remove();
+};
+
+SC.isHomeView = function(viewName){
+  const v = viewName || SC.__currentView || "";
+  return ["renderTeacherHome","renderStudentHome","renderGuestHome","renderRoleSelect"].includes(v);
+};
+
+const __oldUpdateBackButtonUiFix = SC.updateBackButton;
+SC.updateBackButton = function(){
+  const btn = document.getElementById("backBtn");
+  if(!btn) return;
+  const hasHistory = (SC.__viewHistory && SC.__viewHistory.length > 0) || (SC.historyStack && SC.historyStack.length > 1);
+  if(hasHistory && !SC.isHomeView()){
+    btn.classList.add("is-visible");
+    btn.classList.remove("is-disabled");
+    btn.style.visibility = "visible";
+  }else{
+    btn.classList.remove("is-visible");
+    btn.classList.add("is-disabled");
+    btn.style.visibility = "hidden";
+  }
+};
+
+/* 旧切替ボタン削除後もメニュー内で切替可能 */
+setTimeout(()=>SC.updateBackButton?.(), 800);
