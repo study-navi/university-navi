@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>進学コンパス｜Ver.19 先生カルテ版</title>
+  <title>進学コンパス｜完成版 Ver.19 模試科目対応</title>
   <style>
     :root{--navy:#12396f;--blue:#0b66c3;--bg:#eef6ff;--line:#d8e8fb;--text:#0b2d5c}
     *{box-sizing:border-box}
@@ -210,23 +210,14 @@
       .bottomNav span{font-size:13px !important}
     }
 
-  .subjectGrid{display:grid;grid-template-columns:1fr;gap:10px}.subjectRow{border:1px solid #d8e8fb;border-radius:18px;padding:12px;background:#f9fcff}.subjectHead{display:grid;grid-template-columns:1fr 88px;gap:10px;align-items:center}.subjectDetails{display:none;margin-top:10px}.subjectRow.open .subjectDetails{display:block}.fileGroup{border:1px dashed #bdd4f1;border-radius:18px;padding:12px;background:#fbfdff;margin:10px 0}.fileList{font-size:13px;color:#58708f;line-height:1.6}.pill{display:inline-block;border-radius:999px;padding:5px 9px;background:#e8f2ff;color:#12396f;font-size:12px;font-weight:900;margin:3px}@media(min-width:720px){.subjectGrid{grid-template-columns:1fr 1fr}}
-.karteHeader{background:linear-gradient(160deg,#eef6ff,#fff);border:1px solid #d8e8fb;border-radius:22px;padding:16px;margin:12px 0}
-.statGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.statBox{background:#fff;border:1px solid #d8e8fb;border-radius:16px;padding:12px;text-align:center}
-.statBox b{font-size:13px;color:#58708f}.statBox span{display:block;font-size:24px;font-weight:900;margin-top:4px}
-.testCard{border:1px solid #d8e8fb;border-radius:18px;padding:14px;background:#fff;margin:10px 0}
-.adviceBox{background:#fffdf2;border:1px solid #f1d98a;border-radius:18px;padding:14px;margin:10px 0}
-.todoItem{display:flex;gap:8px;align-items:flex-start;border-bottom:1px solid #eef4fb;padding:8px 0}.todoItem:last-child{border-bottom:0}
-.clickable{cursor:pointer}
-@media(min-width:720px){.statGrid{grid-template-columns:repeat(4,1fr)}}
-</style>
+  </style>
 </head>
 <body>
   <header class="topbar">
     <button id="backBtn" onclick="SC.goBack()">← 戻る</button>
+    <button id="roleSwitchBtn" onclick="SC.renderRoleSelect()">切替</button>
     <div class="brand"><div class="brandIcon">🧭</div><span>進学コンパス</span></div>
-    <button id="menuToggleBtn" class="topMenu" onclick="SC.toggleMenu()">☰ メニュー</button>
+    <button id="menuToggleBtn" class="topMenu" onclick="SC.toggleMenu ? SC.toggleMenu() : SC.openMenu()">☰ メニュー</button>
   </header>
   <main id="app"></main>
   <nav class="bottomNav"></nav>
