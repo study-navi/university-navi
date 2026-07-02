@@ -1,232 +1,32 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>進学コンパス｜完成版 Ver.19 模試科目対応</title>
-  <style>
-    :root{--navy:#12396f;--blue:#0b66c3;--bg:#eef6ff;--line:#d8e8fb;--text:#0b2d5c}
-    *{box-sizing:border-box}
-    body{margin:0;background:linear-gradient(180deg,#edf6ff,#fff);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Noto Sans JP",sans-serif;color:var(--text);padding-bottom:82px}
-    .topbar{position:sticky;top:0;z-index:20;background:linear-gradient(90deg,#12396f,#0b66c3);color:white;display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;gap:8px;padding:10px;box-shadow:0 6px 18px rgba(0,0,0,.14)}
-    .brand{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:900;min-width:0}
-    .brandIcon{width:32px;height:32px;border-radius:999px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center}
-    .brand span{font-size:clamp(21px,5.6vw,32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    #backBtn,#roleSwitchBtn,.topMenu{border:0;background:rgba(255,255,255,.16);color:white;font-weight:900;border-radius:999px;padding:9px 10px;font-size:14px;white-space:nowrap}
-    #backBtn{display:none}
-    #app{max-width:920px;margin:0 auto;padding:14px}
-    .card,.box{background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:0 10px 24px rgba(20,59,115,.08);padding:18px;margin:14px 0}
-    .box{border-radius:18px;padding:14px;box-shadow:0 6px 16px rgba(20,59,115,.06)}
-    h1{margin:0 0 10px;font-size:28px} h2{margin:10px 0;font-size:22px}
-    .help{color:#58708f;line-height:1.55}.ok{color:#0a7a2f;font-weight:900}.warn{color:#a65a00;font-weight:900}
-    label{display:block;font-weight:800;margin:12px 0 6px}
-    input,select,textarea{width:100%;border:1px solid #cfe0f5;border-radius:14px;padding:12px;font-size:16px;background:#fff}
-    textarea{min-height:90px}
-    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-    .btn{border:0;border-radius:999px;padding:11px 14px;font-weight:900;cursor:pointer}
-    .primary{background:#0b66c3;color:white}.navy{background:#12396f;color:white}.light{background:#eef6ff;color:#12396f}.danger{background:#fff0f0;color:#a12}
-    .grid{display:grid;gap:12px}.two{grid-template-columns:1fr 1fr}
-    .roleHero{margin:20px auto;border-radius:30px;padding:30px 22px;background:linear-gradient(160deg,#fff,#eef6ff 55%,#dcecff);box-shadow:0 18px 45px rgba(20,59,115,.12);border:1px solid #d6e6fb}
-    .roleHeroTitle{text-align:center;margin-bottom:24px}
-    .roleLogo{width:78px;height:78px;border-radius:24px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#12396f,#2268bd);color:white;font-size:42px;box-shadow:0 12px 28px rgba(20,59,115,.25)}
-    .roleCards,.modeHomeGrid{display:grid;gap:14px}
-    .roleCard,.modeTile{width:100%;border:0;border-radius:24px;padding:20px;text-align:left;background:white;color:#0b2d5c;box-shadow:0 10px 24px rgba(20,59,115,.10);border:1px solid #dce9f8;cursor:pointer}
-    .roleCard h2,.modeTile h2{font-size:23px;margin:0 0 8px}.roleCard p,.modeTile p{margin:0 0 12px;line-height:1.55;color:#58708f}
-    .rolePill,.modeNotice{display:inline-block;border-radius:999px;padding:7px 12px;background:#e8f2ff;color:#12396f;font-weight:800;font-size:13px}
-    .modeNotice{display:block;border-radius:18px;margin:0 0 14px}
-    .previewImg{width:100%;max-height:360px;object-fit:contain;border-radius:16px;margin-top:10px;background:#f5f8ff}
-    .bottomNav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);z-index:30;box-shadow:0 -8px 22px rgba(20,59,115,.08)}
-    .bottomNav button{border:0;background:white;padding:8px 4px;color:#12396f;font-weight:900}
-    .bottomNav span{display:block;font-size:11px;margin-top:2px}
-    .menuPanel{position:fixed;right:12px;top:64px;z-index:40;background:white;border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 18px 45px rgba(20,59,115,.18);display:grid;gap:8px;min-width:220px}
-    .menuPanel button{border:0;border-radius:12px;background:#eef6ff;color:#12396f;padding:11px;text-align:left;font-weight:900}
-    @media(min-width:720px){.roleCards{grid-template-columns:1fr 1fr 1fr}.modeHomeGrid{grid-template-columns:1fr 1fr}.two{grid-template-columns:repeat(4,1fr)}}
-  
-    /* 戻るボタン確実版 */
-    #backBtn{
-      display:inline-block;
-      min-width:64px;
-      border:0;
-      background:rgba(255,255,255,.22);
-      color:white;
-      font-weight:900;
-      border-radius:999px;
-      padding:10px 11px;
-      font-size:14px;
-      white-space:nowrap;
-    }
-    #backBtn.is-disabled{
-      opacity:.38;
-      pointer-events:none;
-    }
-    /* 下メニュー拡大版 */
-    body{padding-bottom:98px}
-    .bottomNav{
-      min-height:76px;
-      grid-template-columns:repeat(4,1fr);
-    }
-    .bottomNav button{
-      padding:10px 4px 12px !important;
-      font-size:24px !important;
-      line-height:1.05;
-      min-height:72px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:4px;
-    }
-    .bottomNav span{
-      font-size:13px !important;
-      font-weight:900;
-      line-height:1.1;
-      white-space:nowrap;
-    }
-    @media(max-width:380px){
-      .bottomNav button{font-size:22px !important}
-      .bottomNav span{font-size:12px !important}
-      #backBtn,#roleSwitchBtn,.topMenu{font-size:13px;padding:9px 8px}
-    }
-
-  
-    /* UI改善版：ヘッダー */
-    .topbar{
-      position:sticky;
-      top:0;
-      z-index:20;
-      background:linear-gradient(90deg,#12396f,#0b66c3);
-      color:white;
-      display:grid;
-      grid-template-columns:86px minmax(0,1fr) 108px;
-      align-items:center;
-      gap:8px;
-      padding:12px 12px;
-      box-shadow:0 6px 18px rgba(0,0,0,.14);
-    }
-    .brand{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      min-width:0;
-      overflow:hidden;
-      font-weight:900;
-    }
-    .brandIcon{
-      width:34px;
-      height:34px;
-      border-radius:999px;
-      background:rgba(255,255,255,.20);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      box-shadow:0 5px 14px rgba(0,0,0,.16);
-      flex:0 0 auto;
-    }
-    .brand span{
-      font-size:clamp(22px,5.6vw,32px);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      line-height:1.05;
-    }
-    #backBtn,.topMenu{
-      border:0;
-      background:rgba(255,255,255,.20);
-      color:white;
-      font-weight:900;
-      border-radius:999px;
-      padding:10px 10px;
-      font-size:14px;
-      white-space:nowrap;
-      min-height:44px;
-    }
-    #backBtn{
-      visibility:hidden;
-    }
-    #backBtn.is-visible{
-      visibility:visible;
-    }
-    #menuToggleBtn{
-      text-align:center;
-    }
-
-    /* 下メニュー拡大版 */
-    body{padding-bottom:112px !important;}
-    .bottomNav{
-      min-height:88px !important;
-      grid-template-columns:repeat(4,1fr);
-      padding-bottom:env(safe-area-inset-bottom);
-    }
-    .bottomNav button{
-      padding:12px 4px 14px !important;
-      font-size:28px !important;
-      line-height:1 !important;
-      min-height:84px !important;
-      display:flex !important;
-      flex-direction:column !important;
-      align-items:center !important;
-      justify-content:center !important;
-      gap:6px !important;
-    }
-    .bottomNav span{
-      font-size:14px !important;
-      font-weight:900 !important;
-      line-height:1.1 !important;
-      white-space:nowrap;
-    }
-
-    /* AIスキャン画像選択 */
-    .scanButtons{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:10px;
-      margin-top:10px;
-    }
-    .scanChoice{
-      border:1px solid #cfe0f5;
-      border-radius:18px;
-      background:#f7fbff;
-      color:#12396f;
-      padding:14px;
-      font-weight:900;
-      font-size:16px;
-      text-align:left;
-    }
-    .hiddenFileInput{
-      position:absolute;
-      left:-9999px;
-      width:1px;
-      height:1px;
-      opacity:0;
-    }
-
-    @media(max-width:390px){
-      .topbar{grid-template-columns:78px minmax(0,1fr) 96px;padding:10px 8px;gap:6px}
-      #backBtn,.topMenu{font-size:13px;padding:9px 8px;min-height:42px}
-      .brandIcon{width:30px;height:30px}
-      .brand span{font-size:clamp(20px,5.2vw,28px)}
-      .bottomNav button{font-size:25px !important}
-      .bottomNav span{font-size:13px !important}
-    }
-
-  </style>
-</head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>進学コンパス｜Ver.20 完全再構築版</title>
+<style>
+:root{--navy:#12396f;--blue:#0b66c3;--bg:#eef6ff;--line:#d8e8fb;--text:#0b2d5c}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#eef6ff,#fff);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Noto Sans JP",sans-serif;color:var(--text);padding-bottom:94px}
+.topbar{position:sticky;top:0;z-index:20;background:linear-gradient(90deg,#12396f,#0b66c3);color:white;display:grid;grid-template-columns:70px 54px minmax(0,1fr) 92px;gap:6px;align-items:center;padding:10px 8px;box-shadow:0 6px 18px rgba(0,0,0,.14)}
+.topbar button{border:0;background:rgba(255,255,255,.20);color:#fff;font-weight:900;border-radius:999px;padding:9px 6px;font-size:12px;min-height:42px;white-space:nowrap}
+#backBtn{visibility:hidden}#backBtn.show{visibility:visible}.brand{display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;font-weight:900;overflow:hidden}.brandIcon{width:30px;height:30px;border-radius:999px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center}.brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:clamp(20px,5vw,30px)}
+#app{max-width:920px;margin:0 auto;padding:14px}.card,.box{background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:0 10px 24px rgba(20,59,115,.08);padding:18px;margin:14px 0}.box{border-radius:18px;padding:14px;box-shadow:0 6px 16px rgba(20,59,115,.06)}
+h1{margin:0 0 12px;font-size:28px}h2{margin:12px 0 10px;font-size:22px}.help{color:#58708f;line-height:1.55}.ok{color:#0a7a2f;font-weight:900}.warn{color:#a65a00;font-weight:900}
+label{display:block;font-weight:900;margin:12px 0 6px}input,select,textarea{width:100%;border:1px solid #cfe0f5;border-radius:14px;padding:12px;font-size:16px;background:#fff}textarea{min-height:90px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btn{border:0;border-radius:999px;padding:11px 14px;font-weight:900;cursor:pointer}.primary{background:#0b66c3;color:#fff}.navy{background:#12396f;color:#fff}.light{background:#eef6ff;color:#12396f}
+.opening{min-height:70vh;display:flex;align-items:center;justify-content:center;text-align:center}.openLogo{width:92px;height:92px;border-radius:28px;margin:0 auto 18px;background:linear-gradient(160deg,#12396f,#0b66c3);display:flex;align-items:center;justify-content:center;color:#fff;font-size:52px;box-shadow:0 18px 40px rgba(20,59,115,.26)}
+.roleHero{border-radius:30px;padding:30px 22px;background:linear-gradient(160deg,#fff,#eef6ff 55%,#dcecff);box-shadow:0 18px 45px rgba(20,59,115,.12);border:1px solid #d6e6fb}.roleHeroTitle{text-align:center;margin-bottom:20px}.roleLogo{width:78px;height:78px;border-radius:24px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#12396f,#2268bd);color:white;font-size:42px}
+.roleCards,.modeHomeGrid{display:grid;gap:14px}.roleCard,.modeTile{width:100%;border:0;border-radius:24px;padding:20px;text-align:left;background:white;color:#0b2d5c;box-shadow:0 10px 24px rgba(20,59,115,.10);border:1px solid #dce9f8;cursor:pointer}.roleCard h2,.modeTile h2{font-size:23px;margin:0 0 8px}.roleCard p,.modeTile p{margin:0 0 12px;line-height:1.55;color:#58708f}
+.rolePill,.modeNotice,.pill{display:inline-block;border-radius:999px;padding:7px 12px;background:#e8f2ff;color:#12396f;font-weight:900;font-size:13px}.modeNotice{display:block;border-radius:18px;margin:0 0 14px}.pill{padding:5px 9px;font-size:12px;margin:3px}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);z-index:30;box-shadow:0 -8px 22px rgba(20,59,115,.08);min-height:82px;padding-bottom:env(safe-area-inset-bottom)}.bottomNav button{border:0;background:white;padding:10px 4px 12px;color:#12396f;font-weight:900;font-size:25px;line-height:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}.bottomNav span{display:block;font-size:13px;line-height:1.1;white-space:nowrap}
+.menuPanel{position:fixed;right:12px;top:70px;z-index:40;background:white;border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 18px 45px rgba(20,59,115,.18);display:grid;gap:8px;min-width:230px}.menuPanel button{border:0;border-radius:12px;background:#eef6ff;color:#12396f;padding:11px;text-align:left;font-weight:900}
+.subjectGrid{display:grid;grid-template-columns:1fr;gap:10px}.subjectRow{border:1px solid #d8e8fb;border-radius:18px;padding:12px;background:#f9fcff}.subjectHead{display:grid;grid-template-columns:1fr 88px;gap:10px;align-items:center}.subjectDetails{display:none;margin-top:10px}.subjectRow.open .subjectDetails{display:block}
+.fileGroup{border:1px dashed #bdd4f1;border-radius:18px;padding:12px;background:#fbfdff;margin:10px 0}.fileList{font-size:13px;color:#58708f;line-height:1.6}.previewImg{width:100%;max-height:360px;object-fit:contain;border-radius:16px;margin-top:10px;background:#f5f8ff}.hiddenFileInput{position:absolute;left:-9999px}.scanButtons{display:grid;gap:10px}.scanChoice{border:1px solid #cfe0f5;border-radius:18px;background:#f7fbff;color:#12396f;padding:14px;font-weight:900;font-size:16px;text-align:left}.mockSubjectNote,.adviceBox{background:#fffdf2;border:1px solid #f1d98a;border-radius:16px;padding:12px;margin:10px 0;font-weight:800}.statGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.statBox{background:#fff;border:1px solid #d8e8fb;border-radius:16px;padding:12px;text-align:center}.statBox b{font-size:13px;color:#58708f}.statBox span{display:block;font-size:24px;font-weight:900;margin-top:4px}.testCard{border:1px solid #d8e8fb;border-radius:18px;padding:14px;background:#fff;margin:10px 0}.todoItem{display:flex;gap:8px;align-items:flex-start;border-bottom:1px solid #eef4fb;padding:8px 0}.todoItem:last-child{border-bottom:0}.clickable{cursor:pointer}
+@media(min-width:720px){.roleCards{grid-template-columns:1fr 1fr 1fr}.modeHomeGrid{grid-template-columns:1fr 1fr}.subjectGrid{grid-template-columns:1fr 1fr}.statGrid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:390px){.topbar{grid-template-columns:66px 50px minmax(0,1fr) 86px;padding:9px 6px;gap:5px}.topbar button{font-size:12px;padding:8px 5px}.brand span{font-size:20px}.brandIcon{width:28px;height:28px}.bottomNav button{font-size:23px}.bottomNav span{font-size:12px}}
+</style></head>
 <body>
-  <header class="topbar">
-    <button id="backBtn" onclick="SC.goBack()">← 戻る</button>
-    <button id="roleSwitchBtn" onclick="SC.renderRoleSelect()">切替</button>
-    <div class="brand"><div class="brandIcon">🧭</div><span>進学コンパス</span></div>
-    <button id="menuToggleBtn" class="topMenu" onclick="SC.toggleMenu ? SC.toggleMenu() : SC.openMenu()">☰ メニュー</button>
-  </header>
-  <main id="app"></main>
-  <nav class="bottomNav"></nav>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script type="module" src="./js/firebase.js"></script>
-  <script type="module" src="./js/auth.js"></script>
-  <script type="module" src="./js/teacher.js"></script>
-  <script type="module" src="./js/student.js"></script>
-  <script type="module" src="./js/ai-scan.js"></script>
-  <script type="module" src="./js/role-ui.js"></script>
-</body>
-</html>
+<header class="topbar"><button id="backBtn" onclick="SC.goBack()">← 戻る</button><button id="roleSwitchBtn" onclick="SC.renderRoleSelect()">切替</button><div class="brand"><div class="brandIcon">🧭</div><span>進学コンパス</span></div><button id="menuToggleBtn" class="topMenu" onclick="SC.toggleMenu()">☰ メニュー</button></header>
+<main id="app"></main><nav class="bottomNav"></nav>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script type="module" src="./js/firebase.js"></script><script type="module" src="./js/auth.js"></script><script type="module" src="./js/app.js"></script>
+</body></html>

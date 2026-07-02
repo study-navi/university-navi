@@ -6,3 +6,4 @@ const firebaseConfig={apiKey:"AIzaSyCQBhzH003xOkUbrtREIO0tNZIJPQn5OOo",authDomai
 const app=initializeApp(firebaseConfig);
 window.SCFB_CONFIG=firebaseConfig;
 window.SCFB={app,auth:getAuth(app),db:getFirestore(app),storage:getStorage(app),collection,doc,getDoc,getDocs,setDoc,addDoc,updateDoc,deleteDoc,query,where,serverTimestamp,ref,uploadBytes,getDownloadURL};
+window.dispatchEvent(new Event("scfb-ready"));
